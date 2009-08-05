@@ -50,6 +50,53 @@ require("_layout.php");
   <span class="standardtitle">Prenom</span><br />
   <div><input name="prenom" type="text" size="32" value="" maxlength="50"></div>
  </div>
+ <div>
+  <span class="standardtitle">Date de naissance</span><br />
+  <div><input name="ddn" type="text" size="32" value="" maxlength="50"></div>
+ </div>
+ <br />
+
+ <div>
+  <span class="standardtitle">Courriel</span><br />
+  <div><input name="courriel" type="text" size="32" value="" maxlength="255"></div>
+ </div>
+ <br />
+
+ <div>
+  <span class="standardtitle">Adresse</span><br />
+  <div><input name="adresse" type="text" size="64" value="" maxlength="80"></div>
+ </div>
+ <br />
+
+ <div>
+  <span class="standardtitle">Ville</span><br />
+  <div><input name="adresse" type="text" size="32" value="" maxlength="50"></div>
+ </div>
+ <div>
+  <span class="standardtitle">T&eacute;l&eacute;phone</span><br />
+  <div><input name="tel" type="text" size="20" value="" maxlength="20"></div>
+ </div>
+ <div>
+  <span class="standardtitle"># Judo Qu&eacute;bec</span><br />
+  <div><input name="affiliation" type="text" size="10" value="" maxlength="20"></div>
+ </div>
+
+ <br />
+
+ <div>
+  <span class="standardtitle">Nom re&ccedil;u imp&ocirc;t</span><br />
+  <div><input name="impot" type="text" size="32" value="" maxlength="50"></div>
+ </div>
+ <br />
+
+ <div>
+  <span class="standardtitle">Contact en cas d'urgence</span><br />
+  <div><input name="nomurgence" type="text" size="32" value="" maxlength="50"></div>
+ </div>
+ <div>
+  <span class="standardtitle">T&eacute;l&eacute;phone urgence</span><br />
+  <div><input name="telurgence" type="text" size="32" value="" maxlength="50"></div>
+ </div>
 
 </body>
 
