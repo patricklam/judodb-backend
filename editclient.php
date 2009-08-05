@@ -38,7 +38,7 @@ require("_layout.php");
 
 <body>
 
-<div class="title"><span><b>Renseignements client</b></div>
+<div class="title"><span><b>Renseignements judoka</b></div>
 
 <div class="sectionBody" style="padding:7px 0 9px 7px;">
  <div style="padding:10px 10px 0px 10px;"><a name="FullName"></a>
