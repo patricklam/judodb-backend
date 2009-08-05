@@ -40,6 +40,10 @@ require("_layout.php");
 
 <div class="title"><span><b>Renseignements client</b></div>
 
+<form name="client" action="editclient.php" method="post">
+<input type="hidden" name="cid" value="" />
+<!-- TODO: display error message when no cid -->
+
 <div class="sectionBody" style="padding:7px 0 9px 7px;">
  <div style="padding:10px 10px 0px 10px;"><a name="FullName"></a>
  <div>
@@ -70,7 +74,7 @@ require("_layout.php");
 
  <div>
   <span class="standardtitle">Ville</span><br />
-  <div><input name="adresse" type="text" size="32" value="" maxlength="50"></div>
+  <div><input name="ville" type="text" size="32" value="" maxlength="50"></div>
  </div>
  <div>
   <span class="standardtitle">T&eacute;l&eacute;phone</span><br />
@@ -97,6 +101,10 @@ require("_layout.php");
   <span class="standardtitle">T&eacute;l&eacute;phone urgence</span><br />
   <div><input name="telurgence" type="text" size="32" value="" maxlength="50"></div>
  </div>
+
+ <div>
+ <input type="submit" value="Submit" />
+</form>
 
 </body>
 
