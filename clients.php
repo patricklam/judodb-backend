@@ -42,7 +42,7 @@ require("_layout.php");
 <script type="text/javascript"  src="base.js"></script>
 <script type="text/javascript"  src="utils.js"></script>
 
-<h1>Renseignements client</h1>
+<h1>Recherche client</h1>
 <p><span id="status">&nbsp;</span></p>
 
 <script>
@@ -85,7 +85,7 @@ function init() {
   }
 }
 
-var fields = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "tel", "affiliation", "nom_recu_impot", "nom_contact_urgence", "tel_contact_urgence"]
+var fields = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "tel", "affiliation", "impot", "nomurgence", "telurgence"]
 
 function populateClient(cid) {
   var rs = executeToObjects(db, 'select * from client where id = '+cid)[0];
@@ -110,98 +110,51 @@ function handleSubmit() {
   var cid = getElementById('cid').value;
   var rs = clientToArray();
 
-  alert('INSERT INTO `client` '+
+  db.execute('INSERT INTO `client` '+
                 'VALUES (' + cid + ', 2009, "' + rs.nom + '", "' +
                 rs.prenom + '", "' + rs.ddn + '", "' + rs.courriel + '", "' +
                 rs.adresse + '", "' + rs.ville + '", "' + rs.tel + '", "' +
-                rs.affiliation + '", "' + rs.nom_recu_impot + '", "' +
-                rs.nom_contact_urgence + '", "' + rs.tel_contact_urgence + '")');
+                rs.affiliation + '", "' + rs.impot + '", "' +
+                rs.nomurgence + '", "' + rs.telurgence + '")');
 
 //  db.execute('INSERT INTO `client` '+
 //                'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
 //                [cid, 2009, rs.nom, rs.prenom, rs.ddn, rs.courriel,
 //                rs.adresse, rs.ville, rs.tel, rs.affiliation, 
-//                rs.nom_recu_impot, rs.nom_contact_urgence, rs.tel_contact_urgence]);
+//                rs.impot, rs.nomurgence, rs.telurgence]);
 
- // db.execute('INSERT INTO `client` '+
- //               'VALUES (?, ?, ?, ?, ?, ?)', 
- //               [1, 2009, 'Lam', 'Patrick', '77/09/19', 'prof.lam@gmail.com']);
+//  db.execute('INSERT INTO `client` '+
+//                'VALUES (?, ?, ?, ?, ?, ?)', 
+//                [1, 2009, "Lam", "Patrick", "77/09/19", "prof.lam@gmail.com"]);
 }
 
 function handleLoad() {
   var cid = getElementById('cid').value;
   populateClient(cid);
 }
+
+function onClick() {
+  var f = getElementById('nom').value;
+  // ... or (nom + prenom) contains f
+  var rs = db.execute('SELECT * FROM `client` WHERE nom contains f OR '+
+              'prenom contains f');
+}
 </script>
 
-<form name="client" onSubmit="handleSubmit(); return false;">
-<!-- <input type="hidden" name="cid" value="" /> -->
+<form name="findclient">
+<input type="hidden" name="cid" value="" />
 
 <div class="sectionBody" style="padding:7px 0 9px 7px;">
  <div style="padding:10px 10px 0px 10px;">
- <!-- for testing purposes: -->
- <div> <input type="text" id="cid" value="" /> 
-       <input type="submit" value="Fetch" onClick="handleLoad(); return false;" />
- </div>
  <div>
-  <span class="standardtitle">Nom</span><br />
-  <div><input id="nom" type="text" size="32" value="" maxlength="50"></div>
+  <span class="standardtitle">Nom ou Prenom</span><br />
+  <div><input id="nom" type="text" size="60" value="" maxlength="60"></div>
  </div>
- <div>
-  <span class="standardtitle">Prenom</span><br />
-  <div><input id="prenom" type="text" size="32" value="" maxlength="50"></div>
- </div>
- <div>
-  <span class="standardtitle">Date de naissance (aa/mm/jj) </span><br />
-  <div><input id="ddn" type="text" size="32" value="" maxlength="50"></div>
- </div>
- <br />
-
- <div>
-  <span class="standardtitle">Courriel</span><br />
-  <div><input id="courriel" type="text" size="32" value="" maxlength="255"></div>
- </div>
- <br />
-
- <div>
-  <span class="standardtitle">Adresse</span><br />
-  <div><input id="adresse" type="text" size="64" value="" maxlength="80"></div>
- </div>
- <br />
-
- <div>
-  <span class="standardtitle">Ville</span><br />
-  <div><input id="ville" type="text" size="32" value="" maxlength="50"></div>
- </div>
- <div>
-  <span class="standardtitle">T&eacute;l&eacute;phone</span><br />
-  <div><input id="tel" type="text" size="20" value="" maxlength="20"></div>
- </div>
- <div>
-  <span class="standardtitle"># Judo Qu&eacute;bec</span><br />
-  <div><input id="affiliation" type="text" size="10" value="" maxlength="20"></div>
- </div>
-
- <br />
-
- <div>
-  <span class="standardtitle">Nom re&ccedil;u imp&ocirc;t</span><br />
-  <div><input id="nom_recu_impot" type="text" size="32" value="" maxlength="50"></div>
- </div>
- <br />
-
- <div>
-  <span class="standardtitle">Contact en cas d'urgence</span><br />
-  <div><input id="nom_contact_urgence" type="text" size="32" value="" maxlength="50"></div>
- </div>
- <div style="display:none">
-  <span class="standardtitle">T&eacute;l&eacute;phone urgence</span><br />
-  <div><input id="tel_contact_urgence" type="text" size="32" value="" maxlength="50"></div>
- </div>
-
- <div>
- <input type="submit" value="Submit" />
+ <input type="submit" value="Fureter" onClick="doSearch(); return false;"/>
 </form>
+
+<div id="results">
+</div>
 
 </body>
 
