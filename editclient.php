@@ -45,104 +45,11 @@ require("_layout.php");
 <h1>Renseignements client</h1>
 <p><span id="status">&nbsp;</span></p>
 
-<script>
-var db;
-init();
-
-// Open this page's local database.
-function init() {
-  var success = false;
-
-  if (window.google && google.gears) {
-    try {
-      db = google.gears.factory.create('beta.database');
-
-      if (db) {
-        db.open('anjoudb');
-        db.execute('create table if not exists `client` (' +
-	             '`id` int(11) NOT NULL, ' +
-		     '`saison` int(5) NOT NULL, ' +
-		     '`nom` varchar(50) NOT NULL, ' +
-		     '`prenom` varchar(50) NOT NULL, ' +
-		     '`ddn` date, ' +
-		     '`courriel` varchar(255), ' +
-		     '`adresse` varchar(255), ' +
-		     '`ville` varchar(50), ' +
-		     '`tel` varchar(20), ' +
-		     '`affiliation` varchar(20), ' +
-		     '`nom_recu_impot` varchar(255), ' +
-		     '`nom_contact_urgence` varchar(255), ' +
-		     '`tel_contact_urgence` varchar(255), ' +
-		     'PRIMARY KEY  (`id`) ' +
-		     ')');
-
-        success = true;
-        // Initialize the UI at startup.
-      }
-    } catch (ex) {
-      setError('Could not create database: ' + ex.message);
-    }
-  }
-}
-
-var fields = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "tel", "affiliation", "nom_recu_impot", "nom_contact_urgence", "tel_contact_urgence"]
-
-function populateClient(cid) {
-  var rs = executeToObjects(db, 'select * from client where id = '+cid)[0];
-  for (i = 0; i < fields.length; i++) {
-    key = fields[i];
-    getElementById(key).value = rs[key];
-  }
-}
-
-function clientToArray() {
-  var rs = {};
-  for (i = 0; i < fields.length; i++) {
-    key = fields[i];
-    rs[key] = getElementById(key).value;
-  }
-  return rs;
-}
-
-function handleSubmit() {
-  // Load up all of the data from the form,
-  // put it into a PHP array, store it to the database.
-  var cid = getElementById('cid').value;
-  var rs = clientToArray();
-
-  alert('INSERT INTO `client` '+
-                'VALUES (' + cid + ', 2009, "' + rs.nom + '", "' +
-                rs.prenom + '", "' + rs.ddn + '", "' + rs.courriel + '", "' +
-                rs.adresse + '", "' + rs.ville + '", "' + rs.tel + '", "' +
-                rs.affiliation + '", "' + rs.nom_recu_impot + '", "' +
-                rs.nom_contact_urgence + '", "' + rs.tel_contact_urgence + '")');
-
-//  db.execute('INSERT INTO `client` '+
-//                'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-//                [cid, 2009, rs.nom, rs.prenom, rs.ddn, rs.courriel,
-//                rs.adresse, rs.ville, rs.tel, rs.affiliation, 
-//                rs.nom_recu_impot, rs.nom_contact_urgence, rs.tel_contact_urgence]);
-
- // db.execute('INSERT INTO `client` '+
- //               'VALUES (?, ?, ?, ?, ?, ?)', 
- //               [1, 2009, 'Lam', 'Patrick', '77/09/19', 'prof.lam@gmail.com']);
-}
-
-function handleLoad() {
-  var cid = getElementById('cid').value;
-  populateClient(cid);
-}
-</script>
-
 <form name="client" onSubmit="handleSubmit(); return false;">
-<!-- <input type="hidden" name="cid" value="" /> -->
+<input type="hidden" id="cid" value="" />
 
 <div class="sectionBody" style="padding:7px 0 9px 7px;">
  <div style="padding:10px 10px 0px 10px;">
- <!-- for testing purposes: -->
- <div> <input type="text" id="cid" value="" /> 
-       <input type="submit" value="Fetch" onClick="handleLoad(); return false;" />
- </div>
  <div>
   <span class="standardtitle">Nom</span><br />
   <div><input id="nom" type="text" size="32" value="" maxlength="50"></div>
@@ -202,6 +109,88 @@ function handleLoad() {
  <div>
  <input type="submit" value="Submit" />
 </form>
+
+<script>
+var cid = <? if (isset($_GET["cid"]) && $_GET["cid"] != "") 
+   { 
+     echo $_GET["cid"];
+   } else echo "-1";
+?>;
+
+var db;
+var fields = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "tel", "affiliation", "nom_recu_impot", "nom_contact_urgence", "tel_contact_urgence"]
+
+init();
+
+// Open this page's local database.
+function init() {
+  var success = false;
+
+  if (window.google && google.gears) {
+    try {
+      db = google.gears.factory.create('beta.database');
+
+      if (db) {
+        db.open('anjoudb');
+        db.execute('create table if not exists `client` (' +
+	             '`id` int(11) NOT NULL, ' +
+		     '`saison` int(5) NOT NULL, ' +
+		     '`nom` varchar(50) NOT NULL, ' +
+		     '`prenom` varchar(50) NOT NULL, ' +
+		     '`ddn` date, ' +
+		     '`courriel` varchar(255), ' +
+		     '`adresse` varchar(255), ' +
+		     '`ville` varchar(50), ' +
+		     '`tel` varchar(20), ' +
+		     '`affiliation` varchar(20), ' +
+		     '`nom_recu_impot` varchar(255), ' +
+		     '`nom_contact_urgence` varchar(255), ' +
+		     '`tel_contact_urgence` varchar(255), ' +
+		     'PRIMARY KEY  (`id`) ' +
+		     ')');
+
+        success = true;
+        // Initialize the UI at startup.
+	if (cid != -1)
+	  populateClient(cid);
+      }
+    } catch (ex) {
+      setError('Could not create database: ' + ex.message);
+    }
+  }
+}
+
+function populateClient() {
+  var rs = executeToObjects(db, 'select * from client where id = '+cid)[0];
+  for (i = 0; i < fields.length; i++) {
+    key = fields[i];
+    getElementById(key).value = rs[key];
+  }
+}
+
+function clientToArray() {
+  var rs = {};
+  for (i = 0; i < fields.length; i++) {
+    key = fields[i];
+    rs[key] = getElementById(key).value;
+  }
+  return rs;
+}
+
+function handleSubmit() {
+  // Load up all of the data from the form,
+  // put it into a PHP array, store it to the database.
+  var rs = clientToArray();
+
+  // This is not atomic transaction, fix later.
+  db.execute('DELETE from `client` WHERE id=?', [cid]);
+  db.execute('INSERT INTO `client` ' +
+                'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
+                [cid, 2009, rs.nom, rs.prenom, rs.ddn, rs.courriel,
+                rs.adresse, rs.ville, rs.tel, rs.affiliation, 
+                rs.nom_recu_impot, rs.nom_contact_urgence, rs.tel_contact_urgence]);
+}
+</script>
 
 </body>
 

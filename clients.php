@@ -30,7 +30,7 @@ require("_layout.php");
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>Facturation Club Judo Anjou: Client</title>
+  <title>Facturation Club Judo Anjou: Recherche clients</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link rel="shortcut icon" href="/files/favicon.ico" type="image/x-icon" />
   <style type="text/css" media="all">@import "styles.css";</style>
@@ -85,59 +85,30 @@ function init() {
   }
 }
 
-var fields = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "tel", "affiliation", "impot", "nomurgence", "telurgence"]
-
-function populateClient(cid) {
-  var rs = executeToObjects(db, 'select * from client where id = '+cid)[0];
-  for (i = 0; i < fields.length; i++) {
-    key = fields[i];
-    getElementById(key).value = rs[key];
-  }
-}
-
-function clientToArray() {
-  var rs = {};
-  for (i = 0; i < fields.length; i++) {
-    key = fields[i];
-    rs[key] = getElementById(key).value;
-  }
-  return rs;
-}
-
-function handleSubmit() {
-  // Load up all of the data from the form,
-  // put it into a PHP array, store it to the database.
-  var cid = getElementById('cid').value;
-  var rs = clientToArray();
-
-  db.execute('INSERT INTO `client` '+
-                'VALUES (' + cid + ', 2009, "' + rs.nom + '", "' +
-                rs.prenom + '", "' + rs.ddn + '", "' + rs.courriel + '", "' +
-                rs.adresse + '", "' + rs.ville + '", "' + rs.tel + '", "' +
-                rs.affiliation + '", "' + rs.impot + '", "' +
-                rs.nomurgence + '", "' + rs.telurgence + '")');
-
-//  db.execute('INSERT INTO `client` '+
-//                'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-//                [cid, 2009, rs.nom, rs.prenom, rs.ddn, rs.courriel,
-//                rs.adresse, rs.ville, rs.tel, rs.affiliation, 
-//                rs.impot, rs.nomurgence, rs.telurgence]);
-
-//  db.execute('INSERT INTO `client` '+
-//                'VALUES (?, ?, ?, ?, ?, ?)', 
-//                [1, 2009, "Lam", "Patrick", "77/09/19", "prof.lam@gmail.com"]);
-}
-
-function handleLoad() {
-  var cid = getElementById('cid').value;
-  populateClient(cid);
-}
-
-function onClick() {
-  var f = getElementById('nom').value;
+function doSearch() {
+  var f = getElementById('query').value;
   // ... or (nom + prenom) contains f
-  var rs = db.execute('SELECT * FROM `client` WHERE nom contains f OR '+
-              'prenom contains f');
+  var rs = db.execute('SELECT id, nom, prenom FROM `client` WHERE nom = "Lam" OR '+
+              'prenom = ? ORDER BY nom', [f]);
+  var clients = [];
+  var index = 0;
+  while (rs.isValidRow()) {
+    if (index < 10) {
+      clients[index] = {};
+      clients[index].id = rs.field(0);
+      clients[index].nom = rs.field(1);
+      clients[index].prenom = rs.field(2);
+    }
+    ++index;
+    rs.next();
+  }
+  rs.close();
+
+  var resultBox = getElementById('results');
+  resultBox.innerHTML = '';
+  for (var i = 0; i < clients.length; ++i) {
+    resultBox.innerHTML += '<a href="editclient.php?cid='+clients[i].id+'">'+clients[i].nom+', '+clients[i].prenom+'</a><br />';
+  }
 }
 </script>
 
@@ -148,7 +119,7 @@ function onClick() {
  <div style="padding:10px 10px 0px 10px;">
  <div>
   <span class="standardtitle">Nom ou Prenom</span><br />
-  <div><input id="nom" type="text" size="60" value="" maxlength="60"></div>
+  <div><input id="query" type="text" size="60" value="" maxlength="60"></div>
  </div>
  <input type="submit" value="Fureter" onClick="doSearch(); return false;"/>
 </form>
