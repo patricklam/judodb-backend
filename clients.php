@@ -86,10 +86,8 @@ function init() {
 }
 
 function doSearch() {
-  var f = getElementById('query').value;
-  // ... or (nom + prenom) contains f
-  var rs = db.execute('SELECT id, nom, prenom FROM `client` WHERE nom = "Lam" OR '+
-              'prenom = ? ORDER BY nom', [f]);
+  var f = '%'+getElementById('query').value+'%';
+  var rs = db.execute('SELECT id, nom, prenom FROM `client` WHERE prenom||" "||nom LIKE ? OR nom||" "||prenom LIKE ? ORDER BY nom COLLATE NOCASE', [f, f]);
   var clients = [];
   var index = 0;
   while (rs.isValidRow()) {
