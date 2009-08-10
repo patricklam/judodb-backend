@@ -41,6 +41,7 @@ require("_layout.php");
 <script type="text/javascript"  src="gears_init.js"></script>
 <script type="text/javascript"  src="base.js"></script>
 <script type="text/javascript"  src="utils.js"></script>
+<script type="text/javascript"  src="constants.js"></script>
 
 <h1>Renseignements client</h1>
 <p><span id="status">&nbsp;</span></p>
@@ -81,7 +82,7 @@ require("_layout.php");
   <div><input id="ville" type="text" size="32" value="" maxlength="50"></div>
  </div>
  <div>
-  <span class="standardtitle">T&eacute;l&eacute;phone</span><br />
+  <span class="standardtitle">T&eacute;l&eacute;phone(s)</span><br />
   <div><input id="tel" type="text" size="20" value="" maxlength="20"></div>
  </div>
  <div>
@@ -168,25 +169,19 @@ function populateClient() {
   }
 }
 
-function clientToArray() {
+function handleSubmit() {
   var rs = {};
   for (i = 0; i < fields.length; i++) {
     key = fields[i];
     rs[key] = getElementById(key).value;
   }
   return rs;
-}
-
-function handleSubmit() {
-  // Load up all of the data from the form,
-  // put it into a PHP array, store it to the database.
-  var rs = clientToArray();
 
   // This is not atomic transaction, fix later.
   db.execute('DELETE from `client` WHERE id=?', [cid]);
   db.execute('INSERT INTO `client` ' +
                 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
-                [cid, 2009, rs.nom, rs.prenom, rs.ddn, rs.courriel,
+                [cid, SAISON, rs.nom, rs.prenom, rs.ddn, rs.courriel,
                 rs.adresse, rs.ville, rs.tel, rs.affiliation, 
                 rs.nom_recu_impot, rs.nom_contact_urgence, rs.tel_contact_urgence]);
 }
