@@ -1,0 +1,25 @@
+* fix up layout of form
+* synchronize to backing db
+* implement proper search capabilities
+* RAMQ
+* no ville d'anjou
+
+* macro: division d'age from ddn
+
+* implement table for choosing cours & other services
+   * date d'inscription
+   * cours
+   * passport judo qc, non-anjou, judogi
+   * escompte famille, nouvel(le) ami(e)
+   * pricelist
+
+* implement table for payment information:
+   * a payment applies to a number of users
+   * payment includes amount, chq#, name
+   * calculate outstanding balance for users
+
+* constants: saison, dates for cheques
+
+* printing functionality
+
+* implement table for belts and tournaments
