@@ -162,7 +162,7 @@ function handleSubmit() {
                 rs.nom_contact_urgence, rs.tel_contact_urgence, rs.RAMQ,
                 rs.version, rs.server_version]);
   cid = db.lastInsertRowId;
-  clearStatus(); addStatus("Sauvegardé.");
+  clearStatus(); addStatus("Sauvegardé."); setTimeout('clearStatus()', 3000);
 }
 </script>
 
