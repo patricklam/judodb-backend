@@ -10,6 +10,7 @@
 <body>
 
 <script type="text/javascript"  src="gears_init.js"></script>
+<script type="text/javascript"  src="dbaccess.js"></script>
 <script type="text/javascript"  src="base.js"></script>
 <script type="text/javascript"  src="utils.js"></script>
 <script type="text/javascript"  src="constants.js"></script>
@@ -67,11 +68,13 @@
  </div>
  </fieldset>
 
- <div>
  <input id="version" type="hidden" value="">
  <input id="server_version" type="hidden" value="">
- <input type="submit" value="Submit" />
- <!-- annuler? -->
+
+ <div class="actions">
+ <a href="clients.html" onClick="handleSubmit(); return false">Sauvegarder</a>
+ <a href="clients.html" onClick="handleSubmit()">Sauvegarder et retourner</a>
+ <a href="clients.html">Annuler</a>
  </div>
 </form>
 
@@ -89,51 +92,17 @@ function gup( name )
     return results[1];
 }
 
-var cid = gup("cid");
-var db;
 var fields = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "tel", "affiliation", "carte_anjou", "nom_recu_impot", "nom_contact_urgence", "tel_contact_urgence", "RAMQ", "version", "server_version"]
 
+var cid = gup("cid");
+var db;
+
 init();
+localInit();
 
-// Open this page's local database.
-function init() {
-  var success = false;
-
-  if (window.google && google.gears) {
-    try {
-      db = google.gears.factory.create('beta.database');
-
-      if (db) {
-        db.open('anjoudb');
-        db.execute('create table if not exists `client` (' +
-	             '`id` INTEGER PRIMARY KEY AUTOINCREMENT, ' +
-		     '`saison` int(5) NOT NULL, ' +
-		     '`nom` varchar(50) NOT NULL, ' +
-		     '`prenom` varchar(50) NOT NULL, ' +
-		     '`ddn` date, ' +
-		     '`courriel` varchar(255), ' +
-		     '`adresse` varchar(255), ' +
-		     '`ville` varchar(50), ' +
-		     '`tel` varchar(20), ' +
-		     '`affiliation` varchar(20), ' +
-		     '`carte_anjou` varchar(20), ' +
-		     '`nom_recu_impot` varchar(255), ' +
-		     '`nom_contact_urgence` varchar(255), ' +
-		     '`tel_contact_urgence` varchar(255), ' +
-		     '`RAMQ` varchar(20), ' +
-		     '`version` int(5) NOT NULL, ' +
-		     '`server_version` int(5) NOT NULL ' +
-		     ')');
-
-        success = true;
-        // Initialize the UI at startup.
-	if (cid)
-	  populateClient(cid);
-      }
-    } catch (ex) {
-      setError('Could not create database: ' + ex.message);
-    }
-  }
+function localInit() {
+  if (cid)
+    populateClient(cid);
 }
 
 function populateClient() {
@@ -153,7 +122,6 @@ function handleSubmit() {
     rs[key] = getElementById(key).value;
   }
 
-  // This is not atomic transaction, fix later.
   db.execute('INSERT OR REPLACE INTO `client` ' +
                 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
                 [cid, SAISON, rs.nom, rs.prenom, rs.ddn, rs.courriel,

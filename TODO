@@ -1,5 +1,4 @@
 * user login
-* ensure that sqlite db properly initializes
 * fix up CSS form
 * synchronize to backing db
    - keep a server_version field in local db

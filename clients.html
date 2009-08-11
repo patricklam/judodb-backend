@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Facturation Club Judo Anjou: Recherche clients</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="shortcut icon" href="/files/favicon.ico" type="image/x-icon" />
+  <style type="text/css" media="all">@import "styles.css";</style>
+</head>
+
+<body>
+
+<script type="text/javascript"  src="gears_init.js"></script>
+<script type="text/javascript"  src="dbaccess.js"></script>
+<script type="text/javascript"  src="base.js"></script>
+<script type="text/javascript"  src="utils.js"></script>
+
+<h1>Recherche client</h1>
+<p><span id="status">&nbsp;</span></p>
+
+<script>
+var db;
+init();
+
+function doSearch() {
+  var f = '%'+getElementById('query').value+'%';
+  var rs = db.execute('SELECT id, nom, prenom FROM `client` WHERE prenom||" "||nom LIKE ? OR nom||" "||prenom LIKE ? ORDER BY nom COLLATE NOCASE', [f, f]);
+  var clients = [];
+  var index = 0;
+  while (rs.isValidRow()) {
+    if (index < 10) {
+      clients[index] = {};
+      clients[index].id = rs.field(0);
+      clients[index].nom = rs.field(1);
+      clients[index].prenom = rs.field(2);
+    }
+    ++index;
+    rs.next();
+  }
+  rs.close();
+
+  var resultBox = getElementById('results');
+  resultBox.innerHTML = '';
+  for (var i = 0; i < clients.length; ++i) {
+    resultBox.innerHTML += '<a href="editclient.html?cid='+clients[i].id+'">'+clients[i].nom+', '+clients[i].prenom+'</a><br />';
+  }
+}
+</script>
+
+<form name="findclient">
+<input type="hidden" name="cid" value="" />
+
+<div class="sectionBody" style="padding:7px 0 9px 7px;">
+ <div style="padding:10px 10px 0px 10px;">
+ <div>
+  <span class="standardtitle">Nom ou Prenom</span><br />
+  <div><input id="query" type="text" size="60" value="" maxlength="60"></div>
+ </div>
+ <input type="submit" value="Fureter" onClick="doSearch(); return false;"/>
+</form>
+
+<div id="results">
+</div>
+
+</body>
+
+</html>
+
+ 

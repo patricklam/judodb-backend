@@ -46,3 +46,7 @@ legend {
 label {
  float: left; width: 12em; margin-right: 1em;
 }
+
+.actions a {
+ color: blue;
+}
