@@ -1,7 +1,20 @@
-* fix up layout of form
+* user login
+* ensure that sqlite db properly initializes
+* fix up CSS form
 * synchronize to backing db
-* RAMQ
-* # ville d'anjou
+   - keep a server_version field in local db
+   - keep a version field in local, remote
+   - when updating: 
+      /* invariant: local version >= local server_version */
+      if local server_version = remote ver, we can freely update:
+        if local version = local server_version, no changes
+        if local version > local server_version, push to server
+
+      if local server_version < remote ver, 
+        if local version = local server_version, pull from server
+        if local version > local server_version, merge changes
+
+      if local server_version > remote ver: should not happen.
 
 * macro: division d'age from ddn
 
