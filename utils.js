@@ -77,4 +77,15 @@ function executeToObjects(db, sql, args) {
   }
 }
 
+var dateRegexp = /^(\d\d)\/(\d\d)\/(\d\d)$/;
 
+// yy/mm/dd
+function validateDate(d) {
+  if (!dateRegexp.test(d))
+    return false;
+  var rs = dateRegexp.exec(d);
+  var month = parseInt(rs[2], 10), day = parseInt(rs[3], 10);
+  if (month == 0 || month > 12) return false;
+  if (day == 0 || day > 31) return false;
+  return true;
+}

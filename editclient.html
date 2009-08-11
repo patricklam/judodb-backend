@@ -23,19 +23,19 @@
 
 <div class="sectionBody" style="padding:7px 0 9px 7px;">
  <fieldset> <legend>Identit&eacute;</legend>
- <div style="padding:10px 10px 0px 10px;">
+ <div style="padding:10px;">
   <div><label for="nom">Nom</label>
   <input id="nom" type="text" size="32" value="" maxlength="50"></div>
   <div><label for="prenom">Prenom</label>
   <input id="prenom" type="text" size="32" value="" maxlength="50"></div>
   <div><label for="ddn">Date de naissance (aa/mm/jj)</label>
-  <input id="ddn" type="text" size="32" value="" maxlength="50"></div>
+  <input id="ddn" type="text" size="32" value="" maxlength="50" onChange="ddnChange()"></div>
  </div>
  <br />
  </fieldset>
 
  <fieldset> <legend>Adresse</legend>
- <div style="padding:10px 10px 0px 10px;">
+ <div style="padding:10px;">
   <label for="courriel">Courriel</label>
   <div><input id="courriel" type="text" size="32" value="" maxlength="255"></div>
   <label for="adresse">Adresse</label>
@@ -48,7 +48,7 @@
  </fieldset>
 
  <fieldset> <legend>Autres renseignments</legend>
- <div style="padding:10px 10px 0px 10px;">
+ <div style="padding:10px;">
   <div><label for="affiliation">N<sup>o</sup> Judo Qu&eacute;bec</label>
   <input id="affiliation" type="text" size="10" value="" maxlength="20"></div>
   <div><label for="carte_anjou">N<sup>o</sup> arrondissement Anjou</label>
@@ -58,13 +58,20 @@
  </fieldset>
 
  <fieldset> <legend>Urgence</legend>
- <div style="padding:10px 10px 0px 10px;">
+ <div style="padding:10px;">
   <label for="nom_contact_urgence">Contact en cas d'urgence</label>
   <div><input id="nom_contact_urgence" type="text" size="32" value="" maxlength="50"></div>
   <label for="tel_contact_urgence">T&eacute;l&eacute;phone urgence</label>
   <div><input id="tel_contact_urgence" type="text" size="32" value="" maxlength="50"></div>
   <label for="no_RAMQ">N<sup>o</sup> RAMQ</label>
   <div><input id="RAMQ" type="text" size="20" value="" maxlength="20"></div>
+ </div>
+ </fieldset>
+
+ <fieldset> <legend>Frais</legend>
+ <div style="padding:10px;">
+  <label for="categorie">Cat&eacute;gorie d'&acirc;ge</label>
+  <div><input id="categorie" type="text" value="" readonly></div>
  </div>
  </fieldset>
 
@@ -113,6 +120,7 @@ function populateClient() {
     key = fields[i];
     getElementById(key).value = rs[key];
   }
+  updateCategorie();
 }
 
 function handleSubmit() {
@@ -131,6 +139,27 @@ function handleSubmit() {
                 rs.version, rs.server_version]);
   cid = db.lastInsertRowId;
   clearStatus(); addStatus("Sauvegardé."); setTimeout('clearStatus()', 3000);
+}
+
+var oldDDN = getElementById("ddn").value;
+function ddnChange() {
+  var ddn = getElementById("ddn").value;
+  if (validateDate(ddn)) {
+    updateCategorie(); 
+    clearStatus();
+  }
+  else {
+    getElementById("ddn").value = oldDDN;
+    setError("Date de naissance invalide.");
+  }
+  oldDDN = ddn;
+}
+
+function updateCategorie() {
+  c = getElementById("categorie");
+  y = parseInt(getElementById("ddn").value.substring(0,2));
+  if (y + 2000 < SAISON) y = y + 2000; else y = y + 1900;
+  c.value = computeCategoryFromYear(y);
 }
 </script>
 
