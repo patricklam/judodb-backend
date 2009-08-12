@@ -59,6 +59,7 @@ function doRequest(method, url, opt_params, handler, opt_body) {
   try {
     // Firefox throws on open() when it is offline; IE throws on send().
     req.open(method, url, true /* async */);
+    req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     req.send(opt_body || null);
   } catch(e) {
     req = null;
