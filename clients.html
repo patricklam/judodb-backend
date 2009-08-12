@@ -18,14 +18,12 @@
 <p><span id="status">&nbsp;</span></p>
 
 <script>
+store = new DataStore();
+store.init();
+
 var db;
 var clients = [];
 var firstToDisplay = 0;
-
-init();
-
-function max(a,b) { return a > b ? a : b; }
-function min(a,b) { return a < b ? a : b; }
 
 function refreshResults() {
   var resultBox = getElementById('results');
@@ -70,7 +68,7 @@ function doSearch() {
   <span class="standardtitle">Nom ou Prenom</span><br />
   <div><input id="query" type="text" size="60" value="" maxlength="60"></div>
  </div>
- <input type="submit" value="Fureter" onClick="doSearch(); return false;"/>
+ <input type="submit" value="Recherche" onClick="doSearch(); return false;"/>
  <input type="button" value="Nouvelle client" onClick="location.href='editclient.html';"/>
 </form>
 

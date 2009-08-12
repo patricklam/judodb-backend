@@ -1,5 +1,4 @@
 /*
-Based on Gearpad sample code, Copyright 2007, Google Inc.
 Copyright 2009, Patrick Lam.
 
 Redistribution and use in source and binary forms, with or without 
@@ -46,19 +45,22 @@ CREATE TABLE `user` (
 
 DROP TABLE IF EXISTS `client`;
 CREATE TABLE `client` (
-  `id` int(11) NOT NULL auto_increment,
+  `id` int(11) integer NOT NULL,
   `saison` int(5) NOT NULL,
   `nom` varchar(50) NOT NULL,
   `prenom` varchar(50) NOT NULL,
   `ddn` date,
+  `courriel` varchar(255),
   `adresse` varchar(255),
   `ville` varchar(50),
   `tel` varchar(20),
   `affiliation` varchar(20),
+  `carte_anjou` varchar(20),
   `nom_recu_impot` varchar(255),
   `nom_contact_urgence` varchar(255),
   `tel_contact_urgence` varchar(255),
-  `email` varchar(255) NOT NULL,
+  `RAMQ` varchar(20),
+  `version` int(5) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 

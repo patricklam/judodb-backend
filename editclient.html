@@ -76,12 +76,17 @@
  </fieldset>
 
  <input id="version" type="hidden" value="">
- <input id="server_version" type="hidden" value="">
+ <input id="server_version" type="hidden" value="-1">
 
  <div class="actions">
- <a href="clients.html" onClick="handleSubmit(); return false">Sauvegarder</a>
- <a href="clients.html" onClick="handleSubmit()">Sauvegarder et retourner</a>
- <a href="clients.html">Annuler</a>
+ <div style="float:left; text-align:right;">
+  <a href="clients.html" onClick="handleSubmit(); return false">Sauvegarder</a>
+  <a href="clients.html" onClick="handleSubmit()">Sauvegarder et retourner</a>
+ </div>
+ <div style="float:right; text-align:right;">
+  <a href="clients.html">Annuler</a>
+  <a href="clients.html" onClick="return handleDelete();">Supprimer</a>
+ </div>
  </div>
 </form>
 
@@ -104,7 +109,8 @@ var fields = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "tel", "af
 var cid = gup("cid");
 var db;
 
-init();
+store = new DataStore();
+store.init();
 localInit();
 
 function localInit() {
@@ -113,7 +119,7 @@ function localInit() {
 }
 
 function populateClient() {
-  var rs = executeToObjects(db, 'select * from client where id = '+cid)[0];
+  var rs = executeToObjects(db, 'select * from client where id = ?', [cid])[0];
   if (!rs) { addStatus('cid not found'); return; }
 
   for (i = 0; i < fields.length; i++) {
@@ -139,6 +145,16 @@ function handleSubmit() {
                 rs.version, rs.server_version]);
   cid = db.lastInsertRowId;
   clearStatus(); addStatus("Sauvegardé."); setTimeout('clearStatus()', 3000);
+}
+
+function handleDelete() {
+  if (!confirm ("Êtes-vous certain de vouloir supprimer "+
+                getElementById("prenom").value+" "+
+                getElementById("nom").value+"?"))
+    return false;
+
+  db.execute('DELETE FROM `client` WHERE id=?', [cid]);
+  return true;
 }
 
 var oldDDN = getElementById("ddn").value;

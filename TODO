@@ -5,6 +5,7 @@
    - add an "exists on remote" field, renumber cids when uploading to
        remote. Alert to conflicts by nom/prenom/ddn with already-existing 
        members.
+       * actually the server_version = -1 field does that.
    - when updating: 
       /* invariant: local version >= local server_version */
       if local server_version = remote ver, we can freely update:
@@ -31,11 +32,15 @@
    * payment includes amount, chq#, name
    * calculate outstanding balance for users
 
-* constants: saison, dates for cheques
-
 * printing functionality
 
 * implement table for belts and tournaments
 
 * import from CSV
 * export to CSV
+
+* implement system tables:
+   - saison
+   - groupes
+   - frais
+   - dates for cheques
