@@ -19,36 +19,51 @@
 
 <script>
 var db;
+var clients = [];
+var firstToDisplay = 0;
+
 init();
+
+function max(a,b) { return a > b ? a : b; }
+function min(a,b) { return a < b ? a : b; }
+
+function refreshResults() {
+  var resultBox = getElementById('results');
+  resultBox.innerHTML = '';
+  for (var i = firstToDisplay; i < min(firstToDisplay+10, clients.length); ++i) {
+    resultBox.innerHTML += '<a href="editclient.html?cid='+clients[i].id+'">'+clients[i].nom+', '+clients[i].prenom+'</a><br />';
+  }
+
+  if (firstToDisplay > 0 || firstToDisplay + 10 < clients.length) 
+    resultBox.innerHTML += '<br />';
+
+  if (firstToDisplay > 0)
+    resultBox.innerHTML += '<a href="" onClick="firstToDisplay -= 10; refreshResults(); return false;">Résultats précedents</a>&nbsp;';
+  if (firstToDisplay + 10 < clients.length)
+    resultBox.innerHTML += '<a href="" onClick="firstToDisplay += 10; refreshResults(); return false;">Résultats suivants<a>';
+}
 
 function doSearch() {
   var f = '%'+getElementById('query').value+'%';
   var rs = db.execute('SELECT id, nom, prenom FROM `client` WHERE prenom||" "||nom LIKE ? OR nom||" "||prenom LIKE ? ORDER BY nom COLLATE NOCASE', [f, f]);
-  var clients = [];
   var index = 0;
+  clients = [];
   while (rs.isValidRow()) {
-    if (index < 10) {
-      clients[index] = {};
-      clients[index].id = rs.field(0);
-      clients[index].nom = rs.field(1);
-      clients[index].prenom = rs.field(2);
-    }
+    clients[index] = {};
+    clients[index].id = rs.field(0);
+    clients[index].nom = rs.field(1);
+    clients[index].prenom = rs.field(2);
     ++index;
     rs.next();
   }
   rs.close();
 
-  var resultBox = getElementById('results');
-  resultBox.innerHTML = '';
-  for (var i = 0; i < clients.length; ++i) {
-    resultBox.innerHTML += '<a href="editclient.html?cid='+clients[i].id+'">'+clients[i].nom+', '+clients[i].prenom+'</a><br />';
-  }
+  firstToDisplay = 0;
+  refreshResults();
 }
 </script>
 
 <form name="findclient">
-<input type="hidden" name="cid" value="" />
-
 <div class="sectionBody" style="padding:7px 0 9px 7px;">
  <div style="padding:10px 10px 0px 10px;">
  <div>
@@ -59,7 +74,7 @@ function doSearch() {
  <input type="button" value="Nouvelle client" onClick="location.href='editclient.html';"/>
 </form>
 
-<div id="results">
+<div id="results" style="padding-top:1em">
 </div>
 
 </body>

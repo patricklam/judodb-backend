@@ -1,5 +1,4 @@
 * user login
-* search form: next 10, prev 10 (put stuff in db to test that)
 * synchronize to backing db
    - keep a server_version field in local db
    - keep a version field in local, remote
