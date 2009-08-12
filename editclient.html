@@ -159,7 +159,8 @@ function updateCategorie() {
   c = getElementById("categorie");
   y = parseInt(getElementById("ddn").value.substring(0,2));
   if (y + 2000 < SAISON) y = y + 2000; else y = y + 1900;
-  c.value = computeCategoryFromYear(y);
+  var catId = computeCategoryId(y);
+  c.value = categoryName(catId);
 }
 </script>
 

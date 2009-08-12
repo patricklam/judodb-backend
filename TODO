@@ -2,6 +2,9 @@
 * synchronize to backing db
    - keep a server_version field in local db
    - keep a version field in local, remote
+   - add an "exists on remote" field, renumber cids when uploading to
+       remote. Alert to conflicts by nom/prenom/ddn with already-existing 
+       members.
    - when updating: 
       /* invariant: local version >= local server_version */
       if local server_version = remote ver, we can freely update:
@@ -14,14 +17,14 @@
 
       if local server_version > remote ver: should not happen.
 
-* macro: division d'age from ddn
-
 * implement table for choosing cours & other services
    * date d'inscription
    * cours
    * passport judo qc, non-anjou, judogi
    * escompte famille, nouvel(le) ami(e)
    * pricelist
+   * cas special, prix special
+   * horaire: standard or custom
 
 * implement table for payment information:
    * a payment applies to a number of users
@@ -33,3 +36,6 @@
 * printing functionality
 
 * implement table for belts and tournaments
+
+* import from CSV
+* export to CSV
