@@ -10,7 +10,6 @@ DataStore.prototype.init = function() {
       db.open('anjoudb');
       db.execute('create table if not exists `client` (' +
              '`id` INTEGER PRIMARY KEY AUTOINCREMENT, ' +
-      	     '`saison` int(5) NOT NULL, ' +
       	     '`nom` varchar(50) NOT NULL, ' +
       	     '`prenom` varchar(50) NOT NULL, ' +
       	     '`ddn` date, ' +
@@ -34,11 +33,34 @@ DataStore.prototype.init = function() {
 }
 
 DataStore.prototype.sync = function() {
-  var rs = db.execute('SELECT * FROM `client` WHERE server_version != version');
-  var index = 0;
+  addStatus("un instant...");
+  var rs = db.execute('SELECT * FROM `client` WHERE server_version <> version');
   var conflicts = [];
+  var activeReqs = 0;
   while (rs.isValidRow()) {
+    var body = "";
+    var i;
+    for (i = 0; i < ALL_FIELDS.length; i++) {
+        var fn = ALL_FIELDS[i];
+	body += fn + "=" + rs.fieldByName(fn)+"&";
+    }
+    activeReqs++;
+
+      // pulling out my COMP302 skillz:
+      // create a closure which binds id.
+    var makeHandler = function(id) {
+        var r = function(status, statusText, responseText) {
+	activeReqs--;
+
+	    // we'll need to beef up responseText for conflict handling.
+        var newSV = responseText.trim();
+	db.execute('UPDATE `client` SET server_version=? WHERE id=?',
+		   [newSV, id]);
+    }; return r; };
+    doRequest("POST", "update.php", null, makeHandler(rs.fieldByName('id')), body);
     rs.next();
   }
   rs.close();
+  function clearWhenDone() 
+    { if (activeReqs == 0) clearStatus(); else setTimeout(clearWhenDone, 100); }
 }

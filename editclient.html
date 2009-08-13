@@ -10,13 +10,13 @@
 <body>
 
 <script type="text/javascript"  src="gears_init.js"></script>
+<script type="text/javascript"  src="constants.js"></script>
 <script type="text/javascript"  src="dbaccess.js"></script>
 <script type="text/javascript"  src="base.js"></script>
 <script type="text/javascript"  src="utils.js"></script>
-<script type="text/javascript"  src="constants.js"></script>
 
 <h1>Renseignements judoka</h1>
-<div><span id="status">&nbsp;</span><div id="sync">synchroniser</div></div>
+<div><span id="status">&nbsp;</span>
 
 <form name="client" onSubmit="handleSubmit(); return false;">
 <input type="hidden" id="cid" value="" />
@@ -28,7 +28,7 @@
   <input id="nom" type="text" size="32" value="" maxlength="50"></div>
   <div><label for="prenom">Prenom</label>
   <input id="prenom" type="text" size="32" value="" maxlength="50"></div>
-  <div><label for="ddn">Date de naissance (aa/mm/jj)</label>
+  <div><label for="ddn">Date de naissance (aaaa/mm/jj)</label>
   <input id="ddn" type="text" size="32" value="" maxlength="50" onChange="ddnChange()"></div>
  </div>
  <br />
@@ -80,8 +80,8 @@
 
  <div class="actions">
  <div style="float:left; text-align:right;">
-  <a href="clients.html" onClick="handleSubmit(); return false">Sauvegarder</a>
   <a href="clients.html" onClick="handleSubmit()">Sauvegarder et retourner</a>
+  <a href="clients.html" onClick="handleSubmit(); return false">Sauvegarder</a>
  </div>
  <div style="float:right; text-align:right;">
   <a href="clients.html">Annuler</a>
@@ -104,8 +104,6 @@ function gup( name )
     return results[1];
 }
 
-var fields = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "tel", "affiliation", "carte_anjou", "nom_recu_impot", "nom_contact_urgence", "tel_contact_urgence", "RAMQ", "version", "server_version"]
-
 var cid = gup("cid");
 var db;
 
@@ -116,14 +114,15 @@ localInit();
 function localInit() {
   if (cid)
     populateClient(cid);
+  clearStatus();
 }
 
 function populateClient() {
   var rs = executeToObjects(db, 'select * from client where id = ?', [cid])[0];
   if (!rs) { addStatus('cid not found'); return; }
 
-  for (i = 0; i < fields.length; i++) {
-    key = fields[i];
+  for (i = 0; i < ALL_FIELDS.length; i++) {
+    key = ALL_FIELDS[i];
     getElementById(key).value = rs[key];
   }
   updateCategorie();
@@ -131,14 +130,16 @@ function populateClient() {
 
 function handleSubmit() {
   var rs = {};
-  for (i = 0; i < fields.length; i++) {
-    key = fields[i];
+  for (i = 0; i < ALL_FIELDS.length; i++) {
+    key = ALL_FIELDS[i];
     rs[key] = getElementById(key).value;
   }
 
+  rs.version++; getElementById("version").value = rs.version;
+
   db.execute('INSERT OR REPLACE INTO `client` ' +
-                'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
-                [cid, SAISON, rs.nom, rs.prenom, rs.ddn, rs.courriel,
+                'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
+                [cid, rs.nom, rs.prenom, rs.ddn, rs.courriel,
                 rs.adresse, rs.ville, rs.tel, rs.affiliation, rs.carte_anjou,
                 rs.nom_recu_impot, 
                 rs.nom_contact_urgence, rs.tel_contact_urgence, rs.RAMQ,
@@ -173,8 +174,7 @@ function ddnChange() {
 
 function updateCategorie() {
   c = getElementById("categorie");
-  y = parseInt(getElementById("ddn").value.substring(0,2));
-  if (y + 2000 < SAISON) y = y + 2000; else y = y + 1900;
+  y = parseInt(getElementById("ddn").value.substring(0,4));
   var catId = computeCategoryId(y);
   c.value = categoryName(catId);
 }

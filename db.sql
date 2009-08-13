@@ -45,8 +45,7 @@ CREATE TABLE `user` (
 
 DROP TABLE IF EXISTS `client`;
 CREATE TABLE `client` (
-  `id` int(11) integer NOT NULL,
-  `saison` int(5) NOT NULL,
+  `id` int(11) NOT NULL auto_increment,
   `nom` varchar(50) NOT NULL,
   `prenom` varchar(50) NOT NULL,
   `ddn` date,

@@ -77,9 +77,9 @@ function executeToObjects(db, sql, args) {
   }
 }
 
-var dateRegexp = /^(\d\d)\/(\d\d)\/(\d\d)$/;
+var dateRegexp = /^(\d\d\d\d)\/(\d\d)\/(\d\d)$/;
 
-// yy/mm/dd
+// yyyy/mm/dd
 function validateDate(d) {
   if (!dateRegexp.test(d))
     return false;
@@ -92,3 +92,13 @@ function validateDate(d) {
 
 function max(a,b) { return a > b ? a : b; }
 function min(a,b) { return a < b ? a : b; }
+
+String.prototype.trim = function() {
+	return this.replace(/^\s+|\s+$/g,"");
+}
+String.prototype.ltrim = function() {
+	return this.replace(/^\s+/,"");
+}
+String.prototype.rtrim = function() {
+	return this.replace(/\s+$/,"");
+}

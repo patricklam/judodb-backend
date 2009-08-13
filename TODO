@@ -1,4 +1,5 @@
 * user login
+* fix layout for status bar, make it fixed-position
 * synchronize to backing db
    - keep a server_version field in local db
    - keep a version field in local, remote
