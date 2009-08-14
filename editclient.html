@@ -21,21 +21,21 @@
 <form name="client" onSubmit="handleSubmit(); return false;">
 <input type="hidden" id="cid" value="" />
 
-<div class="sectionBody" style="padding:7px 0 9px 7px;">
- <fieldset> <legend>Identit&eacute;</legend>
- <div style="padding:10px;">
-  <div style="float:left"><label for="nom">Nom</label>
-  <input id="nom" type="text" size="24" value="" maxlength="50"></div>
-  <div style="float:right"><label for="prenom">Prenom</label>
-  <input id="prenom" type="text" size="24" value="" maxlength="50"></div>
-  <div style="clear:both"><label for="ddn">Date de naissance<br />(aaaa-mm-jj)</label>
+<div class="sectionBody">
+
+<fieldset> <legend>Identit&eacute;</legend>
+ <div>
+  <div style="float:left"><label for="nom">Nom</label><input id="nom" type="text" size="24" value="" maxlength="50"></div>
+  <div style="float:right"><label for="prenom">Prenom</label><input id="prenom" type="text" size="24" value="" maxlength="50"></div>
+ </div>
+ <div style="clear:both">
+  <label for="ddn">Date de naissance<br />(aaaa-mm-jj)</label>
   <input id="ddn" type="text" size="24" value="" maxlength="50" onChange="ddnChange()"></div>
  </div>
- <br />
- </fieldset>
+</fieldset>
 
- <fieldset> <legend>Adresse</legend>
- <div style="padding:10px;">
+<fieldset> <legend>Adresse</legend>
+ <div>
   <div>
    <div style="float:left">
     <label for="adresse">Adresse</label>
@@ -46,17 +46,21 @@
     <input id="ville" type="text" size="24" value="" maxlength="50">
    </div>
   </div>
-  <div style="clear:both">
-   <label for="tel">T&eacute;l&eacute;phone(s)</label>
-   <div style="float:left"><input id="tel" type="text" size="50" value="" maxlength="20"></div>
-   <div style="float:right"><label for="courriel">Courriel</label>
-   <input id="courriel" type="text" size="24" value="" maxlength="255"></div>
+  <div>
+   <div style="float:left">
+    <label for="tel">T&eacute;l&eacute;phone(s)</label>
+    <input id="tel" type="text" size="50" value="" maxlength="20">
+   </div>
+   <div style="float:right">
+    <label for="courriel">Courriel</label>
+    <input id="courriel" type="text" size="24" value="" maxlength="255">
+   </div>
   </div>
  </div>
- </fieldset>
+</fieldset>
 
  <fieldset> <legend>Autres renseignments</legend>
- <div style="padding:10px;">
+ <div>
   <div>
    <div style="float:left"><label for="affiliation">N<sup>o</sup> Judo Qu&eacute;bec</label>
    <input id="affiliation" type="text" size="10" value="" maxlength="20"></div>
@@ -69,27 +73,29 @@
    <div style="float:right"> <label for="date_grade">Date du grade</label>
    <input id="date_grade" type="text" size="24" value="" maxlength="20"></div>
   </div>
-  <div style="clear:both"><label for="nom_recu_impot">Nom re&ccedil;u imp&ocirc;t</label>
-  <input id="nom_recu_impot" type="text" size="32" value="" maxlength="50"> </div>
+  <div style="clear:both">
+   <label for="nom_recu_impot">Nom re&ccedil;u imp&ocirc;t</label>
+   <input id="nom_recu_impot" type="text" size="32" value="" maxlength="50"> 
+  </div>
  </fieldset>
 
  <fieldset> <legend>Urgence</legend>
- <div style="padding:10px;">
-  <label for="no_RAMQ">N<sup>o</sup> RAMQ</label>
-  <div><input id="RAMQ" type="text" size="20" value="" maxlength="20"></div>
-  <div style="clear:both">
+  <div>
+    <label for="no_RAMQ">N<sup>o</sup> RAMQ</label>
+    <input id="RAMQ" type="text" size="20" value="" maxlength="20">
+  </div>
+  <div>
    <div style="float:left"><label for="nom_contact_urgence">Contact en cas d'urgence</label>
-   <input id="nom_contact_urgence" type="text" size="32" value="" maxlength="50"></div>
+    <input id="nom_contact_urgence" type="text" size="32" value="" maxlength="50"></div>
    <div style="float:right"><label for="tel_contact_urgence">T&eacute;l&eacute;phone urgence</label>
-   <input id="tel_contact_urgence" type="text" size="24" value="" maxlength="50"></div>
-   </div>
- </div>
+    <input id="tel_contact_urgence" type="text" size="24" value="" maxlength="50"></div>
+  </div>
  </fieldset>
 
  <fieldset> <legend>Frais</legend>
- <div style="padding:10px;">
+ <div>
   <label for="categorie">Cat&eacute;gorie d'&acirc;ge</label>
-  <div><input id="categorie" type="text" value="" readonly></div>
+  <input id="categorie" type="text" value="" readonly>
  </div>
  </fieldset>
 
