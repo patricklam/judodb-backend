@@ -37,7 +37,7 @@ DataStore.prototype.init = function() {
 function pullEntry(cid, sid) {
   function integrateEntry(status, statusText, responseText, responseXML) {
     if (status != '200') {
-	setError('Probl&egrave;me de connexion: pullEntry.');
+	setError('Problème de connexion: pullEntry.');
         setTimeout(clearStatus, 1000);
         return null;
     }
@@ -72,7 +72,7 @@ function pullFromServer() {
 
   function parseIds(status, statusText, responseText, responseXML) {
       if (status != '200') {
-          setError('Probl&egrave;me de connexion: parseIds.');
+          setError('Problème de connexion: parseIds.');
           setTimeout(clearStatus, 1000);
           return null;
       }
@@ -118,7 +118,7 @@ function pushToServer() {
       var r = function(status, statusText, responseText, responseXML) {
         activeReqs--;
         if (status != '200') {
-          setError('Probl&egrave;me de connexion.');
+          setError('Problème de connexion: pushToServer.');
           setTimeout(clearStatus, 1000);
           return null;
         }

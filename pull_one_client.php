@@ -1,5 +1,7 @@
 <?
-// XXX require authentication
+require ('_authutils.php');
+
+require_authentication();
 
 $id = $_GET["id"];
 if (!isset ($id)) die;
@@ -7,7 +9,7 @@ if (!isset ($id)) die;
 header('content-type: text/xml');
 echo "<?xml version=\"1.0\"?>";
 
-require ('constants.php');
+require ('_constants.php');
 require ('_database.php');
 
 db_connect() || die;

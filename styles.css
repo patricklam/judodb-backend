@@ -53,6 +53,13 @@ label {
  float: left; width: 12em; margin-right: 1em;
 }
 
+#login {
+ position:absolute;
+ padding: 1em;
+ top:25%; left:40%; background:#ccc;
+ cursor: pointer;
+}
+
 .actions a {
  color: blue;
 }

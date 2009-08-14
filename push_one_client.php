@@ -6,8 +6,11 @@
 // Returns server_id.
 // Guarantees that server_version == c.version on exit.
 
-require ('constants.php');
+require ('_constants.php');
 require ('_database.php');
+require ('_authutils.php');
+
+require_authentication();
 
 db_connect() || die;
 

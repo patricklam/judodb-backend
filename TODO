@@ -1,10 +1,3 @@
-* user login: we could do that upon sync, at datastore.
-* store html files locally with gears
-* import from CSV
-* implement merges/conflicts
-* push deletes to server: put another table for deletes with id & version,
-                          send delete requests to the server?
-
 * implement table for choosing cours & other services
    * date d'inscription
    * cours
@@ -13,6 +6,12 @@
    * pricelist
    * cas special, prix special
    * horaire: standard or custom
+
+* store html files locally with gears
+* import from CSV
+* implement merges/conflicts
+* push deletes to server: put another table for deletes with id & version,
+                          send delete requests to the server?
 
 * implement table for payment information:
    * a payment applies to a number of users
@@ -25,6 +24,7 @@
 
 * export to CSV
 
+* use database for user login authentication, not stuff in textfiles!
 * implement system tables:
    - saison
    - groupes

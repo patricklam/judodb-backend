@@ -1,9 +1,12 @@
 <?
-header('content-type: text/xml');
-echo "<?xml version=\"1.0\"?>";
-
 require ('constants.php');
 require ('_database.php');
+require ('_authutils.php');
+
+require_authentication();
+
+header('content-type: text/xml');
+echo "<?xml version=\"1.0\"?>";
 
 db_connect() || die;
 
