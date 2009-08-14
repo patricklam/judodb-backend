@@ -53,7 +53,7 @@ function pullEntry(cid, sid) {
     storeOneClient(cid, rs);
   }
 
-  doRequest("GET", "fetch_one_client.php", {id: sid}, integrateEntry, null);
+  doRequest("GET", "pull_one_client.php", {id: sid}, integrateEntry, null);
 }
 
 function pullFromServer() {
@@ -129,7 +129,7 @@ function pushToServer() {
           ('UPDATE `client` SET server_id=?, server_version=? WHERE id=?',
 	   [sidp, sv, id]);
     }; return r; };
-    doRequest("POST", "update.php", null, 
+    doRequest("POST", "push_one_client.php", null, 
               makeHandler(rs.fieldByName('version'), 
                           rs.fieldByName('id')), body);
     rs.next();
