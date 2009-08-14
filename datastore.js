@@ -36,6 +36,12 @@ DataStore.prototype.init = function() {
 // overwrites the current entry for cid
 function pullEntry(cid, sid) {
   function integrateEntry(status, statusText, responseText, responseXML) {
+    if (status != '200') {
+	setError('Probl&egrave;me de connexion: pullEntry.');
+        setTimeout(clearStatus, 1000);
+        return null;
+    }
+
     var r = responseXML.childNodes[0].childNodes; // entry
     var rs = {};
     for (i = 0; i < r.length; i++) {
@@ -65,6 +71,12 @@ function pullFromServer() {
   rs.close();
 
   function parseIds(status, statusText, responseText, responseXML) {
+      if (status != '200') {
+          setError('Probl&egrave;me de connexion: parseIds.');
+          setTimeout(clearStatus, 1000);
+          return null;
+      }
+
       var t = responseXML.childNodes[0].childNodes; // table
       for (i = 0; i < t.length; i++) {
           if (t[i].nodeName != "tr") continue;
@@ -103,8 +115,13 @@ function pushToServer() {
       // pulling out my COMP302 skillz:
       // create a closure which binds id.
     var makeHandler = function(sv, id) {
-        var r = function(status, statusText, responseText, responseXML) {
-	activeReqs--;
+      var r = function(status, statusText, responseText, responseXML) {
+        activeReqs--;
+        if (status != '200') {
+          setError('Probl&egrave;me de connexion.');
+          setTimeout(clearStatus, 1000);
+          return null;
+        }
 
 	    // we'll need to beef up responseText for conflict handling.
         var sidp = responseText.trim();
