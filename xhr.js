@@ -88,19 +88,20 @@ function doRequest(method, url, opt_params, handler, opt_body) {
 
     try {
       if (req.readyState == 4) {
-        var status, statusText, responseText;
+        var status, statusText, responseText, responseXML;
 
         try {
           var status = req.status;
           var statusText = req.statusText;
           var responseText = req.responseText;
+	  var responseXML = req.responseXML;
         } catch (e) {
           // We cannot get properties while the window is closing.
         }
 
         req = null;
         window.clearTimeout(timerId);
-        handler(status, statusText, responseText);
+        handler(status, statusText, responseText, responseXML);
       }
     } catch (e) {
       if (console.error) {

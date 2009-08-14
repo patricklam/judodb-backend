@@ -11,7 +11,7 @@
 
 <script type="text/javascript"  src="gears_init.js"></script>
 <script type="text/javascript"  src="constants.js"></script>
-<script type="text/javascript"  src="dbaccess.js"></script>
+<script type="text/javascript"  src="datastore.js"></script>
 <script type="text/javascript"  src="base.js"></script>
 <script type="text/javascript"  src="utils.js"></script>
 
@@ -77,6 +77,7 @@
 
  <input id="version" type="hidden" value="">
  <input id="server_version" type="hidden" value="-1">
+ <input id="server_id" type="hidden" value="-1">
 
  <div class="actions">
  <div style="float:left; text-align:right;">
@@ -84,8 +85,9 @@
   <a href="clients.html" onClick="handleSubmit(); return false">Sauvegarder</a>
  </div>
  <div style="float:right; text-align:right;">
-  <a href="clients.html">Annuler</a>
   <a href="clients.html" onClick="return handleDelete();">Supprimer</a>
+  <span style="padding-right:10em">&nbsp;</span>
+  <a href="clients.html">Annuler</a>
  </div>
  </div>
 </form>
@@ -131,20 +133,13 @@ function populateClient() {
 function handleSubmit() {
   var rs = {};
   for (i = 0; i < ALL_FIELDS.length; i++) {
-    key = ALL_FIELDS[i];
+    var key = ALL_FIELDS[i];
     rs[key] = getElementById(key).value;
   }
 
   rs.version++; getElementById("version").value = rs.version;
 
-  db.execute('INSERT OR REPLACE INTO `client` ' +
-                'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
-                [cid, rs.nom, rs.prenom, rs.ddn, rs.courriel,
-                rs.adresse, rs.ville, rs.tel, rs.affiliation, rs.carte_anjou,
-                rs.nom_recu_impot, 
-                rs.nom_contact_urgence, rs.tel_contact_urgence, rs.RAMQ,
-                rs.version, rs.server_version]);
-  cid = db.lastInsertRowId;
+  cid = storeOneClient(cid, rs);
   clearStatus(); addStatus("Sauvegardé."); setTimeout('clearStatus()', 3000);
 }
 
@@ -168,6 +163,7 @@ function ddnChange() {
   else {
     getElementById("ddn").value = oldDDN;
     setError("Date de naissance invalide.");
+    setTimeout(function () { getElementById("ddn").focus(); }, 1);
   }
   oldDDN = ddn;
 }

@@ -1,23 +1,38 @@
-* user login
-* fix layout for status bar, make it fixed-position
-* synchronize to backing db
-   - keep a server_version field in local db
-   - keep a version field in local, remote
-   - add an "exists on remote" field, renumber cids when uploading to
-       remote. Alert to conflicts by nom/prenom/ddn with already-existing 
-       members.
-       * actually the server_version = -1 field does that.
-   - when updating: 
-      /* invariant: local version >= local server_version */
-      if local server_version = remote ver, we can freely update:
-        if local version = local server_version, no changes
-        if local version > local server_version, push to server
+* user login: we could do that upon sync, at datastore.
+* handle renames on nom/prenom/ddn
+   -> perhaps make the server key primary and then the triple secondary.
 
-      if local server_version < remote ver, 
-        if local version = local server_version, pull from server
-        if local version > local server_version, merge changes
+* when updating (c = client, s = server)
+  /* invariant: c.version >= c.server_version */
+  if c.server_version = s.version, we can freely update:
+    if c.version = c.server_version, no changes
+    if c.version > c.server_version, push to server
 
-      if local server_version > remote ver: should not happen.
+  if c.server_version < s.version, 
+    if c.version = c.server_version, pull from server
+    if c.version > c.server_version, merge changes
+
+  if local server_version > remote ver: should not happen.
+
+keep client.server_version, -1 means "new"
+keep client.version, server.version.
+* pull from server
+   - send the complete list of ids and server.versions to client
+   - client asks for any ids it does not have
+   - if client has an id but client.server_version < server.version:
+       + if client.version = client.server_version, pull.
+       + if client.version > client.server_version, merge conflicts
+           (keep a table of merge conflicts and a nav screen for it)
+* push to server (assume this is after pulling).
+   - send all entries with client.server_version == -1 and .v > .sv.
+   - alert to double-add conflicts (by nom/prenom/ddn, where sv == -1).
+   - send back new server_id, server_version from server to client.
+
+// Let's handle conflicts like this:
+// When we have a conflict per nom/prenom/ddn, we compare each field.
+// Fields which are not equal (e.g. values x, y) get x || y.
+// Merging x with w||x||y should give w||x||y.
+// This only applies if we know we're not updating with an actual later version.
 
 * implement table for choosing cours & other services
    * date d'inscription

@@ -11,7 +11,7 @@
 
 <script type="text/javascript" src="gears_init.js"></script>
 <script type="text/javascript" src="constants.js"></script>
-<script type="text/javascript" src="dbaccess.js"></script>
+<script type="text/javascript" src="datastore.js"></script>
 <script type="text/javascript" src="xhr.js"></script>
 <script type="text/javascript" src="base.js"></script>
 <script type="text/javascript" src="utils.js"></script>
@@ -21,11 +21,12 @@
 <div id="sync" onClick="store.sync()">synchroniser</div></div></p>
 
 <script>
+var db;
+
 store = new DataStore();
 store.init();
 clearStatus();
 
-var db;
 var clients = [];
 var firstToDisplay = 0;
 
@@ -83,4 +84,3 @@ function doSearch() {
 
 </html>
 
- 
