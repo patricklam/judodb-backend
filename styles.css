@@ -39,7 +39,7 @@ li {
 }
 
 fieldset {
- margin: 1em 0 0 0;
+ margin: 1em 0 0;
  padding: 0;
 }
 
@@ -50,8 +50,10 @@ legend {
 }
 
 label {
- float: left; width: 12em; margin-right: 1em;
+ float: left; width: 12em; margin-right: 1em; 
 }
+
+input { margin-top:-0.4em; margin-bottom:0.4em; }
 
 #login {
  position:absolute;
