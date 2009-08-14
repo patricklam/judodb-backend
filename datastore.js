@@ -43,6 +43,7 @@ function pullEntry(cid, sid) {
 	rs[key] = r[i].textContent;
     }
     rs.server_id = sid;
+    rs.server_version = rs.version;
     storeOneClient(cid, rs);
   }
 
@@ -88,8 +89,7 @@ function pullFromServer() {
 }
 
 function pushToServer() {
-  var rs = db.execute('SELECT * FROM `client` WHERE server_version <> version');
-  var conflicts = [];
+  var rs = db.execute('SELECT * FROM `client` WHERE version > server_version');
   var activeReqs = 0;
   while (rs.isValidRow()) {
     var body = "";
@@ -102,23 +102,26 @@ function pushToServer() {
 
       // pulling out my COMP302 skillz:
       // create a closure which binds id.
-    var makeHandler = function(id) {
+    var makeHandler = function(sv, id) {
         var r = function(status, statusText, responseText, responseXML) {
 	activeReqs--;
 
 	    // we'll need to beef up responseText for conflict handling.
-        var newSV = responseText.trim();
-	db.execute('UPDATE `client` SET server_version=? WHERE id=?',
-		   [newSV, id]);
+        var sidp = responseText.trim();
+	db.execute
+          ('UPDATE `client` SET server_id=?, server_version=? WHERE id=?',
+	   [sidp, sv, id]);
     }; return r; };
-    doRequest("POST", "update.php", null, makeHandler(rs.fieldByName('id')), body);
+    doRequest("POST", "update.php", null, 
+              makeHandler(rs.fieldByName('version'), 
+                          rs.fieldByName('id')), body);
     rs.next();
   }
   rs.close();
 
   function clearWhenDone() 
     { if (activeReqs == 0) clearStatus(); else setTimeout(clearWhenDone, 100); }
-  clearWhenDone();
+  setTimeout(clearWhenDone, 1000);
 }
 
 function storeOneClient(cid, rs) {

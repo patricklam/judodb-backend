@@ -1,0 +1,36 @@
+Here is the declarative specification for the sync algorithm.
+
+* when updating (c = client, s = server)
+  /* invariant: c.version >= c.server_version */
+  if c.server_version = s.version, we can freely update:
+    if c.version = c.server_version, no changes
+    if c.version > c.server_version, push to server
+
+  if c.server_version < s.version, 
+    if c.version = c.server_version, pull from server
+    if c.version > c.server_version, merge changes
+
+  if local server_version > remote ver: should not happen.
+
+Here is the imperative algorithm.
+
+var client.server_version; // -1 means "new"
+var client.version, server.version;
+pull from server:
+   - send the complete list of ids and server.versions to client
+   - client asks for any ids it does not have
+   - if client has an id but client.server_version < server.version:
+       + if client.version = client.server_version, pull.
+       + if client.version > client.server_version, merge conflicts
+           (keep a table of merge conflicts and a nav screen for it)
+push to server: (assume this is after pulling).
+   - send all entries with client.v > .sv.
+   - send back new server_id from server to client
+       + can then set client.server_version to client.version.
+
+Merge conflicts algorithm is as follows.
+
+When we have two conflicting sets of fields, we compare each field.
+Fields which are not equal (e.g. values x, y) become x || y.
+Merging x with w||x||y should give w||x||y.
+

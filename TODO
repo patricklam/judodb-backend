@@ -1,38 +1,9 @@
 * user login: we could do that upon sync, at datastore.
-* handle renames on nom/prenom/ddn
-   -> perhaps make the server key primary and then the triple secondary.
-
-* when updating (c = client, s = server)
-  /* invariant: c.version >= c.server_version */
-  if c.server_version = s.version, we can freely update:
-    if c.version = c.server_version, no changes
-    if c.version > c.server_version, push to server
-
-  if c.server_version < s.version, 
-    if c.version = c.server_version, pull from server
-    if c.version > c.server_version, merge changes
-
-  if local server_version > remote ver: should not happen.
-
-keep client.server_version, -1 means "new"
-keep client.version, server.version.
-* pull from server
-   - send the complete list of ids and server.versions to client
-   - client asks for any ids it does not have
-   - if client has an id but client.server_version < server.version:
-       + if client.version = client.server_version, pull.
-       + if client.version > client.server_version, merge conflicts
-           (keep a table of merge conflicts and a nav screen for it)
-* push to server (assume this is after pulling).
-   - send all entries with client.server_version == -1 and .v > .sv.
-   - alert to double-add conflicts (by nom/prenom/ddn, where sv == -1).
-   - send back new server_id, server_version from server to client.
-
-// Let's handle conflicts like this:
-// When we have a conflict per nom/prenom/ddn, we compare each field.
-// Fields which are not equal (e.g. values x, y) get x || y.
-// Merging x with w||x||y should give w||x||y.
-// This only applies if we know we're not updating with an actual later version.
+* store html files locally with gears
+* import from CSV
+* implement merges/conflicts
+* push deletes to server: put another table for deletes with id & version,
+                          send delete requests to the server?
 
 * implement table for choosing cours & other services
    * date d'inscription
@@ -52,7 +23,6 @@ keep client.version, server.version.
 
 * implement table for belts and tournaments
 
-* import from CSV
 * export to CSV
 
 * implement system tables:

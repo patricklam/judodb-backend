@@ -14,7 +14,7 @@ db_connect() || die;
 
 $rs = db_query_get("SELECT * FROM `client` WHERE id=$id");
 
-print "<client id='$id'>";
+print "<client server_id='$id'>";
 
 foreach ($ALL_FIELDS as $f) {
  print "<$f>" . $rs[0][$f] . "</$f>";
