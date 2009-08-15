@@ -5,7 +5,10 @@ function createManagedStore() {
     setError('Could not create local server: ' + ex.message);
     return;
   }
-  var store = localServer.createManagedStore(STORE_NAME);
-  store.manifestUrl = 'manifest.json';
-  store.checkForUpdate();
+  var store = localServer.createStore(STORE_NAME);
+  store.capture(
+    ['clients.html', 'editclient.html', 
+     'base.js', 'constants.js', 'cookie.js', 'datastore.js', 'gears_init.js',
+     'localserver.js', 'md5.js', 'utils.js', 'xhr.js', 'styles.css' ], 
+    function captureCallback(url, success, captureId) {});
 }

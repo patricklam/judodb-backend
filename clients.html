@@ -17,6 +17,7 @@
 <script type="text/javascript" src="base.js"></script>
 <script type="text/javascript" src="utils.js"></script>
 <script type="text/javascript" src="md5.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
 
 <h1>Recherche judoka</h1>
 <p><span id="status">&nbsp;</span>
@@ -36,7 +37,7 @@ function refreshResults() {
   var resultBox = getElementById('results');
   resultBox.innerHTML = '';
   for (var i = firstToDisplay; i < min(firstToDisplay+10, clients.length); ++i) {
-    resultBox.innerHTML += '<a href="editclient.html?cid='+clients[i].id+'">'+clients[i].nom+', '+clients[i].prenom+'</a><br />';
+    resultBox.innerHTML += '<a href="editclient.html" onClick="createCookie(\'cid\', '+clients[i].id+', 1)">'+clients[i].nom+', '+clients[i].prenom+'</a><br />';
   }
 
   if (firstToDisplay > 0 || firstToDisplay + 10 < clients.length) 

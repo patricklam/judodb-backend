@@ -14,6 +14,7 @@
 <script type="text/javascript"  src="datastore.js"></script>
 <script type="text/javascript"  src="base.js"></script>
 <script type="text/javascript"  src="utils.js"></script>
+<script type="text/javascript"  src="cookie.js"></script>
 
 <h1>Renseignements judoka</h1>
 <div><span id="status">&nbsp;</span>
@@ -179,7 +180,13 @@ function gup( name )
     return results[1];
 }
 
-var cid = gup("cid");
+var cid;
+
+// First try the cookie; then override with the GET parameter.
+cid = readCookie("cid");
+
+var cc = gup("cid"); if (cc != null) cid = cc;
+
 var catId;
 var db;
 
