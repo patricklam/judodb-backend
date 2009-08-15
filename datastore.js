@@ -33,6 +33,21 @@ DataStore.prototype.init = function() {
              '`grade` varchar(10), '+
              '`date_grade` date' +
              ')');
+    db.execute('create table if not exists `services` (' +
+	     '`client_id` INTEGER, '+
+	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT, '+
+	     '`date_inscription` date, '+
+	     '`cours` varchar(3), '+
+	     '`sessions` varchar(1), '+
+	     '`passport_judo_qc` boolean, '+
+	     '`non_anjou` boolean, '+
+	     '`judogi` varchar(3), '+
+	     '`famille` char(1), '+
+	     '`nouvelami` char(1), '+
+	     '`cas_special_prix` varchar(4), '+
+	     '`cas_special_note` varchar(50), '+
+	     '`horaire_special` varchar(50) '+
+             ')');
     } catch (ex) {
       setError('Could not create database: ' + ex.message);
     }
