@@ -18,7 +18,8 @@ header('content-type: text/html');
 
 $userDB = array("plam" => "portcartier",
                 "rejean"  => "portcartier",
-                "degyve" => "portcartier"); 
+                "degyve" => "portcartier",
+                "bgenier" => "auvers"); 
 
 function getPasswordForUser($username) {
   // get password from a simple associative array
