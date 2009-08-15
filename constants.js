@@ -2,28 +2,26 @@
 var GLOBAL_FIELDS = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "tel", "affiliation", "carte_anjou", "nom_recu_impot", "nom_contact_urgence", "tel_contact_urgence", "RAMQ"];
 var LOCAL_FIELDS = ["version", "server_version", "server_id"];
 var ALL_FIELDS = LOCAL_FIELDS.concat(GLOBAL_FIELDS);
-
+var STORE_NAME = "anjoudb";
 
 /* All this stuff should eventually end up in the database. */
 
 var SAISON = 2009;
 var CATEGORY_NAMES = ["Mini-Poussin (U-7)", "Poussin (U-9)", "Benjamin (U-11)",
                       "Minime (U-13)", "Juvénile (U-15)", "Cadet (U-17)",
-                      "Junior (U-20)", "Sénior"]
+                      "Junior (U-20)", "Sénior", "Junior Noire", "Sénior Noire"];
 var CATEGORY_YEARS = [SAISON-5, SAISON-7, SAISON-9, SAISON-11, SAISON-13,
-                      SAISON-15, SAISON-18, 0]
+                      SAISON-15, SAISON-18, 0];
 
-function computeCategoryId(yr) {
+function computeCategoryId(yr, grade) {
     var rv;
     for (var i = 0; i < CATEGORY_YEARS.length; i++) {
 	if (yr >= CATEGORY_YEARS[i])
 	    { rv = i; break; }
     }
-    // if cn, set rv to category_years.length+1 (could be cadet or junior)
-    if (i == CATEGORY_YEARS.length) {
-	// and ceinture noire
-	// then increase rv by one more
-    }
+    // if yudansha, increase rv (could be cadet or junior)
+    if (grade.toUpperCase().indexOf('DAN') != -1)
+        rv += 2;
     return rv;
 }
 

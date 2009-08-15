@@ -22,6 +22,13 @@ foreach ($ALL_FIELDS as $f) {
  print "<$f>" . $rs[0][$f] . "</$f>";
 }
 
+$rs = db_query_get("SELECT * FROM `grades` " .
+           "WHERE client_id=$id ORDER BY grade_date ASC");
+foreach ($rs as $r) {
+ print "<grade>" . $r['grade'] . "</grade>";
+ print "<dateGrade>" . $r['grade_date'] . "</dateGrade>";
+}
+
 print "</client>";
 
 ?>

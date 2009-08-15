@@ -27,6 +27,12 @@ DataStore.prototype.init = function() {
       	     '`server_version` int(5) NOT NULL, ' +
       	     '`server_id` int(5) NOT NULL ' +
       	     ')');
+    db.execute('create table if not exists `grades` (' +
+             '`client_id` INTEGER, ' +
+             '`id` INTEGER PRIMARY KEY AUTOINCREMENT, ' +
+             '`grade` varchar(10), '+
+             '`date_grade` date' +
+             ')');
     } catch (ex) {
       setError('Could not create database: ' + ex.message);
     }
@@ -43,10 +49,15 @@ function pullEntry(cid, sid) {
     }
 
     var r = responseXML.childNodes[0].childNodes; // entry
-    var rs = {};
+    var rs = {}; rs['grade'] = []; rs['date_grade'] = [];
     for (i = 0; i < r.length; i++) {
         var key = r[i].nodeName;
-	rs[key] = r[i].textContent;
+	if (key == 'dateGrade') key = 'date_grade';
+
+        if (key == 'grade' || key == 'date_grade') {
+	    rs[key] = rs[key].concat(r[i].textContent);
+	} else
+  	    rs[key] = r[i].textContent;
     }
     rs.server_id = sid;
     rs.server_version = rs.version;
@@ -149,7 +160,16 @@ function storeOneClient(cid, rs) {
               rs.nom_recu_impot, 
               rs.nom_contact_urgence, rs.tel_contact_urgence, rs.RAMQ,
               rs.version, rs.server_version, rs.server_id]);
-  return db.lastInsertRowId;
+
+  var newCid = db.lastInsertRowId;
+
+    // overwrite old grades information
+  db.execute('DELETE FROM `grades` WHERE client_id = ?', [cid]);
+  if (rs.grade.length > 0) {
+    db.execute('INSERT INTO `grades` VALUES (?, ?, ?, ?)',
+               [newCid, null, rs.grade[0], rs.date_grade[0]]);
+  }
+  return newCid;
 }
 
 DataStore.prototype.sync = function() {

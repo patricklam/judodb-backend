@@ -39,7 +39,7 @@
   <div>
    <div style="float:left">
     <label for="adresse">Adresse</label>
-    <input id="adresse" type="text" size="50" value="" maxlength="80">
+    <input id="adresse" type="text" size="30" value="" maxlength="80">
    </div>
    <div style="float:right">
     <label for="ville">Ville</label>
@@ -49,7 +49,7 @@
   <div>
    <div style="float:left">
     <label for="tel">T&eacute;l&eacute;phone(s)</label>
-    <input id="tel" type="text" size="50" value="" maxlength="20">
+    <input id="tel" type="text" size="30" value="" maxlength="20">
    </div>
    <div style="float:right">
     <label for="courriel">Courriel</label>
@@ -69,13 +69,13 @@
   </div>
   <div style="clear:both">
    <div style="float:left"><label for="grade">Grade judo</label>
-   <input id="grade" type="text" size="10" value="" maxlength="20"></div>
+   <input id="grade" type="text" size="10" value="" maxlength="20" onChange="updateCategorie()"></div>
    <div style="float:right"> <label for="date_grade">Date du grade</label>
    <input id="date_grade" type="text" size="24" value="" maxlength="20"></div>
   </div>
   <div style="clear:both">
    <label for="nom_recu_impot">Nom re&ccedil;u imp&ocirc;t</label>
-   <input id="nom_recu_impot" type="text" size="32" value="" maxlength="50"> 
+   <input id="nom_recu_impot" type="text" size="30" value="" maxlength="50"> 
   </div>
  </fieldset>
 
@@ -151,6 +151,13 @@ function populateClient() {
     key = ALL_FIELDS[i];
     getElementById(key).value = rs[key];
   }
+
+  var rs = executeToObjects(db, 'select grade, date_grade from grades where client_id = ?', [cid])[0];
+  if (rs) {
+    getElementById('grade').value = rs['grade'];
+    getElementById('date_grade').value = rs['date_grade'];
+  }
+
   updateCategorie();
 }
 
@@ -193,9 +200,10 @@ function ddnChange() {
 }
 
 function updateCategorie() {
-  c = getElementById("categorie");
-  y = parseInt(getElementById("ddn").value.substring(0,4));
-  var catId = computeCategoryId(y);
+  var c = getElementById("categorie");
+  var y = parseInt(getElementById("ddn").value.substring(0,4));
+  var grade = getElementById("grade").value;
+  var catId = computeCategoryId(y, grade);
   c.value = categoryName(catId);
 }
 </script>

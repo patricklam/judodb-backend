@@ -10,6 +10,7 @@
 <body>
 
 <script type="text/javascript" src="gears_init.js"></script>
+<script type="text/javascript" src="localserver.js"></script>
 <script type="text/javascript" src="constants.js"></script>
 <script type="text/javascript" src="datastore.js"></script>
 <script type="text/javascript" src="xhr.js"></script>
@@ -23,6 +24,7 @@
 <script>
 var db;
 
+createManagedStore();
 store = new DataStore();
 store.init();
 clearStatus();
@@ -113,10 +115,10 @@ function doLogin(arg, successContinuation) {
 
 <form name="findclient" action="#">
 <div class="sectionBody" style="padding:7px 0 9px 7px;">
- <div style="padding:10px 10px 0px 10px;">
+ <div style="padding:10px">
  <div>
-  <span class="standardtitle">Nom ou Prenom</span><br />
-  <div><input id="query" type="text" size="60" value="" maxlength="60"></div>
+  <label class="standardtitle" for="query">Nom ou Prenom</label><br /><br />
+  <input id="query" type="text" size="60" value="" maxlength="60">
  </div>
  <input type="submit" value="Recherche" onClick="doSearch(); return false;"/>
  <input type="button" value="Nouvelle client" onClick="location.href='editclient.html';"/>

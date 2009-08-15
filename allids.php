@@ -1,5 +1,5 @@
 <?
-require ('constants.php');
+require ('_constants.php');
 require ('_database.php');
 require ('_authutils.php');
 

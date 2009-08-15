@@ -63,3 +63,11 @@ CREATE TABLE `client` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `grades`;
+CREATE TABLE `grades` (
+  `client_id` INTEGER,
+  `id` INTEGER PRIMARY KEY auto_increment, 
+  `grade` varchar(10),
+  `grade_date` date
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
