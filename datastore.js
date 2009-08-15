@@ -39,12 +39,11 @@ DataStore.prototype.init = function() {
 	     '`date_inscription` date, '+
 	     '`cours` varchar(3), '+
 	     '`sessions` varchar(1), '+
-	     '`passport_judo_qc` boolean, '+
+	     '`passeport` boolean, '+
 	     '`non_anjou` boolean, '+
 	     '`judogi` varchar(3), '+
-	     '`famille` char(1), '+
-	     '`nouvelami` char(1), '+
-	     '`cas_special_prix` varchar(4), '+
+             '`escompte` varchar(3), '+
+	     '`frais` varchar(4), '+
 	     '`cas_special_note` varchar(50), '+
 	     '`horaire_special` varchar(50) '+
              ')');
@@ -180,10 +179,19 @@ function storeOneClient(cid, rs) {
 
     // overwrite old grades information
   db.execute('DELETE FROM `grades` WHERE client_id = ?', [cid]);
-  if (rs.grade.length > 0) {
+  if (rs.grade != null && rs.grade.length > 0) {
     db.execute('INSERT INTO `grades` VALUES (?, ?, ?, ?)',
                [newCid, null, rs.grade[0], rs.date_grade[0]]);
   }
+
+    // XXX for now, overwrite all old signups; fix this later.
+  db.execute('DELETE FROM `services` WHERE client_id = ?', [cid]);
+  db.execute('INSERT INTO `services` ' +
+             'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
+             [newCid, null, rs.date_inscription, rs.cours, rs.sessions, 
+             rs.passeport, rs.non_anjou, rs.judogi, rs.escompte,
+             rs.frais, rs.cas_special_note, rs.horaire_special]);
+
   return newCid;
 }
 

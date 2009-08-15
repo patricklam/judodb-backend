@@ -2,6 +2,12 @@
 var GLOBAL_FIELDS = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "tel", "affiliation", "carte_anjou", "nom_recu_impot", "nom_contact_urgence", "tel_contact_urgence", "RAMQ"];
 var LOCAL_FIELDS = ["version", "server_version", "server_id"];
 var ALL_FIELDS = LOCAL_FIELDS.concat(GLOBAL_FIELDS);
+
+var SERVICE_FIELDS = ["date_inscription", "cours", "sessions",
+                      "passeport", "non_anjou", "judogi",
+                      "escompte", "frais", "cas_special_note",
+                      "horaire_special"];
+
 var STORE_NAME = "anjoudb";
 
 /* All this stuff should eventually end up in the database. */

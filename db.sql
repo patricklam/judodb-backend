@@ -78,12 +78,11 @@ CREATE TABLE `services` (
   `date_inscription` date,
   `cours` varchar(3),
   `sessions` varchar(1),
-  `passport_judo_qc` boolean,
+  `passeport` boolean,
   `non_anjou` boolean,
   `judogi` varchar(3),
-  `famille` char(1),
-  `nouvelami` char(1),
-  `cas_special_prix` varchar(4),
+  `escompte` varchar(3),
+  `frais` varchar(4),
   `cas_special_note` varchar(50),
   `horaire_special` varchar(50)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;

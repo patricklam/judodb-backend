@@ -120,8 +120,8 @@
   </div>
   <div style="clear:both; padding-bottom:2em;">
    <div style="float:left">
-    <label for="judogi">C&ocirc;ut judogi</label>
-    <input id="judogi" type="text" size="5" value="" onChange="addSign('judogi'); calcFrais()">
+    <label for="judogi">Co&ucirc;t judogi</label>
+    <input id="judogi" type="text" size="5" value="" onChange="addDollars('judogi'); calcFrais()">
    </div>
    <div style="float:left; padding-left:25%">
     <label for="passeport">Passeport Judo Qu&eacute;bec</label>
@@ -197,7 +197,7 @@ function localInit() {
 }
 
 function populateClient() {
-  var rs = executeToObjects(db, 'select * from client where id = ?', [cid])[0];
+  var rs = executeToObjects(db, 'select * from `client` where id = ?', [cid])[0];
   if (!rs) { addStatus('cid not found'); return; }
 
   for (i = 0; i < ALL_FIELDS.length; i++) {
@@ -205,13 +205,22 @@ function populateClient() {
     getElementById(key).value = rs[key];
   }
 
-  var rs = executeToObjects(db, 'select grade, date_grade from grades where client_id = ?', [cid])[0];
+  var rs = executeToObjects(db, 'select grade, date_grade from `grades` where client_id = ?', [cid])[0];
   if (rs) {
     getElementById('grade').value = rs['grade'];
     getElementById('date_grade').value = rs['date_grade'];
   }
 
   updateCategorie();
+
+  var rs = executeToObjects(db, 'select * from `services` where client_id = ?', [cid])[0];
+  if (rs) {
+    for (i = 0; i < SERVICE_FIELDS.length; i++) {
+      key = SERVICE_FIELDS[i];
+      getElementById(key).value = rs[key];
+    }
+  }
+  addDollars('frais'); addDollars('judogi');
 }
 
 function populateCoursEscomptes() {
@@ -231,16 +240,27 @@ function updateCarteAnjou() {
 		  (getElementById("carte_anjou").value == '');
 }
 
-function addSign(id) {
+function addDollars(id) {
+  var v = getElementById(id).value;
+  if (v == '') return;
+
+  stripDollars(id);
+  getElementById(id).value += ' $';
+}
+
+function stripDollars(id) {
   var v = getElementById(id).value;
   if (v == '') return;
 
   if (v.substring(v.length-1, v.length) == '$')
     v = v.substring(v, v.length-1);
-  getElementById(id).value = v + ' $';
+  getElementById(id).value = v.trim();
 }
 
 function calcFrais() {
+  if (getElementById("cas_special_note").value != "")
+    return;
+
   var basePrice;
   if (getElementById("sessions").value == '1')
     basePrice = categoryPrix1(catId);
@@ -266,20 +286,28 @@ function calcFrais() {
 }
 
 function enableCustomFrais() {
+  // XXX put up warning when erasing note and already have frais.
   getElementById("frais").readOnly = 
     (getElementById("cas_special_note").value == "");
 }
 
 function handleSubmit() {
   var rs = {};
-  for (i = 0; i < ALL_FIELDS.length; i++) {
-    var key = ALL_FIELDS[i];
+
+  stripDollars('frais'); stripDollars('judogi');
+
+  var f = ALL_FIELDS.concat(SERVICE_FIELDS);
+  for (i = 0; i < f.length; i++) {
+    var key = f[i];
     rs[key] = getElementById(key).value;
   }
 
   rs.version++; getElementById("version").value = rs.version;
 
   cid = storeOneClient(cid, rs);
+
+  addDollars('frais'); addDollars('judogi');
+
   clearStatus(); addStatus("Sauvegardé."); setTimeout('clearStatus()', 3000);
 }
 
