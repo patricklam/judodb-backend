@@ -133,12 +133,12 @@ function pullFromServer() {
   doRequest("GET", "allids.php", null, parseIds, null);
 }
 
-function pushOneEntry(body) {
+function pushOneEntry(handler, body) {
   if (activeRequests >= MAX_REQUESTS)
-    setTimer(function() { pushOneEntry(body); }, 100);
+    setTimer(function() { pushOneEntry(handler, body); }, 100);
 
   activeRequests++;
-  doRequest("POST", "push_one_client.php", null, body);
+  doRequest("POST", "push_one_client.php", null, handler, body);
   activeRequests--;
 }
 
@@ -153,8 +153,8 @@ function pushToServer() {
     }
 
       // pulling out my COMP302 skillz:
-      // create a closure which binds id.
-    var makeHandler = function(sv, id) {
+      // create a closure which binds sv+id.
+    var makeHandler = function(sv, id, body, r) {
       var r = function(status, statusText, responseText, responseXML) {
         if (status != '200') {
           setError('Problème de connexion:pushToServer.');
@@ -162,14 +162,20 @@ function pushToServer() {
           return null;
         }
 
-	    // we'll need to beef up responseText for conflict handling.
         var sidp = responseText.trim();
-	db.execute
-          ('UPDATE `client` SET server_id=?, server_version=? WHERE id=?',
-	   [sidp, sv, id]);
+        if (sidp == '') {
+          var retry = function(r) {
+	       pushOneEntry(makeHandler(sv, id, body, r-1), body);
+	  }
+	  setTimeout(retry, 100);
+	} else {
+  	  db.execute
+            ('UPDATE `client` SET server_id=?, server_version=? WHERE id=?',
+  	     [sidp, sv, id]);
+        }
     }; return r; };
     pushOneEntry(makeHandler(rs.fieldByName('version'), 
-                          rs.fieldByName('id')), body);
+                             rs.fieldByName('id'), body, 3), body);
     rs.next();
   }
   rs.close();
