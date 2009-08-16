@@ -20,17 +20,18 @@ $ddn = db_escape($_POST['ddn']);
 
 //$fh = fopen("/tmp/push", "a");
 
-if (isset($_POST['server_id']))
+if (isset($_POST['server_id']) && $_POST['server_id'] != '-1') {
 //fwrite($fh, "server says sid $sid\n");
   $sid = $_POST['server_id'];
-else {
+} else {
   $rs = db_query_get("SELECT (id) FROM `client` WHERE " .
                      "nom='$nom' AND prenom='$prenom' AND ddn='$ddn'");
 
-  if (isset($rs)) {
+  if (isset($rs) && isset($rs[0])) {
     $sid = $rs[0]["id"];
 //fwrite($fh, "alleged sid $sid\n");
-  } else {
+}
+  else {
 //fwrite($fh, "INSERT INTO `client` (nom, prenom, ddn) VALUES ('$nom', '$prenom', '$ddn')\n");
     $sid = db_query_set(
       "INSERT INTO `client` (nom, prenom, ddn) VALUES ('$nom', '$prenom', '$ddn')");

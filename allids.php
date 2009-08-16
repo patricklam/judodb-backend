@@ -13,9 +13,11 @@ db_connect() || die;
 $rs = db_query_get("SELECT id, version FROM `client`");
 
 print "<table>";
-foreach ($rs as $r) {
+if (isset($rs)) {
+ foreach ($rs as $r) {
   $id = $r['id']; $ver = $r['version'];
   print "<tr><id>$id</id><version>$ver</version></tr>\n";
+ }
 }
 print "</table>";
 

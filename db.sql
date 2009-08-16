@@ -29,7 +29,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Schema for JudoDB. After creating a blank database called 'judoanjou',
  * run with something like:
  *
- * mysql -u myuser -p judoanjou < db.sql
+ * mysql -u anjoudb -p judoanjou < db.sql
  */
 
 DROP TABLE IF EXISTS `user`;
@@ -52,6 +52,7 @@ CREATE TABLE `client` (
   `courriel` varchar(255),
   `adresse` varchar(255),
   `ville` varchar(50),
+  `code_postal` varchar(8),
   `tel` varchar(20),
   `affiliation` varchar(20),
   `carte_anjou` varchar(20),

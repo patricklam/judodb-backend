@@ -1,3 +1,5 @@
+var activeRequests = 0; var MAX_REQUESTS = 3;
+
 function DataStore() {
 }
 
@@ -16,6 +18,7 @@ DataStore.prototype.init = function() {
       	     '`courriel` varchar(255), ' +
       	     '`adresse` varchar(255), ' +
       	     '`ville` varchar(50), ' +
+      	     '`code_postal` varchar(10), ' +
       	     '`tel` varchar(20), ' +
       	     '`affiliation` varchar(20), ' +
       	     '`carte_anjou` varchar(20), ' +
@@ -78,7 +81,12 @@ function pullEntry(cid, sid) {
     storeOneClient(cid, rs);
   }
 
+  if (activeRequests >= MAX_REQUESTS)
+    setTimer(function() { pullEntry(cid, sid); }, 100);
+
+  activeRequests++;
   doRequest("GET", "pull_one_client.php", {id: sid}, integrateEntry, null);
+  activeRequests--;
 }
 
 function pullFromServer() {
@@ -125,9 +133,17 @@ function pullFromServer() {
   doRequest("GET", "allids.php", null, parseIds, null);
 }
 
+function pushOneEntry(body) {
+  if (activeRequests >= MAX_REQUESTS)
+    setTimer(function() { pushOneEntry(body); }, 100);
+
+  activeRequests++;
+  doRequest("POST", "push_one_client.php", null, body);
+  activeRequests--;
+}
+
 function pushToServer() {
   var rs = db.execute('SELECT * FROM `client` WHERE version > server_version');
-  var activeReqs = 0;
   while (rs.isValidRow()) {
     var body = "";
     var i;
@@ -135,15 +151,13 @@ function pushToServer() {
         var fn = ALL_FIELDS[i];
 	body += fn + "=" + rs.fieldByName(fn)+"&";
     }
-    activeReqs++;
 
       // pulling out my COMP302 skillz:
       // create a closure which binds id.
     var makeHandler = function(sv, id) {
       var r = function(status, statusText, responseText, responseXML) {
-        activeReqs--;
         if (status != '200') {
-          setError('Problème de connexion: pushToServer.');
+          setError('Problème de connexion:pushToServer.');
           setTimeout(clearStatus, 1000);
           return null;
         }
@@ -154,34 +168,30 @@ function pushToServer() {
           ('UPDATE `client` SET server_id=?, server_version=? WHERE id=?',
 	   [sidp, sv, id]);
     }; return r; };
-    doRequest("POST", "push_one_client.php", null, 
-              makeHandler(rs.fieldByName('version'), 
+    pushOneEntry(makeHandler(rs.fieldByName('version'), 
                           rs.fieldByName('id')), body);
     rs.next();
   }
   rs.close();
-
-  function clearWhenDone() 
-    { if (activeReqs == 0) clearStatus(); else setTimeout(clearWhenDone, 100); }
-  setTimeout(clearWhenDone, 1000);
 }
 
 function storeOneClient(cid, rs) {
   db.execute('INSERT OR REPLACE INTO `client` ' +
-             'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
+             'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
               [cid, rs.nom, rs.prenom, rs.ddn, rs.courriel,
-              rs.adresse, rs.ville, rs.tel, rs.affiliation, rs.carte_anjou,
+              rs.adresse, rs.ville, rs.code_postal,
+              rs.tel, rs.affiliation, rs.carte_anjou,
               rs.nom_recu_impot, 
               rs.nom_contact_urgence, rs.tel_contact_urgence, rs.RAMQ,
               rs.version, rs.server_version, rs.server_id]);
 
   var newCid = db.lastInsertRowId;
 
-    // overwrite old grades information
+    // XXX overwrite old grades information
   db.execute('DELETE FROM `grades` WHERE client_id = ?', [cid]);
   if (rs.grade != null && rs.grade.length > 0) {
     db.execute('INSERT INTO `grades` VALUES (?, ?, ?, ?)',
-               [newCid, null, rs.grade[0], rs.date_grade[0]]);
+               [newCid, rs.grade_id[0], rs.grade[0], rs.date_grade[0]]);
   }
 
     // XXX for now, overwrite all old signups; fix this later.
@@ -200,4 +210,10 @@ DataStore.prototype.sync = function() {
 
   pullFromServer();
   pushToServer();
+
+  function clearWhenDone() { 
+      if (activeRequests == 0) clearStatus(); 
+      else setTimeout(clearWhenDone, 100); 
+  }
+  setTimeout(clearWhenDone, 1000);
 }

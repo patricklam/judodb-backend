@@ -1,7 +1,4 @@
-* store grades to server
-* view/edit grade history
-
-* implement table for choosing cours & other services
+* save table for choosing cours & other services to remote server
    * date d'inscription
    * cours
    * frais passport judo qc, non-anjou, judogi
@@ -9,12 +6,14 @@
    * pricelist
    * cas special, prix special
    * horaire: standard or custom
+* store grades to remote server
 
-* when entering 'cas special', enable editing of 'frais'.
+* test roundtripping of all information
 
-* store html files locally with gears (managedstore)
-* import from CSV
 * implement merges/conflicts
+* view/edit grade history
+
+* tweak list of stored html files locally with gears
 * push deletes to server: put another table for deletes with id & version,
                           send delete requests to the server?
 
@@ -25,7 +24,7 @@
 
 * printing functionality
 
-* implement table for belts and tournaments
+* implement table for tournament results
 
 * export to CSV
 
