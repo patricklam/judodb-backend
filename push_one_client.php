@@ -19,6 +19,7 @@ $prenom = db_escape($_POST['prenom']);
 $ddn = db_escape($_POST['ddn']);
 
 //$fh = fopen("/tmp/push", "a");
+//fwrite($fh, "pushing $prenom $nom\n");
 
 if (isset($_POST['server_id']) && $_POST['server_id'] != '-1') {
 //fwrite($fh, "server says sid $sid\n");
