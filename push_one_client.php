@@ -50,6 +50,8 @@ $updates=substr($updates, 1);
 
 db_query_set("UPDATE `client` SET $updates WHERE id='$sid'");
 
+// update grade, services info
+
 print($sid);
 
 ?>

@@ -145,7 +145,10 @@ function pushOneEntry(handler, body) {
 function pushToServer() {
   var rs = db.execute('SELECT * FROM `client` WHERE version > server_version');
   while (rs.isValidRow()) {
+    var cid = rs.fieldByName('id');
     var body = "";
+
+    // populate client info
     var i;
     for (i = 0; i < ALL_FIELDS.length; i++) {
         var fn = ALL_FIELDS[i];
@@ -163,19 +166,19 @@ function pushToServer() {
         }
 
         var sidp = responseText.trim();
-        if (sidp == '') {
+        if (sidp == '' || sidp.length > 20) {
           var retry = function(r) {
 	       pushOneEntry(makeHandler(sv, id, body, r-1), body);
 	  }
-	  setTimeout(retry, 100);
+          if (r > 0)
+  	      setTimeout(retry, 100);
 	} else {
   	  db.execute
             ('UPDATE `client` SET server_id=?, server_version=? WHERE id=?',
   	     [sidp, sv, id]);
         }
     }; return r; };
-    pushOneEntry(makeHandler(rs.fieldByName('version'), 
-                             rs.fieldByName('id'), body, 3), body);
+    pushOneEntry(makeHandler(rs.fieldByName('version'), cid, body, 3), body);
     rs.next();
   }
   rs.close();
