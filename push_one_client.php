@@ -18,18 +18,26 @@ $nom = db_escape($_POST['nom']);
 $prenom = db_escape($_POST['prenom']);
 $ddn = db_escape($_POST['ddn']);
 
+//$fh = fopen("/tmp/push", "a");
+
 if (isset($_POST['server_id']))
+//fwrite($fh, "server says sid $sid\n");
   $sid = $_POST['server_id'];
 else {
   $rs = db_query_get("SELECT (id) FROM `client` WHERE " .
                      "nom='$nom' AND prenom='$prenom' AND ddn='$ddn'");
 
-  if (isset($rs))
+  if (isset($rs)) {
     $sid = $rs[0]["id"];
-  else
+//fwrite($fh, "alleged sid $sid\n");
+  } else {
+//fwrite($fh, "INSERT INTO `client` (nom, prenom, ddn) VALUES ('$nom', '$prenom', '$ddn')\n");
     $sid = db_query_set(
       "INSERT INTO `client` (nom, prenom, ddn) VALUES ('$nom', '$prenom', '$ddn')");
+    }
 }
+
+//fclose($fh);
 
 $updates = "";
 foreach ($ALL_FIELDS as $f) {
