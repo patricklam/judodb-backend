@@ -24,7 +24,9 @@
 * test roundtripping of all information
 
 * implement merges/conflicts
-* view/edit grade history
+* view/edit grade history 
+   + (I think the current UI for both grades & services is OK,
+      but we need to add 'view history' pop-up link.)
 
 * tweak list of stored html files locally with gears
 * push deletes to server: put another table for deletes with id & version,
