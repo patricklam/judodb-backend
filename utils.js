@@ -103,6 +103,13 @@ String.prototype.rtrim = function() {
 	return this.replace(/\s+$/,"");
 }
 
+// http://4umi.com/web/javascript/camelcase.php
+String.prototype.camelCase = function() { var s = trim( this );
+ return ( /\S[A-Z]/.test( s ) ) ?
+  s.replace( /(.)([A-Z])/g, function(t,a,b) { return a + '_' + b.toLowerCase(); } ) :
+  s.replace( /(_)([a-z])/g, function(t,a,b) { return b.toUpperCase(); } );
+};
+
 // http://www.web-source.net/web_development/currency_formatting.htm
 function asCurrency(amount)
 {

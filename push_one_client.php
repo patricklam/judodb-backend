@@ -39,8 +39,6 @@ if (isset($_POST['server_id']) && $_POST['server_id'] != '-1') {
     }
 }
 
-//fclose($fh);
-
 $updates = "";
 foreach ($ALL_FIELDS as $f) {
   $v = db_escape($_POST[$f]);
@@ -50,9 +48,41 @@ $updates=substr($updates, 1);
 
 db_query_set("UPDATE `client` SET $updates WHERE id='$sid'");
 
-// update grade, services info
+// update grade: 4D,3D,2D,1D;2009-03-22,2002-11-10,1998-11-08,1996-11-03
+$grades=explode(',', $_POST['grade']); 
+$date_grade=explode(',', $_POST['date_grade']);
+
+$i = 0;
+db_query_set("DELETE FROM `grades` WHERE client_id='$sid'");
+foreach ($grades as $g) {
+  $dg = $date_grade[i];
+  db_query_set("INSERT INTO `grades` (client_id, grade, date_grade) ".
+                 "SET client_id='$sid',grade='$g',date_grade='$dg'");
+  $i++; 
+}
+
+// update services info; create lists
+$service_namelist = '(client_id';
+foreach ($SERVICE_FIELDS as $s) {
+  $sfs[$s] = explode(',', $_POST[$s]);
+  $service_namelist .= ", $s";
+}
+$service_namelist .= ')';
+
+$i = 0;
+db_query_set("DELETE FROM `services` WHERE client_id='$sid'");
+foreach ($sfs['date_inscription'] as $s) {
+  $service_tuple = "SET client_id='$sid'";
+  foreach ($SERVICE_FIELDS as $s)
+    $service_tuple .= ", $s='".$sfs[$s][i] . "'";
+
+  db_query_set("INSERT INTO `services` $service_namelist $service_tuple");
+  $i++; 
+}
 
 print($sid);
+
+//fclose($fh);
 
 ?>
 

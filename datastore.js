@@ -56,7 +56,7 @@ DataStore.prototype.init = function() {
   }
 }
 
-// overwrites the current entry for cid
+// overwrites client's current entry for cid with server info
 function pullEntry(cid, sid) {
   function integrateEntry(status, statusText, responseText, responseXML) {
     if (status != '200') {
@@ -66,12 +66,13 @@ function pullEntry(cid, sid) {
     }
 
     var r = responseXML.childNodes[0].childNodes; // entry
-    var rs = {}; rs['grade'] = []; rs['date_grade'] = [];
+    var rs = {}; 
+    for (f in MULTI_FIELDS) {
+	rs[f] = [];
+    }
     for (i = 0; i < r.length; i++) {
-        var key = r[i].nodeName;
-	if (key == 'dateGrade') key = 'date_grade';
-
-        if (key == 'grade' || key == 'date_grade') {
+        var key = camelCase(r[i].nodeName);
+        if (MULTI_FIELDS[key]) {
 	    rs[key] = rs[key].concat(r[i].textContent);
 	} else
   	    rs[key] = r[i].textContent;
@@ -87,6 +88,40 @@ function pullEntry(cid, sid) {
   activeRequests++;
   doRequest("GET", "pull_one_client.php", {id: sid}, integrateEntry, null);
   activeRequests--;
+}
+
+// for rs from either server or, adds rs information to client db.
+function storeOneClient(cid, rs) {
+  db.execute('INSERT OR REPLACE INTO `client` ' +
+             'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
+              [cid, rs.nom, rs.prenom, rs.ddn, rs.courriel,
+              rs.adresse, rs.ville, rs.code_postal,
+              rs.tel, rs.affiliation, rs.carte_anjou,
+              rs.nom_recu_impot, 
+              rs.nom_contact_urgence, rs.tel_contact_urgence, rs.RAMQ,
+              rs.version, rs.server_version, rs.server_id]);
+
+  var newCid = db.lastInsertRowId;
+
+    // XXX we currently overwrite old grades information; must merge
+  db.execute('DELETE FROM `grades` WHERE client_id = ?', [newCid]);
+  if (rs.grade != null && rs.grade.length > 0) {
+    db.execute('INSERT INTO `grades` VALUES (?, ?, ?, ?)',
+               [newCid, rs.grade_id[0], rs.grade[0], rs.date_grade[0]]);
+  }
+
+    // XXX for now, we overwrite all old signups; fix this later.
+  db.execute('DELETE FROM `services` WHERE client_id = ?', [newCid]);
+  if (rs.date_inscription != null && rs.date_inscription.length > 0) {
+    db.execute('INSERT INTO `services` ' +
+               'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
+               [newCid, rs.service_id[0], rs.date_inscription[0], rs.cours[0], 
+                rs.sessions[0], rs.passeport[0], rs.non_anjou[0], 
+    		rs.judogi[0], rs.escompte[0], rs.frais[0], 
+                rs.cas_special_note[0], rs.horaire_special[0]]);
+  }
+
+  return newCid;
 }
 
 function pullFromServer() {
@@ -150,9 +185,45 @@ function pushToServer() {
 
     // populate client info
     var i;
-    for (i = 0; i < ALL_FIELDS.length; i++) {
+
+    for (i in ALL_FIELDS) {
         var fn = ALL_FIELDS[i];
 	body += fn + "=" + rs.fieldByName(fn)+"&";
+    }
+
+    // populate grade info
+
+    var grades = ['grade', 'date_grade'];
+    var gs = db.execute('SELECT * FROM `grades` WHERE client_id=?', [cid]);
+    var grade = ''; var date_grade = '';
+
+    var gotRowGS = gs.isValidRow();
+    while (gs.isValidRow()) {
+        grade = grade + ',' + gs.fieldByName('grade');
+        date_grade = date_grade + ',' + gs.fieldByName('date_grade');
+	gs.next();
+    }
+    if (gotRowGS)
+        body += "grade="+grade.substring(1, grade.length)+
+                "&date_grade="+date_grade.substring(1, date_grade)+"&";
+
+    for (i in SERVICE_FIELDS)
+	r[i] = '';
+
+    var ss = db.execute('SELECT * from `services` WHERE client_id=?', [cid]);
+    var gotRowSS = ss.isValidRow();
+    while (ss.isValidRow()) {
+        for (i in SERVICE_FIELDS) {
+            var fn = SERVICE_FIELDS[i];
+	    r[fn] = r[fn] + ',' + ss.fieldByName(fn);
+	}
+	ss.next();
+    }
+    if (gotRowSS) {
+	for (i in SERVICE_FIELDS) {
+            var fn = SERVICE_FIELDS[i];
+	    body += fn + "=" + r[fn] +"&";
+	}
     }
 
       // pulling out my COMP302 skillz:
@@ -182,36 +253,6 @@ function pushToServer() {
     rs.next();
   }
   rs.close();
-}
-
-function storeOneClient(cid, rs) {
-  db.execute('INSERT OR REPLACE INTO `client` ' +
-             'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
-              [cid, rs.nom, rs.prenom, rs.ddn, rs.courriel,
-              rs.adresse, rs.ville, rs.code_postal,
-              rs.tel, rs.affiliation, rs.carte_anjou,
-              rs.nom_recu_impot, 
-              rs.nom_contact_urgence, rs.tel_contact_urgence, rs.RAMQ,
-              rs.version, rs.server_version, rs.server_id]);
-
-  var newCid = db.lastInsertRowId;
-
-    // XXX overwrite old grades information
-  db.execute('DELETE FROM `grades` WHERE client_id = ?', [cid]);
-  if (rs.grade != null && rs.grade.length > 0) {
-    db.execute('INSERT INTO `grades` VALUES (?, ?, ?, ?)',
-               [newCid, rs.grade_id[0], rs.grade[0], rs.date_grade[0]]);
-  }
-
-    // XXX for now, overwrite all old signups; fix this later.
-  db.execute('DELETE FROM `services` WHERE client_id = ?', [cid]);
-  db.execute('INSERT INTO `services` ' +
-             'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
-             [newCid, null, rs.date_inscription, rs.cours, rs.sessions, 
-             rs.passeport, rs.non_anjou, rs.judogi, rs.escompte,
-             rs.frais, rs.cas_special_note, rs.horaire_special]);
-
-  return newCid;
 }
 
 DataStore.prototype.sync = function() {
