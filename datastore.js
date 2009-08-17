@@ -71,7 +71,7 @@ function pullEntry(cid, sid) {
 	rs[f] = [];
     }
     for (i = 0; i < r.length; i++) {
-        var key = camelCase(r[i].nodeName);
+        var key = r[i].nodeName;
         if (MULTI_FIELDS[key]) {
 	    rs[key] = rs[key].concat(r[i].textContent);
 	} else
@@ -107,7 +107,7 @@ function storeOneClient(cid, rs) {
   db.execute('DELETE FROM `grades` WHERE client_id = ?', [newCid]);
   if (rs.grade != null && rs.grade.length > 0) {
     db.execute('INSERT INTO `grades` VALUES (?, ?, ?, ?)',
-               [newCid, rs.grade_id[0], rs.grade[0], rs.date_grade[0]]);
+               [newCid, null, rs.grade[0], rs.date_grade[0]]);
   }
 
     // XXX for now, we overwrite all old signups; fix this later.
@@ -115,7 +115,7 @@ function storeOneClient(cid, rs) {
   if (rs.date_inscription != null && rs.date_inscription.length > 0) {
     db.execute('INSERT INTO `services` ' +
                'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
-               [newCid, rs.service_id[0], rs.date_inscription[0], rs.cours[0], 
+               [newCid, null, rs.date_inscription[0], rs.cours[0], 
                 rs.sessions[0], rs.passeport[0], rs.non_anjou[0], 
     		rs.judogi[0], rs.escompte[0], rs.frais[0], 
                 rs.cas_special_note[0], rs.horaire_special[0]]);
@@ -207,6 +207,7 @@ function pushToServer() {
         body += "grade="+grade.substring(1, grade.length)+
                 "&date_grade="+date_grade.substring(1, date_grade)+"&";
 
+    var r = {};
     for (i in SERVICE_FIELDS)
 	r[i] = '';
 
