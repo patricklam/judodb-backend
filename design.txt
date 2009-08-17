@@ -34,3 +34,22 @@ When we have two conflicting sets of fields, we compare each field.
 Fields which are not equal (e.g. values x, y) become x || y.
 Merging x with w||x||y should give w||x||y.
 
+Here are some unused bits of code:
+
+
+// http://4umi.com/web/javascript/camelcase.php
+String.prototype.camelCase = function() { var s = this.trim();
+ return ( /\S[A-Z]/.test( s ) ) ?
+  s.replace( /(.)([A-Z])/g, function(t,a,b) { return a + '_' + b.toLowerCase(); } ) :
+  s.replace( /(_)([a-z])/g, function(t,a,b) { return b.toUpperCase(); } );
+};
+
+function camelCase($s) {
+ $p = '/\S[A-Z]/';
+ $p1 = '/(.)([A-Z])/';
+ $p2 = '/(_)([a-z])/';
+ if (preg_match($p, $s))
+  return (preg_replace_callback($p1, create_function('$matches', 'return $matches[1] . "_" . strtolower($matches[2]);'), $s));
+ else
+  return (preg_replace_callback($p2, create_function('$matches', 'return strtoupper($matches[2]);'), $s));
+}
