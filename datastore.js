@@ -205,7 +205,7 @@ function pushToServer() {
     }
     if (gotRowGS)
         body += "grade="+grade.substring(1, grade.length)+
-                "&date_grade="+date_grade.substring(1, date_grade)+"&";
+                "&date_grade="+date_grade.substring(1, date_grade.length)+"&";
 
     var r = {};
     for (i in SERVICE_FIELDS)
