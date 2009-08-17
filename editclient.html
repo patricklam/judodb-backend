@@ -159,6 +159,7 @@
  <input id="server_id" type="hidden" value="-1">
 
  <input id="grade_id" type="hidden" value="-1">
+ <input id="service_id" type="hidden" value="-1">
  <input id="date_inscription" type="hidden" value="">
 
  <div class="actions">
@@ -235,6 +236,7 @@ function populateClient() {
       key = SERVICE_FIELDS[i];
       getElementById(key).value = rs[key];
     }
+    getElementById('service_id').value = rs['id'];
   }
   addDollars('frais'); addDollars('judogi');
 }
@@ -321,10 +323,14 @@ function handleSubmit() {
     rs[key] = getElementById(key).value;
   }
 
+  // more grades stuff below; for now only one field for multi-fields
   if (rs['grade_id'] == -1) rs['grade_id'] = null;
+  if (rs['service_id'] == -1) rs['service_id'] = null;
+
+  for (f in MULTI_FIELDS) {
+    rs[f] = [rs[f]];
+  }
   rs['grade_id'] = [rs['grade_id']];
-  rs['grade'] = [rs['grade']];
-  rs['date_grade'] = [rs['date_grade']];
 
   rs.version++; getElementById("version").value = rs.version;
 

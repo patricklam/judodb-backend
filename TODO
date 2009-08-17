@@ -6,7 +6,20 @@
    * pricelist
    * cas special, prix special
    * horaire: standard or custom
+* grey out frais when it's uneditable
 * store grades to remote server
+* implement table for payment information:
+   * a payment applies to a number of users (divide by number of users)
+   * payment includes amount, chq#/cash, name
+   * calculate outstanding balance for users
+
+   algorithm for dividing costs:
+   X owes $500, Y owes $300.
+   X and Y pay $700.
+   -> Apply credit of (700/800)*500 to X, 700/800*300 to Y.
+
+* printing functionality
+* export to CSV
 
 * test roundtripping of all information
 
@@ -17,19 +30,10 @@
 * push deletes to server: put another table for deletes with id & version,
                           send delete requests to the server?
 
-* implement table for payment information:
-   * a payment applies to a number of users
-   * payment includes amount, chq#, name
-   * calculate outstanding balance for users
-
-* printing functionality
-
 * implement table for tournament results
 
-* export to CSV
-
 * use database for user login authentication, not stuff in textfiles!
-* implement system tables:
+* implement system config tables:
    - saison
    - groupes
    - frais

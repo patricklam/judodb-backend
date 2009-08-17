@@ -3,10 +3,17 @@ var GLOBAL_FIELDS = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "co
 var LOCAL_FIELDS = ["version", "server_version", "server_id"];
 var ALL_FIELDS = LOCAL_FIELDS.concat(GLOBAL_FIELDS);
 
-var SERVICE_FIELDS = ["date_inscription", "cours", "sessions",
+var SERVICE_FIELDS = ["service_id", "date_inscription", "cours", "sessions",
                       "passeport", "non_anjou", "judogi",
                       "escompte", "frais", "cas_special_note",
                       "horaire_special"];
+
+var MULTI_FIELDS = [];
+for (sf in SERVICE_FIELDS) {
+    MULTI_FIELDS[SERVICE_FIELDS[sf]] = true;
+}
+MULTI_FIELDS['grade'] = true;
+MULTI_FIELDS['date_grade'] = true;
 
 var STORE_NAME = "anjoudb";
 
