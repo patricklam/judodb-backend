@@ -68,7 +68,7 @@ if (isset($_FILES["facturation"])) {
   // update grades table
   $grade = $client[4];
   if ($forReal)
-    db_query_set("INSERT INTO `grades` (client_id, grade, grade_date) VALUES ($sid, '$grade', '')");
+    db_query_set("INSERT INTO `grades` (client_id, grade, date_grade) VALUES ($sid, '$grade', '')");
 
   // update services table 
   $cours = $client[3];
