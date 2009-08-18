@@ -48,9 +48,9 @@ DataStore.prototype.init = function() {
 	     '`sessions` varchar(1), '+
 	     '`passeport` boolean, '+
 	     '`non_anjou` boolean, '+
-	     '`judogi` varchar(3), '+
+	     '`judogi` varchar(10), '+
              '`escompte` varchar(3), '+
-	     '`frais` varchar(4), '+
+	     '`frais` varchar(10), '+
 	     '`cas_special_note` varchar(50), '+
 	     '`horaire_special` varchar(50) '+
              ')');

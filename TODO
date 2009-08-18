@@ -1,4 +1,4 @@
-* more testing of roundtripping of all information to remote server
+--- version beta1:
 
 * implement table for payment information:
    * a payment applies to a number of users (divide by number of users)
@@ -13,12 +13,18 @@
 * printing functionality
 * export to CSV
 
+* more testing of roundtripping of all information to remote server
+   + (it seems to work)
+
+* tweak list of stored html files locally with gears
+
+--- later:
+
 * implement merges/conflicts
 * view/edit grade history 
    + (I think the current UI for both grades & services is OK,
       but we need to add 'view history' pop-up link.)
 
-* tweak list of stored html files locally with gears
 * push deletes to server: put another table for deletes with id & version,
                           send delete requests to the server?
 
