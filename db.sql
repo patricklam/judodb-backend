@@ -77,13 +77,13 @@ CREATE TABLE `services` (
   `client_id` INTEGER,
   `id` INTEGER PRIMARY KEY auto_increment, 
   `date_inscription` date,
-  `cours` varchar(3),
-  `sessions` varchar(1),
+  `cours` char(3),
+  `sessions` char(1),
   `passeport` boolean,
   `non_anjou` boolean,
-  `judogi` varchar(3),
-  `escompte` varchar(3),
-  `frais` varchar(4),
+  `judogi` char(3),
+  `escompte` char(3),
+  `frais` char(10),
   `cas_special_note` varchar(50),
   `horaire_special` varchar(50)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;

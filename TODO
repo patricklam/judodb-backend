@@ -1,5 +1,4 @@
-* save table for choosing cours & other services to remote server
-* test roundtripping of all information to remote server
+* more testing of roundtripping of all information to remote server
 
 * implement table for payment information:
    * a payment applies to a number of users (divide by number of users)

@@ -213,7 +213,7 @@ function pushToServer() {
 
     var r = {};
     for (i in SERVICE_FIELDS)
-	r[i] = '';
+	r[SERVICE_FIELDS[i]] = '';
 
     var ss = db.execute('SELECT * from `services` WHERE client_id=?', [cid]);
     var gotRowSS = ss.isValidRow();
@@ -227,7 +227,7 @@ function pushToServer() {
     if (gotRowSS) {
 	for (i in SERVICE_FIELDS) {
             var fn = SERVICE_FIELDS[i];
-	    body += fn + "=" + r[fn] +"&";
+	    body += fn + "=" + r[fn].substring(1, r[fn].length) +"&";
 	}
     }
 
