@@ -9,6 +9,7 @@ var SERVICE_FIELDS = ["date_inscription", "cours", "sessions",
                       "horaire_special"];
 
 var CHECKBOX_FIELDS = ['non_anjou', 'passeport'];
+var SELECT_FIELDS = ['cours', 'sessions', 'escompte'];
 
 var MULTI_FIELDS = [];
 for (sf in SERVICE_FIELDS) {
@@ -39,7 +40,8 @@ var COURS = ["Adultes (LM2015-2145, V1930-2130)",
              "Anciens de 7 à 12 ans (S1430-1600)",
              "Anciens de 5 à 6 ans (D930-1030)",
              "Anciens de 7 à 9 ans (D1030-1230)",
-             "Filles 7-11"];
+             "Filles 7-11",
+             "Autre"];
 
 function computeCategoryId(yr, grade) {
     var rv;

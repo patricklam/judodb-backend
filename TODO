@@ -1,13 +1,9 @@
+* date_inscription upon changes to inscription
+
 * save table for choosing cours & other services to remote server
-   * date d'inscription
-   * cours
-   * frais passport judo qc, non-anjou, judogi
-   * escompte famille, nouvel(le) ami(e)
-   * pricelist
-   * cas special, prix special
-   * horaire: standard or custom
+* test roundtripping of all information to remote server
+
 * grey out frais when it's uneditable
-* store grades to remote server
 * implement table for payment information:
    * a payment applies to a number of users (divide by number of users)
    * payment includes amount, chq#/cash, name
@@ -20,8 +16,6 @@
 
 * printing functionality
 * export to CSV
-
-* test roundtripping of all information
 
 * implement merges/conflicts
 * view/edit grade history 

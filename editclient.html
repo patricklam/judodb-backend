@@ -204,9 +204,9 @@ store.init();
 localInit();
 
 function localInit() {
+  populateCoursEscomptes();
   if (cid)
     populateClient(cid);
-  populateCoursEscomptes();
   calcFrais();
   enableCustomFrais();
   clearStatus();
@@ -234,7 +234,10 @@ function populateClient() {
   if (rs) {
     for (i = 0; i < SERVICE_FIELDS.length; i++) {
       key = SERVICE_FIELDS[i];
-      getElementById(key).value = rs[key];
+      if (getElementById(key).type == "select-one")
+          getElementById(key).selectedIndex = parseInt(rs[key]);
+      else
+          getElementById(key).value = rs[key];
     }
     getElementById('service_id').value = rs['id'];
   }
@@ -341,6 +344,11 @@ function handleSubmit() {
   for (c in CHECKBOX_FIELDS) {
     var cf = CHECKBOX_FIELDS[c];
     rs[cf] = getElementById(cf).checked;
+  }
+
+  for (s in SELECT_FIELDS) {
+    var sf = SELECT_FIELDS[s];
+    rs[sf] = getElementById(sf).selectedIndex;
   }
 
   for (f in MULTI_FIELDS) {
