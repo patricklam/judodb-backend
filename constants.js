@@ -8,6 +8,8 @@ var SERVICE_FIELDS = ["date_inscription", "cours", "sessions",
                       "escompte", "frais", "cas_special_note",
                       "horaire_special"];
 
+var CHECKBOX_FIELDS = ['non_anjou', 'passeport'];
+
 var MULTI_FIELDS = [];
 for (sf in SERVICE_FIELDS) {
     MULTI_FIELDS[SERVICE_FIELDS[sf]] = true;

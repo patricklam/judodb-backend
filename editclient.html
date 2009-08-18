@@ -238,6 +238,16 @@ function populateClient() {
     }
     getElementById('service_id').value = rs['id'];
   }
+
+  for (c in CHECKBOX_FIELDS) {
+    var cf = CHECKBOX_FIELDS[c];
+    if (getElementById(cf).value == 0 || getElementById(cf).value == 'false')
+      getElementById(cf).checked = false;
+    if (getElementById(cf).value == 1 || getElementById(cf).value == 'true') 
+      getElementById(cf).checked = true;
+    getElementById(cf).value = getElementById(cf).checked;
+  }
+
   addDollars('frais'); addDollars('judogi');
 }
 
@@ -326,6 +336,12 @@ function handleSubmit() {
   // more grades stuff below; for now only one field for multi-fields
   if (rs['grade_id'] == -1) rs['grade_id'] = null;
   if (rs['service_id'] == -1) rs['service_id'] = null;
+
+  // TODO must List.map once we have a list of services.
+  for (c in CHECKBOX_FIELDS) {
+    var cf = CHECKBOX_FIELDS[c];
+    rs[cf] = getElementById(cf).checked;
+  }
 
   for (f in MULTI_FIELDS) {
     rs[f] = [rs[f]];
