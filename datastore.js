@@ -8,6 +8,10 @@ DataStore.prototype.init = function() {
   if (window.google && google.gears) {
     try {
       db = google.gears.factory.create('beta.database');
+      if (!db) {
+	  setError("Problème d'initialisation: est-ce que Google Gears est installé?");
+          return;
+      }
 
       db.open('anjoudb');
       db.execute('create table if not exists `client` (' +
