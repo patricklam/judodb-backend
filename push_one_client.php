@@ -57,7 +57,7 @@ db_query_set("DELETE FROM `grades` WHERE client_id='$sid'");
 foreach ($grades as $g) {
   $dg = $date_grade[i];
   db_query_set("INSERT INTO `grades` (client_id, grade, date_grade) ".
-                 "SET client_id='$sid',grade='$g',date_grade='$dg'");
+                 "VALUES ('$sid','$g','$dg')");
   $i++; 
 }
 
@@ -72,9 +72,10 @@ $service_namelist .= ')';
 $i = 0;
 db_query_set("DELETE FROM `services` WHERE client_id='$sid'");
 foreach ($sfs['date_inscription'] as $s) {
-  $service_tuple = "SET client_id='$sid'";
+  $service_tuple = "VALUES (client_id='$sid'";
   foreach ($SERVICE_FIELDS as $s)
     $service_tuple .= ", $s='".$sfs[$s][i] . "'";
+  $service_tuple .= ")";
 
   db_query_set("INSERT INTO `services` $service_namelist $service_tuple");
   $i++; 
