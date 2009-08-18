@@ -104,11 +104,11 @@
   <div>
    <div style="float:left">
     <label for="categorie">Cat&eacute;gorie d'&acirc;ge</label>
-    <input id="categorie" type="text" value="" onChange="calcFrais()" readonly>
+    <input id="categorie" type="text" value="" onChange="uFrais()" readonly>
    </div>
    <div style="float:right">
     <label for="sessions">Sessions</label>
-    <select id="sessions" onChange="calcFrais()">
+    <select id="sessions" onChange="ud(); uFrais()">
     <option value="1">1</option>
     <option value="2">2</option>
     </select>
@@ -117,40 +117,40 @@
   <div style="clear:both">
    <div style="float:left; padding-bottom:1em;">
     <label for="cours">Cours</label>
-    <select id="cours">
+    <select id="cours" onChange="ud();">
     </select>
    </div>
    <div style="float:right">
     <label for="escompte">Escompte</label>
-    <select id="escompte" onChange="calcFrais()">
+    <select id="escompte" onChange="ud(); uFrais()">
     </select>
    </div>
   </div>
   <div style="clear:both; padding-bottom:2em;">
    <div style="float:left">
     <label for="judogi">Co&ucirc;t judogi</label>
-    <input id="judogi" type="text" size="5" value="" onChange="addDollars('judogi'); calcFrais()">
+    <input id="judogi" type="text" size="5" value="" onChange="ud(); if (this.value != '') addDollars('judogi'); uFrais()">
    </div>
    <div style="float:left; padding-left:25%">
     <label for="passeport">Passeport Judo Qu&eacute;bec</label>
-    <input id="passeport" type="checkbox" onChange="calcFrais()">
+    <input id="passeport" type="checkbox" onChange="ud(); uFrais()">
    </div>
    <div style="float:right">
     <label for="non_anjou">Pas de carte Anjou</label>
-    <input id="non_anjou" type="checkbox" onChange="calcFrais()" readonly>
+    <input id="non_anjou" type="checkbox" onChange="ud(); uFrais()" readonly>
    </div>
   </div>
   <div style="clear:both">
    <label for="cas_special_note">Cas sp&eacute;cial</label>
-   <input id="cas_special_note" type="text" value="" onChange="enableCustomFrais()">
+   <input id="cas_special_note" type="text" value="" onChange="ud(); enableCustomFrais()">
   </div>
   <div>
    <label for="horaire_special">Horaire sp&eacute;cial</label>
-   <input id="horaire_special" type="text" value="" onChange="calcFrais()" >
+   <input id="horaire_special" type="text" value="" onChange="ud(); uFrais()" >
   </div>
   <div>
    <label for="frais">Frais</label>
-   <input id="frais" type="text" value="" readonly>
+   <input id="frais" type="text" value="" onChange="ud()" disabled>
   </div>
  </fieldset>
 
@@ -161,6 +161,7 @@
  <input id="grade_id" type="hidden" value="-1">
  <input id="service_id" type="hidden" value="-1">
  <input id="date_inscription" type="hidden" value="">
+ <input id="old_cas_special_note" type="hidden" value="">
 
  <div class="actions">
  <div style="float:left; text-align:right;">
@@ -207,7 +208,7 @@ function localInit() {
   populateCoursEscomptes();
   if (cid)
     populateClient(cid);
-  calcFrais();
+  uFrais();
   enableCustomFrais();
   clearStatus();
 }
@@ -290,7 +291,7 @@ function stripDollars(id) {
 
 function calcFrais() {
   if (getElementById("cas_special_note").value != "")
-    return;
+    return getElementById("frais").value;
 
   var basePrice;
   if (getElementById("sessions").value == '1')
@@ -313,13 +314,33 @@ function calcFrais() {
   if (parseFloat(jv) > 0)
     basePrice += parseFloat(jv);
 
-  getElementById("frais").value = asCurrency(basePrice)+" $";
+  return asCurrency(basePrice)+" $";
+}
+
+// autoupdate for date_inscription field
+function ud() {
+  getElementById("date_inscription").value = formatDate(new Date());
+}
+
+// autoupdate for frais field
+function uFrais() {
+  getElementById("frais").value = calcFrais();
 }
 
 function enableCustomFrais() {
-  // XXX put up warning when erasing note and already have frais.
-  getElementById("frais").readOnly = 
+  if (getElementById("cas_special_note").value == "" && 
+      getElementById("frais").value != calcFrais())
+    if (!confirm("Est-ce que vous voulez effacer le frais special?")) {
+      getElementById("cas_special_note").value = 
+        getElementById("old_cas_special_note").value;
+      return false;
+    }
+
+  uFrais();
+  getElementById("frais").disabled = 
     (getElementById("cas_special_note").value == "");
+  getElementById("old_cas_special_note").value = 
+    getElementById("cas_special_note").value;
 }
 
 function handleSubmit() {

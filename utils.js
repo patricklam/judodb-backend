@@ -120,3 +120,9 @@ function asCurrency(amount)
 	return s;
 }
 
+// http://boonedocks.net/mike/archives/157-Formatting-a-Javascript-Date-for-MySQL.html
+function formatDate(date1) {
+  return date1.getFullYear() + '-' +
+    (date1.getMonth() < 9 ? '0' : '') + (date1.getMonth()+1) + '-' +
+    (date1.getDate() < 10 ? '0' : '') + date1.getDate();
+}
