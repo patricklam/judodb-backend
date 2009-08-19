@@ -20,114 +20,23 @@
 <script type="text/javascript" src="cookie.js"></script>
 
 <h1>Recherche judoka</h1>
-<p><span id="status">&nbsp;</span>
+<p><span id="status">&nbsp;</span></p>
 
-<script>
-clearStatus();
-if (!window.google || !google.gears) {
-  location.href = "http://gears.google.com/?action=install&message=Installer Google Gears pour acceder au base de données du club." +
-                  "&return=http://www.judo-anjou.qc.ca/anjoudb";
-}
+<script type="text/javascript" src="clients_utils.js"></script>
 
-var db;
-
-createManagedStore();
-store = new DataStore();
-store.init();
-
-var clients = [];
-var firstToDisplay = 0;
-
-function refreshResults() {
-  var resultBox = getElementById('results');
-  resultBox.innerHTML = '';
-  for (var i = firstToDisplay; i < min(firstToDisplay+10, clients.length); ++i) {
-    resultBox.innerHTML += '<a href="editclient.html" onclick="createCookie(\'cid\', '+clients[i].id+', 1)">'+clients[i].nom+', '+clients[i].prenom+'</a><br />';
-  }
-
-  if (firstToDisplay > 0 || firstToDisplay + 10 < clients.length) 
-    resultBox.innerHTML += '<br />';
-
-  if (firstToDisplay + 10 < clients.length)
-    resultBox.innerHTML += '<a href="" onclick="firstToDisplay += 10; refreshResults(); return false;">Résultats suivants<a/>&nbsp;';
-  if (firstToDisplay > 0)
-    resultBox.innerHTML += '<a href="" onclick="firstToDisplay -= 10; refreshResults(); return false;">Résultats précedents</a>&nbsp;';
-}
-
-function doSearch() {
-  var f = '%'+getElementById('query').value+'%';
-  var rs = db.execute('SELECT id, nom, prenom FROM `client` WHERE prenom||" "||nom LIKE ? OR nom||" "||prenom LIKE ? ORDER BY nom COLLATE NOCASE', [f, f]);
-  var index = 0;
-  clients = [];
-  while (rs.isValidRow()) {
-    clients[index] = {};
-    clients[index].id = rs.field(0);
-    clients[index].nom = rs.field(1);
-    clients[index].prenom = rs.field(2);
-    ++index;
-    rs.next();
-  }
-  rs.close();
-
-  firstToDisplay = 0;
-  refreshResults();
-}
-
-var challenge;
-
-function loginAndSync() {
-  doRequest("GET", "authenticate.php", null, lsCheckLogin_, null);
-
-  function lsCheckLogin_(status, statusText, responseText, responseXML) {
-    if (status == '200') {
-      store.sync();
-      return;
-    }
-    doRequest("GET", "request_challenge.php", null, lsGotChallenge_, null);
-  }
-
-  function lsGotChallenge_(status, statusText, responseText, responseXML) {
-    challenge = responseText.trim();
-    getElementById('login').style.display="inline";
-    getElementById('login').onSubmit = function() { 
-        getElementById('login').style.display="none";
-        store.sync();
-    }
-    return;
-  }
-}
-
-function computeResponse() {
-  postReq = "username="+getElementById('loginid').value+"&";
-  postReq += "response="+
-    hex_md5(challenge+getElementById('password').value);
-  return postReq;
-}
-
-function doLogin(arg, successContinuation) {
-  doRequest("POST", "authenticate.php", null, lAuthenticated_, arg);
-  function lAuthenticated_(status, statusText, responseText, responseXML) {
-    if (status == '200') {
-      successContinuation();
-    } else {
-      setError("Mot de passe invalide.");
-      setTimeout(clearStatus, 1000);
-    }
-  }
-}
-</script>
-
-<div id="sync" onclick="loginAndSync()">synchroniser</div></div></p>
+<div id="sync" onclick="loginAndSync()">synchroniser</div>
 
 <form name="findclient" action="#">
 <div class="sectionBody" style="padding:7px 0 9px 7px;">
  <div style="padding:10px">
  <div>
   <label class="standardtitle" for="query">Nom ou Prenom</label><br /><br />
-  <input id="query" type="text" size="60" value="" maxlength="60">
+  <input id="query" type="text" size="60" value="" maxlength="60" />
  </div>
  <input type="submit" value="Recherche" onclick="doSearch(); return false;"/>
  <input type="button" value="Nouvelle client" onclick="eraseCookie('cid'); location.href='editclient.html';"/>
+ </div>
+</div>
 </form>
 
 <div id="results" style="padding-top:1em">
@@ -137,9 +46,9 @@ function doLogin(arg, successContinuation) {
 <form class="compactform" action="#">
   Veuillez vous identifier: <br /><br />
   <div class="oneper"><label for="loginid">id
-  <input id="loginid" type="text" size="16" value="" maxlength="50"></label></div>
+  <input id="loginid" type="text" size="16" value="" maxlength="50" /></label></div>
   <div class="oneper"><label for="password">mot de passe
-  <input id="password" type="password" size="16" value="" maxlength="50"></label></div>
+  <input id="password" type="password" size="16" value="" maxlength="50" /></label></div>
   <div class="actions">
    <a onclick="doLogin(computeResponse(), getElementById('login').onSubmit)">entrer</a> &nbsp; &nbsp; 
    <a onclick="getElementById('login').style.display='none'">annuler</a>
