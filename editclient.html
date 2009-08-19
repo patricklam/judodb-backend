@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Facturation Club Judo Anjou: Judoka</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="shortcut icon" href="/files/favicon.ico" type="image/x-icon" />
+  <style type="text/css" media="all">@import "styles.css";</style>
+</head>
+
+<body>
+
+<script type="text/javascript"  src="gears_init.js"></script>
+<script type="text/javascript"  src="constants.js"></script>
+<script type="text/javascript"  src="datastore.js"></script>
+<script type="text/javascript"  src="base.js"></script>
+<script type="text/javascript"  src="utils.js"></script>
+<script type="text/javascript"  src="cookie.js"></script>
+
+<h1>Renseignements judoka</h1>
+<div><span id="status">&nbsp;</span></div>
+
+<form name="client" class="compactform" onsubmit="handleSubmit(); return false;" action="#">
+
+<input type="hidden" id="cid" value="" />
+<input id="version" type="hidden" value="" />
+<input id="server_version" type="hidden" value="-1" />
+<input id="server_id" type="hidden" value="-1" />
+
+<input id="grade_id" type="hidden" value="-1" />
+<input id="service_id" type="hidden" value="-1" />
+<input id="old_cas_special_note" type="hidden" value="" />
+
+<fieldset> <legend>Identit&eacute;</legend>
+ <div class="threeper">
+  <label for="nom">Nom<input id="nom" type="text" size="24" value="" maxlength="50" /></label>
+  <label for="prenom">Prenom<input id="prenom" type="text" size="24" value="" maxlength="50" /></label>
+  <label for="ddn">Date de naissance (aaaa-mm-jj)
+   <input id="ddn" type="text" size="24" value="" maxlength="50" onchange="ddnChange()" />
+  </label>
+ </div>
+</fieldset>
+
+<fieldset> <legend>Adresse</legend>
+ <div class="oneper">
+  <label for="adresse">Adresse
+   <input id="adresse" type="text" size="60" value="" maxlength="80" />
+  </label>
+ </div>
+ <div class="fourper">
+  <label for="ville">Ville
+    <input id="ville" type="text" size="16" value="" maxlength="50" />
+  </label>
+  <label for="tel">Code postal
+    <input id="code_postal" type="text" size="10" value="" maxlength="20"
+	   onchange="this.value = this.value.toUpperCase()" />
+  </label>
+  <label for="tel">T&eacute;l&eacute;phone(s)
+    <input id="tel" type="text" size="18" value="" maxlength="20" />
+  </label>
+  <label for="courriel">Courriel
+    <input id="courriel" type="text" size="19.5" value="" maxlength="255" />
+  </label>
+ </div>
+</fieldset>
+
+ <fieldset> <legend>Autres renseignments</legend>
+ <div class="fourper">
+   <label for="affiliation">Num&eacute;ro Judo Qu&eacute;bec
+    <input id="affiliation" type="text" size="10" value="" maxlength="20" />
+   </label>
+   <label for="grade">Grade judo (<a href="#" onclick="alert('Pas encore disponible.'); return false;">histoire</a>)
+    <input id="grade" type="text" size="10" value="" maxlength="20" onchange="updateCategorie()" /></label>
+   <label for="date_grade">Date du grade
+    <input id="date_grade" type="text" size="10" value="" maxlength="20" />
+   </label>
+   <label for="carte_anjou">Num&eacute;ro arrondissement Anjou
+    <input id="carte_anjou" type="text" size="19" value="" maxlength="20" onchange="updateCarteAnjou()" />
+   </label>
+  </div>
+ <div class="oneper">
+   <label for="nom_recu_impot">Nom re&ccedil;u imp&ocirc;t
+    <input id="nom_recu_impot" type="text" size="40" value="" maxlength="50" /> 
+   </label>
+ </div>
+ </fieldset>
+
+ <fieldset> <legend>Urgence</legend>
+  <div class="oneper">
+    <label for="RAMQ">N<sup>o</sup> RAMQ
+     <input id="RAMQ" type="text" size="20" value="" maxlength="20" />
+    </label>
+  </div>
+  <div class="twoper">
+   <label for="nom_contact_urgence">Contact en cas d'urgence
+    <input id="nom_contact_urgence" type="text" size="30" value="" maxlength="50" />
+   </label>
+   <label for="tel_contact_urgence">T&eacute;l&eacute;phone urgence
+    <input id="tel_contact_urgence" type="text" size="24" value="" maxlength="50" /></label>
+  </div>
+ </fieldset>
+
+ <fieldset> <legend>Inscription (<a href="#" onclick="alert('Pas encore disponible.'); return false;">histoire</a>)</legend>
+  <div class="twoper">
+   <label for="categorie">Date d'inscription
+    <input id="date_inscription" type="text" value="" disabled="disabled" />
+   </label>
+   <label for="saisons">Saisons
+    <input id="saisons" type="text" value="" disabled="disabled" />
+   </label>
+  </div>
+  <div class="twoper">
+   <label for="cours">Cours
+    <select id="cours" onchange="ud();">
+     <option />
+    </select>
+   </label>
+   <label for="sessions" style="width:5em">Sessions
+    <select id="sessions" onchange="ud(); uFrais()">
+     <option value="1">1</option>
+     <option value="2">2</option>
+    </select>
+   </label>
+  </div>
+  <label for="horaire_special">Horaire sp&eacute;cial
+    <input id="horaire_special" type="text" value="" onchange="ud(); uFrais()" />
+  </label>
+  <div class="fourper">
+   <label for="categorie">Cat&eacute;gorie d'&acirc;ge
+    <input id="categorie" type="text" value="" onchange="uFrais()" disabled="disabled" />
+   </label>
+   <label for="categorieFrais" style="float:right">Frais cours
+    <input id="categorieFrais" type="text" value="" disabled="disabled" />
+   </label>
+  </div>
+  <div class="fourper">
+   <label for="escompte">Escompte
+    <select id="escompte" onchange="ud(); uFrais()">
+     <option />
+    </select>
+   </label>
+   <label for="escompteFrais" style="float:right"> - escompte
+    <input id="escompteFrais" type="text" value="" disabled="disabled" />
+   </label>
+  </div>
+  <div class="fourper">
+   <label for="sans_affiliation">Deja affili&eacute; Judo Qu&eacute;bec
+    <input id="sans_affiliation" type="checkbox" onchange="ud(); uFrais()" />
+   </label>
+   <label for="affiliationFrais" style="float:right">Frais d'affiliation Judo Qu&eacute;bec
+    <input id="affiliationFrais" type="text" value="" disabled="disabled" />
+   </label>
+  </div>
+  <div class="fourper">
+    <label for="judogi">Co&ucirc;t judogi
+     <input id="judogi" type="text" size="5" value="" onchange="ud(); if (this.value != '') addDollars('judogi'); uFrais()" />
+    </label>
+    <label for="passeport">Passeport Judo Qu&eacute;bec
+     <input id="passeport" type="checkbox" onchange="ud(); uFrais()" />
+    </label>
+    <label for="non_anjou">Pas de carte Anjou
+     <input id="non_anjou" type="checkbox" onchange="ud(); uFrais()" />
+    </label>
+    <label for="ppaFrais" style="float:right">Autres frais
+     <input id="ppaFrais" type="text" value="" disabled="disabled" />
+    </label>
+  </div>
+  <div class="fourper">
+   <label for="cas_special_note">Cas sp&eacute;cial
+    <input id="cas_special_note" type="text" value="" onchange="ud(); enableCustomFrais()" /></label>
+   <label for="frais" style="float:right">Frais total
+   <input id="frais" type="text" value="" onchange="ud(); uFrais(); addDollars('frais');" disabled="disabled" />
+   </label>
+  </div>
+ </fieldset>
+
+ <fieldset> <legend>Versements</legend>
+  <div class="oneper">
+   <label for="copay">Paiement partag&eacute; avec
+    <input id="copay" type="text" size="30" value="" onchange="" />
+   </label>
+  </div>
+  <div class="oneper">
+   <label for="mode">Mode
+    <select id="mode" onchange="updateModePaiement();">
+     <option value="1">Ch&egrave;que</option>
+     <option value="2">Comptant</option>
+    </select>
+   </label>
+  </div>
+  <fieldset id="versement1"><legend>1ère versement</legend>
+  <div class="fourper">
+   <label for="versement1_chqno">Num&eacute;ro du ch&egrave;que
+    <input id="versement1_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
+   </label>
+   <label for="versement1_date">Date du cheque
+    <input id="versement1_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
+   </label>
+   <label for="versement1_montant" style="float:right">Montant
+    <input id="versement1_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
+   </label>
+  </div>
+  </fieldset>
+  <fieldset id="versement2" style="display:none"><legend>2ième versement</legend>
+  <div class="fourper">
+   <label for="versement2_chqno">Num&eacute;ro du ch&egrave;que
+    <input id="versement2_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
+   </label>
+   <label for="versement2_date">Date du cheque
+    <input id="versement2_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
+   </label>
+   <label for="versement2_montant" style="float:right">Montant
+    <input id="versement2_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
+   </label>
+  </div>
+  </fieldset>
+  <fieldset id="versement3" style="display:none"><legend>3ième versement</legend>
+  <div class="fourper">
+   <label for="versement3_chqno">Num&eacute;ro du ch&egrave;que
+    <input id="versement3_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
+   </label>
+   <label for="versement3_date">Date du cheque
+    <input id="versement3_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
+   </label>
+   <label for="versement3_montant" style="float:right">Montant
+    <input id="versement3_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
+   </label>
+  </div>
+  </fieldset>
+  <fieldset id="versement4" style="display:none"><legend>4ième versement</legend>
+  <div class="fourper">
+   <label for="versement4_chqno">Num&eacute;ro du ch&egrave;que
+    <input id="versement4_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
+   </label>
+   <label for="versement4_date">Date du cheque
+    <input id="versement4_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
+   </label>
+   <label for="versement4_montant" style="float:right">Montant
+    <input id="versement4_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
+   </label>
+  </div>
+  </fieldset>
+  <fieldset id="versement5" style="display:none"><legend>5ième versement</legend>
+  <div class="fourper">
+   <label for="versement5_chqno">Num&eacute;ro du ch&egrave;que
+    <input id="versement5_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
+   </label>
+   <label for="versement5_date">Date du cheque
+    <input id="versement5_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
+   </label>
+   <label for="versement5_montant" style="float:right">Montant
+    <input id="versement5_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
+   </label>
+  </div>
+  </fieldset>
+  <div class="fourper">
+   <label for="solde" style="float:right">Solde au compte
+    <input id="solde" type="text" value="" disabled="disabled" />
+   </label>
+  </div>
+ </fieldset>
+</form>
+
+<div class="actions">
+<div style="float:left; text-align:right;">
+  <a href="clients.html" onclick="handleSubmit()">Sauvegarder et retourner</a>
+  <a href="clients.html" onclick="handleSubmit(); return false">Sauvegarder</a>
+</div>
+<div style="float:right; text-align:right;">
+  <a href="clients.html" onclick="return handleDelete();">Supprimer</a>
+  <span style="padding-right:10em">&nbsp;</span>
+  <a href="clients.html">Annuler</a>
+</div>
+</div>
+
+<script type="text/javascript"  src="editclient_utils.js"></script>
+
+</body>
+
+</html>

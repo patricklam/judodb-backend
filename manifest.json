@@ -1,0 +1,8 @@
+{
+  "betaManifestVersion": 1,
+  "version": "pre1",
+  "entries": [
+    { "url": "clients.html", "editclient.html", "base.js", "constants.js",
+             "datastore.js", "md5.js", "utils.js", "xhr.js", "gears_init.js" }
+  ]
+}

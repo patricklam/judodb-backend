@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Facturation Club Judo Anjou: Recherche judoka</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="shortcut icon" href="/files/favicon.ico" type="image/x-icon" />
+  <style type="text/css" media="all">@import "styles.css";</style>
+</head>
+
+<body>
+
+<script type="text/javascript" src="gears_init.js"></script>
+<script type="text/javascript" src="localserver.js"></script>
+<script type="text/javascript" src="constants.js"></script>
+<script type="text/javascript" src="datastore.js"></script>
+<script type="text/javascript" src="xhr.js"></script>
+<script type="text/javascript" src="base.js"></script>
+<script type="text/javascript" src="utils.js"></script>
+<script type="text/javascript" src="md5.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+
+<h1>Recherche judoka</h1>
+<p><span id="status">&nbsp;</span></p>
+
+<script type="text/javascript" src="clients_utils.js"></script>
+
+<div id="sync" onclick="loginAndSync()">synchroniser</div>
+
+<form name="findclient" action="#">
+<div class="sectionBody" style="padding:7px 0 9px 7px;">
+ <div>
+  <label class="standardtitle" for="query">Nom ou Prenom</label><br /><br />
+  <input id="query" type="text" size="60" value="" maxlength="60" />
+ </div>
+ <input type="submit" value="Recherche" onclick="doSearch(); return false;"/>
+ <input type="button" value="Nouvelle client" onclick="eraseCookie('cid'); location.href='editclient.html';"/>
+ </div>
+
+ <div id="results" style="padding:1em">
+ </div>
+
+</form>
+
+<div id="login" style="display:none">
+<form class="compactform" action="#">
+  Veuillez vous identifier: <br /><br />
+  <div class="oneper"><label for="loginid">id
+  <input id="loginid" type="text" size="16" value="" maxlength="50" /></label></div>
+  <div class="oneper"><label for="password">mot de passe
+  <input id="password" type="password" size="16" value="" maxlength="50" /></label></div>
+  <div class="actions">
+   <a onclick="doLogin(computeResponse(), getElementById('login').onSubmit)">entrer</a> &nbsp; &nbsp; 
+   <a onclick="getElementById('login').style.display='none'">annuler</a>
+  </div>
+</form>
+</div>
+
+</body>
+
+</html>
+

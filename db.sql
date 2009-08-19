@@ -1,5 +1,4 @@
 /*
-Based on Gearpad sample code, Copyright 2007, Google Inc.
 Copyright 2009, Patrick Lam.
 
 Redistribution and use in source and binary forms, with or without 
@@ -30,7 +29,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Schema for JudoDB. After creating a blank database called 'judoanjou',
  * run with something like:
  *
- * mysql -u myuser -p judoanjou < db.sql
+ * mysql -u anjoudb -p judoanjou < db.sql
  */
 
 DROP TABLE IF EXISTS `user`;
@@ -47,18 +46,46 @@ CREATE TABLE `user` (
 DROP TABLE IF EXISTS `client`;
 CREATE TABLE `client` (
   `id` int(11) NOT NULL auto_increment,
-  `saison` int(5) NOT NULL,
   `nom` varchar(50) NOT NULL,
   `prenom` varchar(50) NOT NULL,
   `ddn` date,
+  `courriel` varchar(255),
   `adresse` varchar(255),
   `ville` varchar(50),
+  `code_postal` varchar(8),
   `tel` varchar(20),
   `affiliation` varchar(20),
+  `carte_anjou` varchar(20),
   `nom_recu_impot` varchar(255),
   `nom_contact_urgence` varchar(255),
   `tel_contact_urgence` varchar(255),
-  `email` varchar(255) NOT NULL,
+  `RAMQ` varchar(20),
+  `version` int(5) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `grades`;
+CREATE TABLE `grades` (
+  `client_id` INTEGER,
+  `id` INTEGER PRIMARY KEY auto_increment, 
+  `grade` varchar(10),
+  `date_grade` date
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `services`;
+CREATE TABLE `services` (
+  `client_id` INTEGER,
+  `id` INTEGER PRIMARY KEY auto_increment, 
+  `date_inscription` date,
+  `saisons` char(10),
+  `sans_affiliation` boolean,
+  `cours` char(3),
+  `sessions` char(1),
+  `passeport` boolean,
+  `non_anjou` boolean,
+  `judogi` char(3),
+  `escompte` char(3),
+  `frais` char(10),
+  `cas_special_note` varchar(50),
+  `horaire_special` varchar(50)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
