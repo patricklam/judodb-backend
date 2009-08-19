@@ -44,6 +44,7 @@ DataStore.prototype.init = function() {
 	     '`client_id` INTEGER, '+
 	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT, '+
 	     '`date_inscription` date, '+
+             '`sans_affiliation` boolean, '+
 	     '`cours` varchar(3), '+
 	     '`sessions` varchar(1), '+
 	     '`passeport` boolean, '+

@@ -77,6 +77,7 @@ CREATE TABLE `services` (
   `client_id` INTEGER,
   `id` INTEGER PRIMARY KEY auto_increment, 
   `date_inscription` date,
+  `sans_affiliation` boolean,
   `cours` char(3),
   `sessions` char(1),
   `passeport` boolean,

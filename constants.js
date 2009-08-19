@@ -3,7 +3,7 @@ var GLOBAL_FIELDS = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "co
 var LOCAL_FIELDS = ["version", "server_version", "server_id"];
 var ALL_FIELDS = LOCAL_FIELDS.concat(GLOBAL_FIELDS);
 
-var SERVICE_FIELDS = ["date_inscription", "cours", "sessions",
+var SERVICE_FIELDS = ["date_inscription", "sans_affiliation", "cours", "sessions",
                       "passeport", "non_anjou", "judogi",
                       "escompte", "frais", "cas_special_note",
                       "horaire_special"];
