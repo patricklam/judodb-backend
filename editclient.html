@@ -1,5 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <title>Facturation Club Judo Anjou: Judoka</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -17,408 +19,259 @@
 <script type="text/javascript"  src="cookie.js"></script>
 
 <h1>Renseignements judoka</h1>
-<div><span id="status">&nbsp;</span>
+<div><span id="status">&nbsp;</span></div>
 
-<form name="client" onSubmit="handleSubmit(); return false;">
+<form name="client" class="compactform" onsubmit="handleSubmit(); return false;" action="#">
+
 <input type="hidden" id="cid" value="" />
+<input id="version" type="hidden" value="" />
+<input id="server_version" type="hidden" value="-1" />
+<input id="server_id" type="hidden" value="-1" />
 
-<div class="sectionBody">
+<input id="grade_id" type="hidden" value="-1" />
+<input id="service_id" type="hidden" value="-1" />
+<input id="old_cas_special_note" type="hidden" value="" />
 
 <fieldset> <legend>Identit&eacute;</legend>
- <div>
-  <div style="float:left"><label for="nom">Nom</label><input id="nom" type="text" size="24" value="" maxlength="50"></div>
-  <div style="float:right"><label for="prenom">Prenom</label><input id="prenom" type="text" size="24" value="" maxlength="50"></div>
- </div>
- <div style="clear:both">
-  <label for="ddn">Date de naissance<br />(aaaa-mm-jj)</label>
-  <input id="ddn" type="text" size="24" value="" maxlength="50" onChange="ddnChange()"></div>
+ <div class="threeper">
+  <label for="nom">Nom<input id="nom" type="text" size="24" value="" maxlength="50" /></label>
+  <label for="prenom">Prenom<input id="prenom" type="text" size="24" value="" maxlength="50" /></label>
+  <label for="ddn">Date de naissance (aaaa-mm-jj)
+   <input id="ddn" type="text" size="24" value="" maxlength="50" onchange="ddnChange()" />
+  </label>
  </div>
 </fieldset>
 
 <fieldset> <legend>Adresse</legend>
- <div>
-  <div>
-   <div style="float:left">
-    <label for="adresse">Adresse</label>
-    <input id="adresse" type="text" size="30" value="" maxlength="80">
-   </div>
-  </div>
-  <div style="clear:both">
-   <div style="float:left">
-    <label for="ville">Ville</label>
-    <input id="ville" type="text" size="30" value="" maxlength="50">
-   </div>
-   <div style="float:right">
-    <label for="tel">Code postal</label>
-    <input id="code_postal" type="text" size="24" value="" maxlength="20"
-	   onChange="this.value = this.value.toUpperCase()">
-   </div>
-  </div>
-  <div>
-   <div style="float:left">
-    <label for="tel">T&eacute;l&eacute;phone(s)</label>
-    <input id="tel" type="text" size="30" value="" maxlength="20">
-   </div>
-   <div style="float:right">
-    <label for="courriel">Courriel</label>
-    <input id="courriel" type="text" size="24" value="" maxlength="255">
-   </div>
-  </div>
+ <div class="oneper">
+  <label for="adresse">Adresse
+   <input id="adresse" type="text" size="60" value="" maxlength="80" />
+  </label>
+ </div>
+ <div class="fourper">
+  <label for="ville">Ville
+    <input id="ville" type="text" size="16" value="" maxlength="50" />
+  </label>
+  <label for="tel">Code postal
+    <input id="code_postal" type="text" size="10" value="" maxlength="20"
+	   onchange="this.value = this.value.toUpperCase()" />
+  </label>
+  <label for="tel">T&eacute;l&eacute;phone(s)
+    <input id="tel" type="text" size="18" value="" maxlength="20" />
+  </label>
+  <label for="courriel">Courriel
+    <input id="courriel" type="text" size="19.5" value="" maxlength="255" />
+  </label>
  </div>
 </fieldset>
 
  <fieldset> <legend>Autres renseignments</legend>
- <div>
-  <div>
-   <div style="float:left"><label for="affiliation">N<sup>o</sup> Judo Qu&eacute;bec</label>
-   <input id="affiliation" type="text" size="10" value="" maxlength="20"></div>
-   <div style="float:right" ><label for="carte_anjou">N<sup>o</sup> arrondissement Anjou</label>
-   <input id="carte_anjou" type="text" size="24" value="" maxlength="20" onChange="updateCarteAnjou()"></div>
+ <div class="fourper">
+   <label for="affiliation">Num&eacute;ro Judo Qu&eacute;bec
+    <input id="affiliation" type="text" size="10" value="" maxlength="20" />
+   </label>
+   <label for="grade">Grade judo (<a href="#" onclick="alert('Pas encore disponible.'); return false;">histoire</a>)
+    <input id="grade" type="text" size="10" value="" maxlength="20" onchange="updateCategorie()" /></label>
+   <label for="date_grade">Date du grade
+    <input id="date_grade" type="text" size="10" value="" maxlength="20" />
+   </label>
+   <label for="carte_anjou">Num&eacute;ro arrondissement Anjou
+    <input id="carte_anjou" type="text" size="19" value="" maxlength="20" onchange="updateCarteAnjou()" />
+   </label>
   </div>
-  <div style="clear:both">
-   <div style="float:left"><label for="grade">Grade judo</label>
-   <input id="grade" type="text" size="10" value="" maxlength="20" onChange="updateCategorie()"></div>
-   <div style="float:right"> <label for="date_grade">Date du grade</label>
-   <input id="date_grade" type="text" size="24" value="" maxlength="20"></div>
-  </div>
-  <div style="clear:both">
-   <label for="nom_recu_impot">Nom re&ccedil;u imp&ocirc;t</label>
-   <input id="nom_recu_impot" type="text" size="30" value="" maxlength="50"> 
-  </div>
+ <div class="oneper">
+   <label for="nom_recu_impot">Nom re&ccedil;u imp&ocirc;t
+    <input id="nom_recu_impot" type="text" size="40" value="" maxlength="50" /> 
+   </label>
+ </div>
  </fieldset>
 
  <fieldset> <legend>Urgence</legend>
-  <div>
-    <label for="no_RAMQ">N<sup>o</sup> RAMQ</label>
-    <input id="RAMQ" type="text" size="20" value="" maxlength="20">
+  <div class="oneper">
+    <label for="RAMQ">N<sup>o</sup> RAMQ
+     <input id="RAMQ" type="text" size="20" value="" maxlength="20" />
+    </label>
   </div>
-  <div>
-   <div style="float:left"><label for="nom_contact_urgence">Contact en cas d'urgence</label>
-    <input id="nom_contact_urgence" type="text" size="30" value="" maxlength="50"></div>
-   <div style="float:right"><label for="tel_contact_urgence">T&eacute;l&eacute;phone urgence</label>
-    <input id="tel_contact_urgence" type="text" size="24" value="" maxlength="50"></div>
+  <div class="twoper">
+   <label for="nom_contact_urgence">Contact en cas d'urgence
+    <input id="nom_contact_urgence" type="text" size="30" value="" maxlength="50" />
+   </label>
+   <label for="tel_contact_urgence">T&eacute;l&eacute;phone urgence
+    <input id="tel_contact_urgence" type="text" size="24" value="" maxlength="50" /></label>
   </div>
  </fieldset>
 
  <fieldset> <legend>Frais</legend>
-  <div>
-   <div style="float:left">
-    <label for="categorie">Cat&eacute;gorie d'&acirc;ge</label>
-    <input id="categorie" type="text" value="" onChange="uFrais()" readonly>
-   </div>
-   <div style="float:right">
-    <label for="sessions">Sessions</label>
-    <select id="sessions" onChange="ud(); uFrais()">
-    <option value="1">1</option>
-    <option value="2">2</option>
+  <div class="oneper">
+   <label for="categorie">Date d'inscription
+    <input id="date_inscription" type="text" value="" disabled="disabled" />
+   </label>
+  </div>
+  <div class="twoper">
+   <label for="cours">Cours
+    <select id="cours" onchange="ud();">
+     <option />
     </select>
-   </div>
-  </div>
-  <div style="clear:both">
-   <div style="float:left; padding-bottom:1em;">
-    <label for="cours">Cours</label>
-    <select id="cours" onChange="ud();">
+   </label>
+   <label for="sessions" style="width:5em">Sessions
+    <select id="sessions" onchange="ud(); uFrais()">
+     <option value="1">1</option>
+     <option value="2">2</option>
     </select>
-   </div>
-   <div style="float:right">
-    <label for="escompte">Escompte</label>
-    <select id="escompte" onChange="ud(); uFrais()">
+   </label>
+  </div>
+  <label for="horaire_special">Horaire sp&eacute;cial
+    <input id="horaire_special" type="text" value="" onchange="ud(); uFrais()" />
+  </label>
+  <div class="fourper">
+   <label for="categorie">Cat&eacute;gorie d'&acirc;ge
+    <input id="categorie" type="text" value="" onchange="uFrais()" disabled="disabled" />
+   </label>
+   <label for="categorieFrais" style="float:right">Frais cours
+    <input id="categorieFrais" type="text" value="" disabled="disabled" />
+   </label>
+  </div>
+  <div class="fourper">
+   <label for="escompte">Escompte
+    <select id="escompte" onchange="ud(); uFrais()">
+     <option />
     </select>
-   </div>
+   </label>
+   <label for="escompteFrais" style="float:right"> - escompte
+    <input id="escompteFrais" type="text" value="" disabled="disabled" />
+   </label>
   </div>
-  <div style="clear:both; padding-bottom:2em;">
-   <div style="float:left">
-    <label for="judogi">Co&ucirc;t judogi</label>
-    <input id="judogi" type="text" size="5" value="" onChange="ud(); if (this.value != '') addDollars('judogi'); uFrais()">
-   </div>
-   <div style="float:left; padding-left:25%">
-    <label for="passeport">Passeport Judo Qu&eacute;bec</label>
-    <input id="passeport" type="checkbox" onChange="ud(); uFrais()">
-   </div>
-   <div style="float:right">
-    <label for="non_anjou">Pas de carte Anjou</label>
-    <input id="non_anjou" type="checkbox" onChange="ud(); uFrais()" readonly>
-   </div>
+  <div class="fourper">
+   <label for="sans_affiliation">Deja affili&eacute; Judo Qu&eacute;bec
+    <input id="sans_affiliation" type="checkbox" onchange="ud(); uFrais()" />
+   </label>
+   <label for="affiliationFrais" style="float:right">Frais d'affiliation Judo Qu&eacute;bec
+    <input id="affiliationFrais" type="text" value="" disabled="disabled" />
+   </label>
   </div>
-  <div style="clear:both">
-   <label for="cas_special_note">Cas sp&eacute;cial</label>
-   <input id="cas_special_note" type="text" value="" onChange="ud(); enableCustomFrais()">
+  <div class="fourper">
+    <label for="judogi">Co&ucirc;t judogi
+     <input id="judogi" type="text" size="5" value="" onchange="ud(); if (this.value != '') addDollars('judogi'); uFrais()" />
+    </label>
+    <label for="passeport">Passeport Judo Qu&eacute;bec
+     <input id="passeport" type="checkbox" onchange="ud(); uFrais()" />
+    </label>
+    <label for="non_anjou">Pas de carte Anjou
+     <input id="non_anjou" type="checkbox" onchange="ud(); uFrais()" />
+    </label>
+    <label for="ppaFrais" style="float:right">Autres frais
+     <input id="ppaFrais" type="text" value="" disabled="disabled" />
+    </label>
   </div>
-  <div>
-   <label for="horaire_special">Horaire sp&eacute;cial</label>
-   <input id="horaire_special" type="text" value="" onChange="ud(); uFrais()" >
-  </div>
-  <div>
-   <label for="frais">Frais</label>
-   <input id="frais" type="text" value="" onChange="ud()" disabled>
+  <div class="fourper">
+   <label for="cas_special_note">Cas sp&eacute;cial
+    <input id="cas_special_note" type="text" value="" onchange="ud(); enableCustomFrais()" /></label>
+   <label for="frais" style="float:right">Frais total
+   <input id="frais" type="text" value="" onchange="ud()" disabled="disabled" />
+   </label>
   </div>
  </fieldset>
 
- <input id="version" type="hidden" value="">
- <input id="server_version" type="hidden" value="-1">
- <input id="server_id" type="hidden" value="-1">
-
- <input id="grade_id" type="hidden" value="-1">
- <input id="service_id" type="hidden" value="-1">
- <input id="date_inscription" type="hidden" value="">
- <input id="old_cas_special_note" type="hidden" value="">
-
- <div class="actions">
- <div style="float:left; text-align:right;">
-  <a href="clients.html" onClick="handleSubmit()">Sauvegarder et retourner</a>
-  <a href="clients.html" onClick="handleSubmit(); return false">Sauvegarder</a>
- </div>
- <div style="float:right; text-align:right;">
-  <a href="clients.html" onClick="return handleDelete();">Supprimer</a>
-  <span style="padding-right:10em">&nbsp;</span>
-  <a href="clients.html">Annuler</a>
- </div>
- </div>
+ <fieldset> <legend>Versements</legend>
+  <div class="oneper">
+   <label for="copay">Paiement partag&eacute; avec
+    <input id="copay" type="text" size="30" value="" onchange="" />
+   </label>
+  </div>
+  <div class="oneper">
+   <label for="mode">Mode
+    <select id="mode">
+     <option value="1">Ch&egrave;que</option>
+     <option value="2">Comptant</option>
+    </select>
+   </label>
+  </div>
+  <fieldset id="versement1"><legend>1ère versement</legend>
+  <div class="fourper">
+   <label for="versement1_chqno">Num&eacute;ro du ch&egrave;que
+    <input id="versement1_chqno" type="text" value="" size="5" onchange="" />
+   </label>
+   <label for="versement1_date">Date du cheque
+    <input id="versement1_date" type="text" value="" size="10" onchange="" />
+   </label>
+   <label for="versement1_montant" style="float:right">Montant
+    <input id="versement1_montant" type="text" value="" size="5" onchange="" />
+   </label>
+  </div>
+  </fieldset>
+  <fieldset id="versement2" style="display:none"><legend>2ième versement</legend>
+  <div class="fourper">
+   <label for="versement2_chqno">Num&eacute;ro du ch&egrave;que
+    <input id="versement2_chqno" type="text" value="" size="5" onchange="" />
+   </label>
+   <label for="versement2_date">Date du cheque
+    <input id="versement2_date" type="text" value="" size="10" onchange="" />
+   </label>
+   <label for="versement2_montant" style="float:right">Montant
+    <input id="versement2_montant" type="text" value="" size="5" onchange="" />
+   </label>
+  </div>
+  </fieldset>
+  <fieldset id="versement3" style="display:none"><legend>3ième versement</legend>
+  <div class="fourper">
+   <label for="versement3_chqno">Num&eacute;ro du ch&egrave;que
+    <input id="versement3_chqno" type="text" value="" size="5" onchange="" />
+   </label>
+   <label for="versement3_date">Date du cheque
+    <input id="versement3_date" type="text" value="" size="10" onchange="" />
+   </label>
+   <label for="versement3_montant" style="float:right">Montant
+    <input id="versement3_montant" type="text" value="" size="5" onchange="" />
+   </label>
+  </div>
+  </fieldset>
+  <fieldset id="versement4" style="display:none"><legend>4ième versement</legend>
+  <div class="fourper">
+   <label for="versement4_chqno">Num&eacute;ro du ch&egrave;que
+    <input id="versement4_chqno" type="text" value="" size="5" onchange="" />
+   </label>
+   <label for="versement4_date">Date du cheque
+    <input id="versement4_date" type="text" value="" size="10" onchange="" />
+   </label>
+   <label for="versement4_montant" style="float:right">Montant
+    <input id="versement4_montant" type="text" value="" size="5" onchange="" />
+   </label>
+  </div>
+  </fieldset>
+  <fieldset id="versement5" style="display:none"><legend>5ième versement</legend>
+  <div class="fourper">
+   <label for="versement4_chqno">Num&eacute;ro du ch&egrave;que
+    <input id="versement4_chqno" type="text" value="" size="5" onchange="" />
+   </label>
+   <label for="versement4_date">Date du cheque
+    <input id="versement4_date" type="text" value="" size="10" onchange="" />
+   </label>
+   <label for="versement4_montant" style="float:right">Montant
+    <input id="versement4_montant" type="text" value="" size="5" onchange="" />
+   </label>
+  </div>
+  </fieldset>
+  <div class="fourper">
+   <label for="solde" style="float:right">Solde au compte
+    <input id="solde" type="text" value="" disabled="disabled" />
+   </label>
+  </div>
+ </fieldset>
 </form>
 
-<script>
-// Courtesy http://www.netlobo.com/url_query_string_javascript.html
-function gup( name )
-{
-  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-  var regexS = "[\\?&]"+name+"=([^&#]*)";
-  var regex = new RegExp( regexS );
-  var results = regex.exec( window.location.href );
-  if( results == null )
-    return null;
-  else
-    return results[1];
-}
+<div class="actions">
+<div style="float:left; text-align:right;">
+  <a href="clients.html" onclick="handleSubmit()">Sauvegarder et retourner</a>
+  <a href="clients.html" onclick="handleSubmit(); return false">Sauvegarder</a>
+</div>
+<div style="float:right; text-align:right;">
+  <a href="clients.html" onclick="return handleDelete();">Supprimer</a>
+  <span style="padding-right:10em">&nbsp;</span>
+  <a href="clients.html">Annuler</a>
+</div>
+</div>
 
-var cid;
-
-// First try the cookie; then override with the GET parameter.
-cid = readCookie("cid");
-
-var cc = gup("cid"); if (cc != null) cid = cc;
-
-var catId;
-var db;
-
-store = new DataStore();
-store.init();
-localInit();
-
-function localInit() {
-  populateCoursEscomptes();
-  if (cid)
-    populateClient(cid);
-  uFrais();
-  enableCustomFrais();
-  clearStatus();
-}
-
-function populateClient() {
-  var rs = executeToObjects(db, 'select * from `client` where id = ?', [cid])[0];
-  if (!rs) { addStatus('cid not found'); return; }
-
-  for (i = 0; i < ALL_FIELDS.length; i++) {
-    key = ALL_FIELDS[i];
-    getElementById(key).value = rs[key];
-  }
-
-  var rs = executeToObjects(db, 'select id, grade, date_grade from `grades` where client_id = ?', [cid])[0];
-  if (rs) {
-    getElementById('grade_id').value = rs['id'];
-    getElementById('grade').value = rs['grade'];
-    getElementById('date_grade').value = rs['date_grade'];
-  }
-
-  updateCategorie();
-
-  var rs = executeToObjects(db, 'select * from `services` where client_id = ?', [cid])[0];
-  if (rs) {
-    for (i = 0; i < SERVICE_FIELDS.length; i++) {
-      key = SERVICE_FIELDS[i];
-      if (getElementById(key).type == "select-one")
-          getElementById(key).selectedIndex = parseInt(rs[key]);
-      else
-          getElementById(key).value = rs[key];
-    }
-    getElementById('service_id').value = rs['id'];
-  }
-
-  for (c in CHECKBOX_FIELDS) {
-    var cf = CHECKBOX_FIELDS[c];
-    if (getElementById(cf).value == 0 || getElementById(cf).value == 'false')
-      getElementById(cf).checked = false;
-    if (getElementById(cf).value == 1 || getElementById(cf).value == 'true') 
-      getElementById(cf).checked = true;
-    getElementById(cf).value = getElementById(cf).checked;
-  }
-
-  addDollars('frais'); addDollars('judogi');
-}
-
-function populateCoursEscomptes() {
-  var cours = getElementById('cours');
-  for (i = 0; i < COURS.length; i++) {
-    cours.add(new Option(COURS[i], i), null);
-  }
-
-  var escompte = getElementById('escompte');
-  for (i = 0; i < ESCOMPTE_NAMES.length; i++) {
-    escompte.add(new Option(ESCOMPTE_NAMES[i], ESCOMPTE_AMOUNTS[i]), null);
-  }
-}
-
-function updateCarteAnjou() {
-  getElementById("non_anjou").value = 
-		  (getElementById("carte_anjou").value == '');
-}
-
-function addDollars(id) {
-  var v = getElementById(id).value;
-  if (v == '') return;
-
-  stripDollars(id);
-  getElementById(id).value += ' $';
-}
-
-function stripDollars(id) {
-  var v = getElementById(id).value;
-  if (v == '') return;
-
-  if (v.substring(v.length-1, v.length) == '$')
-    v = v.substring(v, v.length-1);
-  getElementById(id).value = v.trim();
-}
-
-function calcFrais() {
-  if (getElementById("cas_special_note").value != "")
-    return getElementById("frais").value;
-
-  var basePrice;
-  if (getElementById("sessions").value == '1')
-    basePrice = categoryPrix1(catId);
-  else
-    basePrice = categoryPrix2(catId);
-
-  var escompte = parseFloat(getElementById("escompte").value);
-  basePrice = basePrice * (1.00-(escompte/100));
-
-  // for winter, should be able to selectively pay judoQC.
-  basePrice += categoryPrixJQ(catId);
-  if (getElementById("passeport").checked)
-    basePrice += FRAIS_PASSEPORT_JUDO_QUEBEC;
-  if (getElementById("non_anjou").checked)
-    basePrice += FRAIS_PAS_ANJOU;
-
-  var jv = getElementById("judogi").value;
-  jv = jv.substring(0, jv.length-1);
-  if (parseFloat(jv) > 0)
-    basePrice += parseFloat(jv);
-
-  return asCurrency(basePrice)+" $";
-}
-
-// autoupdate for date_inscription field
-function ud() {
-  getElementById("date_inscription").value = formatDate(new Date());
-}
-
-// autoupdate for frais field
-function uFrais() {
-  getElementById("frais").value = calcFrais();
-}
-
-function enableCustomFrais() {
-  if (getElementById("cas_special_note").value == "" && 
-      getElementById("frais").value != calcFrais())
-    if (!confirm("Est-ce que vous voulez effacer le frais special?")) {
-      getElementById("cas_special_note").value = 
-        getElementById("old_cas_special_note").value;
-      return false;
-    }
-
-  uFrais();
-  getElementById("frais").disabled = 
-    (getElementById("cas_special_note").value == "");
-  getElementById("old_cas_special_note").value = 
-    getElementById("cas_special_note").value;
-}
-
-function handleSubmit() {
-  var rs = {};
-
-  stripDollars('frais'); stripDollars('judogi');
-
-  var f = ALL_FIELDS.concat(SERVICE_FIELDS);
-  // XXX TODO special case grades (keep history) 
-  f = f.concat(['grade_id', 'grade', 'date_grade']);
-
-  for (i = 0; i < f.length; i++) {
-    var key = f[i];
-    rs[key] = getElementById(key).value;
-  }
-
-  // more grades stuff below; for now only one field for multi-fields
-  if (rs['grade_id'] == -1) rs['grade_id'] = null;
-  if (rs['service_id'] == -1) rs['service_id'] = null;
-
-  // TODO must List.map once we have a list of services.
-  for (c in CHECKBOX_FIELDS) {
-    var cf = CHECKBOX_FIELDS[c];
-    rs[cf] = getElementById(cf).checked;
-  }
-
-  for (s in SELECT_FIELDS) {
-    var sf = SELECT_FIELDS[s];
-    rs[sf] = getElementById(sf).selectedIndex;
-  }
-
-  for (f in MULTI_FIELDS) {
-    rs[f] = [rs[f]];
-  }
-  rs['grade_id'] = [rs['grade_id']];
-
-  rs.version++; getElementById("version").value = rs.version;
-
-  cid = storeOneClient(cid, rs);
-
-  addDollars('frais'); addDollars('judogi');
-
-  clearStatus(); addStatus("Sauvegardé."); setTimeout('clearStatus()', 3000);
-}
-
-function handleDelete() {
-  if (!confirm ("Êtes-vous certain de vouloir supprimer "+
-                getElementById("prenom").value+" "+
-                getElementById("nom").value+"?"))
-    return false;
-
-  db.execute('DELETE FROM `client` WHERE id=?', [cid]);
-  return true;
-}
-
-var oldDDN = getElementById("ddn").value;
-function ddnChange() {
-  var ddn = getElementById("ddn").value;
-  if (validateDate(ddn)) {
-    updateCategorie(); 
-    clearStatus();
-  }
-  else {
-    getElementById("ddn").value = oldDDN;
-    setError("Date de naissance invalide.");
-    setTimeout(function () { getElementById("ddn").focus(); }, 1);
-  }
-  oldDDN = ddn;
-}
-
-function updateCategorie() {
-  var c = getElementById("categorie");
-  var y = parseInt(getElementById("ddn").value.substring(0,4));
-  var grade = getElementById("grade").value;
-  catId = computeCategoryId(y, grade);
-  c.value = categoryName(catId);
-}
-</script>
+<script type="text/javascript"  src="editclient_utils.js"></script>
 
 </body>
 
