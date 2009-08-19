@@ -4,5 +4,5 @@ $GLOBAL_FIELDS = array("nom", "prenom", "ddn", "courriel", "adresse", "ville", "
 $ALL_FIELDS = $GLOBAL_FIELDS;
 array_push($ALL_FIELDS, "version");
 $GRADES_FIELDS = array("date_grade", "grade");
-$SERVICE_FIELDS = array("date_inscription", "sans_affiliation", "cours", "sessions", "passeport", "non_anjou", "judogi", "escompte", "frais", "cas_special_note", "horaire_special");
+$SERVICE_FIELDS = array("date_inscription", "saisons", "sans_affiliation", "cours", "sessions", "passeport", "non_anjou", "judogi", "escompte", "frais", "cas_special_note", "horaire_special");
 ?>
