@@ -71,9 +71,9 @@ if (isset($_FILES["facturation"])) {
     db_query_set("INSERT INTO `grades` (client_id, grade, date_grade) VALUES ($sid, '$grade', '')");
 
   // update services table 
-  $cours = $client[3];
-  if ($forReal)
-    db_query_set("INSERT INTO `services` (client_id, date_inscription, cours, sessions, judogi, escompte, passeport, non_anjou, frais, cas_special_note, horaire_special) VALUES ($sid, '2009-01-01', $cours, '0', '0', '0', '0', false, false, '', '')");
+  $cours = intval($client[3])-1;
+  if ($forReal && $cours != -1)
+    db_query_set("INSERT INTO `services` (client_id, date_inscription, saisons, sans_affiliation, cours, sessions, judogi, escompte, passeport, non_anjou, frais, cas_special_note, horaire_special) VALUES ($sid, '2009-01-01', '', 0, $cours, '0', '0', '0', '0', false, false, '', '')");
   $clientCount++;
   print '<tr><td>' . $rs['nom'] . '</td><td>' . $rs['prenom'] . '</td></tr>';
 }

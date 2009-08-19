@@ -140,6 +140,16 @@ function calcFrais() {
   return asCurrency(price)+" $";
 }
 
+function calcSaison() {    
+  if (getElementById("cas_special_note").value != "")
+    return getElementById("saisons").value;
+
+  var s = CURRENT_SESSION;
+  if (getElementById("sessions").value == "2")
+    s += " " + NEXT_SESSION;
+  return s;
+}
+
 // autoupdate for date_inscription field
 function ud() {
   getElementById("date_inscription").value = formatDate(new Date());
@@ -147,6 +157,7 @@ function ud() {
 
 // autoupdate for frais field
 function uFrais() {
+  getElementById("saisons").value = calcSaison();
   getElementById("frais").value = calcFrais();
 }
 
@@ -161,6 +172,8 @@ function enableCustomFrais() {
 
   uFrais();
   getElementById("frais").disabled = 
+    (getElementById("cas_special_note").value == "");
+  getElementById("saisons").disabled = 
     (getElementById("cas_special_note").value == "");
   getElementById("old_cas_special_note").value = 
     getElementById("cas_special_note").value;

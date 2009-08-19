@@ -3,7 +3,8 @@ var GLOBAL_FIELDS = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "co
 var LOCAL_FIELDS = ["version", "server_version", "server_id"];
 var ALL_FIELDS = LOCAL_FIELDS.concat(GLOBAL_FIELDS);
 
-var SERVICE_FIELDS = ["date_inscription", "sans_affiliation", "cours", "sessions",
+var SERVICE_FIELDS = ["date_inscription", "saisons", "sans_affiliation", 
+		      "cours", "sessions",
                       "passeport", "non_anjou", "judogi",
                       "escompte", "frais", "cas_special_note",
                       "horaire_special"];
@@ -23,6 +24,7 @@ var STORE_NAME = "anjoudb";
 /* All this stuff should eventually end up in the database. */
 
 var SAISON = 2009;
+var CURRENT_SESSION="A09"; var NEXT_SESSION="H10";
 var CATEGORY_NAMES = ["Mini-Poussin (U-7)", "Poussin (U-9)", "Benjamin (U-11)",
                       "Minime (U-13)", "Juvénile (U-15)", "Cadet (U-17)",
                       "Junior (U-20)", "Sénior", "Junior Noire", "Sénior Noire"];
