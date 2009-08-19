@@ -48,10 +48,10 @@ function refreshResults() {
   if (firstToDisplay > 0 || firstToDisplay + 10 < clients.length) 
     resultBox.innerHTML += '<br />';
 
+  if (firstToDisplay + 10 < clients.length)
+    resultBox.innerHTML += '<a href="" onClick="firstToDisplay += 10; refreshResults(); return false;">Résultats suivants<a/>&nbsp;';
   if (firstToDisplay > 0)
     resultBox.innerHTML += '<a href="" onClick="firstToDisplay -= 10; refreshResults(); return false;">Résultats précedents</a>&nbsp;';
-  if (firstToDisplay + 10 < clients.length)
-    resultBox.innerHTML += '<a href="" onClick="firstToDisplay += 10; refreshResults(); return false;">Résultats suivants<a>';
 }
 
 function doSearch() {
@@ -134,12 +134,12 @@ function doLogin(arg, successContinuation) {
 </div>
 
 <div id="login" style="display:none">
-<form action="#">
+<form class="compactform" action="#">
   Veuillez vous identifier: <br /><br />
-  <div><label for="loginid">id</label>
-  <input id="loginid" type="text" size="16" value="" maxlength="50"></div>
-  <div><label for="password">mot de passe</label>
-  <input id="password" type="password" size="16" value="" maxlength="50"></div>
+  <div class="oneper"><label for="loginid">id
+  <input id="loginid" type="text" size="16" value="" maxlength="50"></label></div>
+  <div class="oneper"><label for="password">mot de passe
+  <input id="password" type="password" size="16" value="" maxlength="50"></label></div>
   <div class="actions">
    <a onClick="doLogin(computeResponse(), getElementById('login').onSubmit)">entrer</a> &nbsp; &nbsp; 
    <a onClick="getElementById('login').style.display='none'">annuler</a>
