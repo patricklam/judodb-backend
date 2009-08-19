@@ -28,7 +28,6 @@
 
 <form name="findclient" action="#">
 <div class="sectionBody" style="padding:7px 0 9px 7px;">
- <div style="padding:10px">
  <div>
   <label class="standardtitle" for="query">Nom ou Prenom</label><br /><br />
   <input id="query" type="text" size="60" value="" maxlength="60" />
@@ -36,11 +35,11 @@
  <input type="submit" value="Recherche" onclick="doSearch(); return false;"/>
  <input type="button" value="Nouvelle client" onclick="eraseCookie('cid'); location.href='editclient.html';"/>
  </div>
-</div>
-</form>
 
-<div id="results" style="padding-top:1em">
-</div>
+ <div id="results" style="padding:1em">
+ </div>
+
+</form>
 
 <div id="login" style="display:none">
 <form class="compactform" action="#">
