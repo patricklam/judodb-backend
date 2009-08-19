@@ -170,7 +170,7 @@
    <label for="cas_special_note">Cas sp&eacute;cial
     <input id="cas_special_note" type="text" value="" onchange="ud(); enableCustomFrais()" /></label>
    <label for="frais" style="float:right">Frais total
-   <input id="frais" type="text" value="" onchange="ud()" disabled="disabled" />
+   <input id="frais" type="text" value="" onchange="ud(); uFrais(); addDollars('frais');" disabled="disabled" />
    </label>
   </div>
  </fieldset>
@@ -183,7 +183,7 @@
   </div>
   <div class="oneper">
    <label for="mode">Mode
-    <select id="mode">
+    <select id="mode" onchange="updateModePaiement();">
      <option value="1">Ch&egrave;que</option>
      <option value="2">Comptant</option>
     </select>
@@ -192,65 +192,65 @@
   <fieldset id="versement1"><legend>1ère versement</legend>
   <div class="fourper">
    <label for="versement1_chqno">Num&eacute;ro du ch&egrave;que
-    <input id="versement1_chqno" type="text" value="" size="5" onchange="" />
+    <input id="versement1_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement1_date">Date du cheque
-    <input id="versement1_date" type="text" value="" size="10" onchange="" />
+    <input id="versement1_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement1_montant" style="float:right">Montant
-    <input id="versement1_montant" type="text" value="" size="5" onchange="" />
+    <input id="versement1_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
    </label>
   </div>
   </fieldset>
   <fieldset id="versement2" style="display:none"><legend>2ième versement</legend>
   <div class="fourper">
    <label for="versement2_chqno">Num&eacute;ro du ch&egrave;que
-    <input id="versement2_chqno" type="text" value="" size="5" onchange="" />
+    <input id="versement2_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement2_date">Date du cheque
-    <input id="versement2_date" type="text" value="" size="10" onchange="" />
+    <input id="versement2_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement2_montant" style="float:right">Montant
-    <input id="versement2_montant" type="text" value="" size="5" onchange="" />
+    <input id="versement2_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
    </label>
   </div>
   </fieldset>
   <fieldset id="versement3" style="display:none"><legend>3ième versement</legend>
   <div class="fourper">
    <label for="versement3_chqno">Num&eacute;ro du ch&egrave;que
-    <input id="versement3_chqno" type="text" value="" size="5" onchange="" />
+    <input id="versement3_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement3_date">Date du cheque
-    <input id="versement3_date" type="text" value="" size="10" onchange="" />
+    <input id="versement3_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement3_montant" style="float:right">Montant
-    <input id="versement3_montant" type="text" value="" size="5" onchange="" />
+    <input id="versement3_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
    </label>
   </div>
   </fieldset>
   <fieldset id="versement4" style="display:none"><legend>4ième versement</legend>
   <div class="fourper">
    <label for="versement4_chqno">Num&eacute;ro du ch&egrave;que
-    <input id="versement4_chqno" type="text" value="" size="5" onchange="" />
+    <input id="versement4_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement4_date">Date du cheque
-    <input id="versement4_date" type="text" value="" size="10" onchange="" />
+    <input id="versement4_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement4_montant" style="float:right">Montant
-    <input id="versement4_montant" type="text" value="" size="5" onchange="" />
+    <input id="versement4_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
    </label>
   </div>
   </fieldset>
   <fieldset id="versement5" style="display:none"><legend>5ième versement</legend>
   <div class="fourper">
-   <label for="versement4_chqno">Num&eacute;ro du ch&egrave;que
-    <input id="versement4_chqno" type="text" value="" size="5" onchange="" />
+   <label for="versement5_chqno">Num&eacute;ro du ch&egrave;que
+    <input id="versement5_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
-   <label for="versement4_date">Date du cheque
-    <input id="versement4_date" type="text" value="" size="10" onchange="" />
+   <label for="versement5_date">Date du cheque
+    <input id="versement5_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
-   <label for="versement4_montant" style="float:right">Montant
-    <input id="versement4_montant" type="text" value="" size="5" onchange="" />
+   <label for="versement5_montant" style="float:right">Montant
+    <input id="versement5_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
    </label>
   </div>
   </fieldset>

@@ -20,8 +20,9 @@ MULTI_FIELDS['grade'] = true;
 MULTI_FIELDS['date_grade'] = true;
 
 var STORE_NAME = "anjoudb";
+var MAX_VERSEMENTS = 5;
 
-/* All this stuff should eventually end up in the database. */
+/* All this stuff below should eventually end up in the database. */
 
 var SAISON = 2009;
 var CURRENT_SESSION="A09"; var NEXT_SESSION="H10";

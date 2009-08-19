@@ -159,6 +159,7 @@ function ud() {
 function uFrais() {
   getElementById("saisons").value = calcSaison();
   getElementById("frais").value = calcFrais();
+  uSolde();
 }
 
 function enableCustomFrais() {
@@ -179,10 +180,71 @@ function enableCustomFrais() {
     getElementById("cas_special_note").value;
 }
 
+function updateModePaiement() {
+  var dis = false;
+  if (getElementById("mode").value == "2") dis = true;
+  for (var i = 1; i <= MAX_VERSEMENTS; i++) {
+    getElementById("versement"+i+"_chqno").disabled = dis;
+    getElementById("versement"+i+"_date").disabled = dis;
+  }
+}
+
+function addOrRemoveVersements() {
+  // garbage collect empty versements & add $s
+  for (var i = 1; i <= MAX_VERSEMENTS; i++) {
+      var l = "versement"+i+"_";
+
+      if (getElementById(l+"montant").value != "")
+	  addDollars(l+"montant");
+
+      if (getElementById(l+"chqno").value=="" &&
+	  getElementById(l+"date").value=="" &&
+	  getElementById(l+"montant").value=="") {
+	  for (var j = i; j < MAX_VERSEMENTS; j++) {
+	      var l = "versement"+j+"_";
+	      var m = "versement"+(j+1)+"_";
+
+	      getElementById(l+"chqno").value=getElementById(m+"chqno").value;
+	      getElementById(l+"date").value=getElementById(m+"date").value;
+	      getElementById(l+"montant").value=getElementById(m+"montant").value;
+	  }
+
+	  var m = "versement"+(MAX_VERSEMENTS)+"_";
+	  getElementById(m+"chqno").value='';
+	  getElementById(m+"date").value='';
+	  getElementById(m+"montant").value='';
+      }
+  }
+
+  for (var i = 2; i <= MAX_VERSEMENTS; i++) {
+      var l = "versement"+i;
+      getElementById(l).style.display="block";
+      if (getElementById(l+"_chqno").value=="" &&
+	  getElementById(l+"_date").value=="" &&
+	  getElementById(l+"_montant").value=="") {
+	  for (var j = i+1; j <= MAX_VERSEMENTS; j++) {
+	      var m = "versement"+j;
+	      getElementById(m).style.display='none';
+	  }
+	  break;
+      }
+  }
+}
+
+function uSolde() {
+  getElementById("solde").value = getElementById("frais").value;    
+}
+
 function handleSubmit() {
   var rs = {};
 
   stripDollars('frais'); stripDollars('judogi');
+  for (var i = 1; i <= MAX_VERSEMENTS; i++) {
+      var l = "versement"+i+"_";
+
+      if (getElementById(l+"montant").value != "")
+	  stripDollars(l+"montant");
+  }
 
   var f = ALL_FIELDS.concat(SERVICE_FIELDS);
   // XXX TODO special case grades (keep history) 
