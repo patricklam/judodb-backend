@@ -8,7 +8,7 @@ var SERVICE_FIELDS = ["date_inscription", "sans_affiliation", "cours", "sessions
                       "escompte", "frais", "cas_special_note",
                       "horaire_special"];
 
-var CHECKBOX_FIELDS = ['non_anjou', 'passeport'];
+var CHECKBOX_FIELDS = ['non_anjou', 'passeport', 'sans_affiliation'];
 var SELECT_FIELDS = ['cours', 'sessions', 'escompte'];
 
 var MULTI_FIELDS = [];

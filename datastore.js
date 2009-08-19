@@ -119,9 +119,9 @@ function storeOneClient(cid, rs) {
   db.execute('DELETE FROM `services` WHERE client_id = ?', [newCid]);
   if (rs.date_inscription != null && rs.date_inscription.length > 0) {
     db.execute('INSERT INTO `services` ' +
-               'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
-               [newCid, null, rs.date_inscription[0], rs.cours[0], 
-                rs.sessions[0], rs.passeport[0], rs.non_anjou[0], 
+               'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
+               [newCid, null, rs.date_inscription[0], rs.sans_affiliation[0],
+                rs.cours[0], rs.sessions[0], rs.passeport[0], rs.non_anjou[0], 
     		rs.judogi[0], rs.escompte[0], rs.frais[0], 
                 rs.cas_special_note[0], rs.horaire_special[0]]);
   }

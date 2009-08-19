@@ -1,5 +1,7 @@
 --- version beta1:
 
+* effacer inscription
+
 * implement table for payment information:
    * a payment applies to a number of users (divide by number of users)
    * payment includes amount, chq#/cash, name

@@ -115,8 +115,10 @@ function calcFrais() {
   price -= escomptePrice;
   getElementById("escompteFrais").value = asCurrency(escomptePrice) + ' $';
 
-  price += categoryPrixJQ(catId);
-  getElementById("affiliationFrais").value = asCurrency(categoryPrixJQ(catId)) + ' $';
+  var judoQCPrice = categoryPrixJQ(catId);
+  if (getElementById("sans_affiliation").checked) judoQCPrice = 0;
+  price += judoQCPrice;
+  getElementById("affiliationFrais").value = asCurrency(judoQCPrice) + ' $';
 
   var ppaPrice = 0;
   if (getElementById("passeport").checked)
