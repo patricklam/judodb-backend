@@ -42,16 +42,16 @@ function refreshResults() {
   var resultBox = getElementById('results');
   resultBox.innerHTML = '';
   for (var i = firstToDisplay; i < min(firstToDisplay+10, clients.length); ++i) {
-    resultBox.innerHTML += '<a href="editclient.html" onClick="createCookie(\'cid\', '+clients[i].id+', 1)">'+clients[i].nom+', '+clients[i].prenom+'</a><br />';
+    resultBox.innerHTML += '<a href="editclient.html" onclick="createCookie(\'cid\', '+clients[i].id+', 1)">'+clients[i].nom+', '+clients[i].prenom+'</a><br />';
   }
 
   if (firstToDisplay > 0 || firstToDisplay + 10 < clients.length) 
     resultBox.innerHTML += '<br />';
 
   if (firstToDisplay + 10 < clients.length)
-    resultBox.innerHTML += '<a href="" onClick="firstToDisplay += 10; refreshResults(); return false;">Résultats suivants<a/>&nbsp;';
+    resultBox.innerHTML += '<a href="" onclick="firstToDisplay += 10; refreshResults(); return false;">Résultats suivants<a/>&nbsp;';
   if (firstToDisplay > 0)
-    resultBox.innerHTML += '<a href="" onClick="firstToDisplay -= 10; refreshResults(); return false;">Résultats précedents</a>&nbsp;';
+    resultBox.innerHTML += '<a href="" onclick="firstToDisplay -= 10; refreshResults(); return false;">Résultats précedents</a>&nbsp;';
 }
 
 function doSearch() {
@@ -117,7 +117,7 @@ function doLogin(arg, successContinuation) {
 }
 </script>
 
-<div id="sync" onClick="loginAndSync()">synchroniser</div></div></p>
+<div id="sync" onclick="loginAndSync()">synchroniser</div></div></p>
 
 <form name="findclient" action="#">
 <div class="sectionBody" style="padding:7px 0 9px 7px;">
@@ -126,8 +126,8 @@ function doLogin(arg, successContinuation) {
   <label class="standardtitle" for="query">Nom ou Prenom</label><br /><br />
   <input id="query" type="text" size="60" value="" maxlength="60">
  </div>
- <input type="submit" value="Recherche" onClick="doSearch(); return false;"/>
- <input type="button" value="Nouvelle client" onClick="location.href='editclient.html';"/>
+ <input type="submit" value="Recherche" onclick="doSearch(); return false;"/>
+ <input type="button" value="Nouvelle client" onclick="eraseCookie('cid'); location.href='editclient.html';"/>
 </form>
 
 <div id="results" style="padding-top:1em">
@@ -141,8 +141,8 @@ function doLogin(arg, successContinuation) {
   <div class="oneper"><label for="password">mot de passe
   <input id="password" type="password" size="16" value="" maxlength="50"></label></div>
   <div class="actions">
-   <a onClick="doLogin(computeResponse(), getElementById('login').onSubmit)">entrer</a> &nbsp; &nbsp; 
-   <a onClick="getElementById('login').style.display='none'">annuler</a>
+   <a onclick="doLogin(computeResponse(), getElementById('login').onSubmit)">entrer</a> &nbsp; &nbsp; 
+   <a onclick="getElementById('login').style.display='none'">annuler</a>
   </div>
 </form>
 </div>
