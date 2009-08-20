@@ -35,7 +35,7 @@
 <fieldset> <legend>Identit&eacute;</legend>
  <div class="threeper">
   <label for="nom">Nom<input id="nom" type="text" size="24" value="" maxlength="50" /></label>
-  <label for="prenom">Prenom<input id="prenom" type="text" size="24" value="" maxlength="50" /></label>
+  <label for="prenom">Prénom<input id="prenom" type="text" size="24" value="" maxlength="50" /></label>
   <label for="ddn">Date de naissance (aaaa-mm-jj)
    <input id="ddn" type="text" size="24" value="" maxlength="50" onchange="ddnChange()" />
   </label>
@@ -145,7 +145,7 @@
    </label>
   </div>
   <div class="fourper">
-   <label for="sans_affiliation">Deja affili&eacute; Judo Qu&eacute;bec
+   <label for="sans_affiliation">Déjà affili&eacute; Judo Qu&eacute;bec
     <input id="sans_affiliation" type="checkbox" onchange="ud(); uFrais()" />
    </label>
    <label for="affiliationFrais" style="float:right">Frais d'affiliation Judo Qu&eacute;bec
@@ -177,14 +177,14 @@
 
  <fieldset> <legend>Versements</legend>
   <div class="fourper">
-   <label for="copay">Paiement partag&eacute; avec
+   <label for="copay">Paiement partag&eacute; avec <span id="copayError" style="color:red; display:none">&nbsp;&nbsp;(erreur!)</span>
     <input id="copay" type="text" size="30" value="" onchange="" />
    </label>
    <label for="frais_famille" style="float:right; display:none" >Frais famille
     <input id="frais_famille" type="text" value="" />
    </label>
   </div>
-  <fieldset id="versement1"><legend>1ère versement</legend>
+  <fieldset id="versement1"><legend>1er versement</legend>
   <div class="fourper">
    <label for="versement1_mode">Mode
     <select id="versement1_mode" onchange="updateModePaiement('1');">
@@ -195,7 +195,7 @@
    <label for="versement1_chqno">Num&eacute;ro du ch&egrave;que
     <input id="versement1_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
-   <label for="versement1_date">Date du cheque
+   <label for="versement1_date">Date du chèque
     <input id="versement1_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement1_montant" style="float:right">Montant
@@ -203,7 +203,7 @@
    </label>
   </div>
   </fieldset>
-  <fieldset id="versement2" style="display:none"><legend>2ième versement</legend>
+  <fieldset id="versement2" style="display:none"><legend>2e versement</legend>
   <div class="fourper">
    <label for="versement2_mode">Mode
     <select id="versement2_mode" onchange="updateModePaiement('2');">
@@ -214,7 +214,7 @@
    <label for="versement2_chqno">Num&eacute;ro du ch&egrave;que
     <input id="versement2_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
-   <label for="versement2_date">Date du cheque
+   <label for="versement2_date">Date du chèque
     <input id="versement2_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement2_montant" style="float:right">Montant
@@ -222,7 +222,7 @@
    </label>
   </div>
   </fieldset>
-  <fieldset id="versement3" style="display:none"><legend>3ième versement</legend>
+  <fieldset id="versement3" style="display:none"><legend>3e versement</legend>
   <div class="fourper">
    <label for="versement3_mode">Mode
     <select id="versement3_mode" onchange="updateModePaiement('3');">
@@ -233,7 +233,7 @@
    <label for="versement3_chqno">Num&eacute;ro du ch&egrave;que
     <input id="versement3_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
-   <label for="versement3_date">Date du cheque
+   <label for="versement3_date">Date du chèque
     <input id="versement3_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement3_montant" style="float:right">Montant
@@ -241,7 +241,7 @@
    </label>
   </div>
   </fieldset>
-  <fieldset id="versement4" style="display:none"><legend>4ième versement</legend>
+  <fieldset id="versement4" style="display:none"><legend>4e versement</legend>
   <div class="fourper">
    <label for="versement4_mode">Mode
     <select id="versement4_mode" onchange="updateModePaiement('4');">
@@ -252,7 +252,7 @@
    <label for="versement4_chqno">Num&eacute;ro du ch&egrave;que
     <input id="versement4_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
-   <label for="versement4_date">Date du cheque
+   <label for="versement4_date">Date du chèque
     <input id="versement4_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement4_montant" style="float:right">Montant
@@ -260,7 +260,7 @@
    </label>
   </div>
   </fieldset>
-  <fieldset id="versement5" style="display:none"><legend>5ième versement</legend>
+  <fieldset id="versement5" style="display:none"><legend>5e versement</legend>
   <div class="fourper">
    <label for="versement5_mode">Mode
     <select id="versement5_mode" onchange="updateModePaiement('5');">
@@ -271,7 +271,7 @@
    <label for="versement5_chqno">Num&eacute;ro du ch&egrave;que
     <input id="versement5_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
-   <label for="versement5_date">Date du cheque
+   <label for="versement5_date">Date du chèque
     <input id="versement5_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement5_montant" style="float:right">Montant

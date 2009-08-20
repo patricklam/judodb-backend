@@ -1,7 +1,13 @@
 --- version beta1:
 
-* effacer inscription
+* validate payment group
+* collect total to collect for payment group
 
+* effacer inscription (table of deletes)
+
+* display last sync
+
+* suggest date for versements
 * implement table for payment information:
    * a payment applies to a number of users (divide by number of users)
    * payment includes amount, chq#/cash, name

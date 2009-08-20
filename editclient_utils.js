@@ -112,7 +112,7 @@ function calcFrais() {
 
   var escompte = parseFloat(getElementById("escompte").value);
   var escomptePrice = -(price * escompte/100);
-  price -= escomptePrice;
+  price += escomptePrice;
   getElementById("escompteFrais").value = asCurrency(escomptePrice) + ' $';
 
   var judoQCPrice = categoryPrixJQ(catId);
