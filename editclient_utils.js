@@ -180,13 +180,11 @@ function enableCustomFrais() {
     getElementById("cas_special_note").value;
 }
 
-function updateModePaiement() {
+function updateModePaiement(i) {
   var dis = false;
-  if (getElementById("mode").value == "2") dis = true;
-  for (var i = 1; i <= MAX_VERSEMENTS; i++) {
-    getElementById("versement"+i+"_chqno").disabled = dis;
-    getElementById("versement"+i+"_date").disabled = dis;
-  }
+  if (getElementById("versement"+i+"_mode").value == "2") dis = true;
+  getElementById("versement"+i+"_chqno").disabled = dis;
+  getElementById("versement"+i+"_date").disabled = dis;
 }
 
 function addOrRemoveVersements() {
@@ -204,12 +202,15 @@ function addOrRemoveVersements() {
 	      var l = "versement"+j+"_";
 	      var m = "versement"+(j+1)+"_";
 
+	      getElementById(l+"mode").value=getElementById(m+"mode").value;
 	      getElementById(l+"chqno").value=getElementById(m+"chqno").value;
 	      getElementById(l+"date").value=getElementById(m+"date").value;
 	      getElementById(l+"montant").value=getElementById(m+"montant").value;
 	  }
 
 	  var m = "versement"+(MAX_VERSEMENTS)+"_";
+	  getElementById(m+"mode").value="1";
+	  getElementById(m+"mode").selectedIndex=0;
 	  getElementById(m+"chqno").value='';
 	  getElementById(m+"date").value='';
 	  getElementById(m+"montant").value='';

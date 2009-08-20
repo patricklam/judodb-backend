@@ -176,21 +176,22 @@
  </fieldset>
 
  <fieldset> <legend>Versements</legend>
-  <div class="oneper">
+  <div class="fourper">
    <label for="copay">Paiement partag&eacute; avec
     <input id="copay" type="text" size="30" value="" onchange="" />
    </label>
-  </div>
-  <div class="oneper">
-   <label for="mode">Mode
-    <select id="mode" onchange="updateModePaiement();">
-     <option value="1">Ch&egrave;que</option>
-     <option value="2">Comptant</option>
-    </select>
+   <label for="frais_famille" style="float:right; display:none" >Frais famille
+    <input id="frais_famille" type="text" value="" />
    </label>
   </div>
   <fieldset id="versement1"><legend>1ère versement</legend>
   <div class="fourper">
+   <label for="versement1_mode">Mode
+    <select id="versement1_mode" onchange="updateModePaiement('1');">
+     <option value="1">Ch&egrave;que</option>
+     <option value="2">Comptant</option>
+    </select>
+   </label>
    <label for="versement1_chqno">Num&eacute;ro du ch&egrave;que
     <input id="versement1_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
@@ -204,6 +205,12 @@
   </fieldset>
   <fieldset id="versement2" style="display:none"><legend>2ième versement</legend>
   <div class="fourper">
+   <label for="versement2_mode">Mode
+    <select id="versement2_mode" onchange="updateModePaiement('2');">
+     <option value="1">Ch&egrave;que</option>
+     <option value="2">Comptant</option>
+    </select>
+   </label>
    <label for="versement2_chqno">Num&eacute;ro du ch&egrave;que
     <input id="versement2_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
@@ -217,6 +224,12 @@
   </fieldset>
   <fieldset id="versement3" style="display:none"><legend>3ième versement</legend>
   <div class="fourper">
+   <label for="versement3_mode">Mode
+    <select id="versement3_mode" onchange="updateModePaiement('3');">
+     <option value="1">Ch&egrave;que</option>
+     <option value="2">Comptant</option>
+    </select>
+   </label>
    <label for="versement3_chqno">Num&eacute;ro du ch&egrave;que
     <input id="versement3_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
@@ -230,6 +243,12 @@
   </fieldset>
   <fieldset id="versement4" style="display:none"><legend>4ième versement</legend>
   <div class="fourper">
+   <label for="versement4_mode">Mode
+    <select id="versement4_mode" onchange="updateModePaiement('4');">
+     <option value="1">Ch&egrave;que</option>
+     <option value="2">Comptant</option>
+    </select>
+   </label>
    <label for="versement4_chqno">Num&eacute;ro du ch&egrave;que
     <input id="versement4_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
@@ -243,6 +262,12 @@
   </fieldset>
   <fieldset id="versement5" style="display:none"><legend>5ième versement</legend>
   <div class="fourper">
+   <label for="versement5_mode">Mode
+    <select id="versement5_mode" onchange="updateModePaiement('5');">
+     <option value="1">Ch&egrave;que</option>
+     <option value="2">Comptant</option>
+    </select>
+   </label>
    <label for="versement5_chqno">Num&eacute;ro du ch&egrave;que
     <input id="versement5_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
    </label>
