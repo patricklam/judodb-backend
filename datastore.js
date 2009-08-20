@@ -1,4 +1,4 @@
-var activeRequests = 0; var MAX_REQUESTS = 3;
+var activeRequests = 0; var MAX_REQUESTS = 2;
 
 function DataStore() {
 }
@@ -66,7 +66,7 @@ DataStore.prototype.init = function() {
 function pullEntry(cid, sid) {
   function integrateEntry(status, statusText, responseText, responseXML) {
     if (status != '200') {
-	setError('Problème de connexion: pullEntry.');
+	setError('Problème de connexion: pullEntry ('+status+')');
         setTimeout(clearStatus, 1000);
         return null;
     }
@@ -180,6 +180,7 @@ function pushOneEntry(handler, body) {
     setTimer(function() { pushOneEntry(handler, body); }, 100);
 
   activeRequests++;
+    // should probably actually be PUT, not POST.
   doRequest("POST", "push_one_client.php", null, handler, body);
   activeRequests--;
 }
