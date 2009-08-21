@@ -177,9 +177,9 @@
  <fieldset> <legend>Versements</legend>
   <div class="fourper">
    <label for="copay" style="width:40%">Paiement partag&eacute; avec <span id="copayError" style="color:red; display:none">&nbsp;&nbsp;(erreur!)</span>
-    <input id="copay" type="text" size="30" value="" onchange="" />
+    <input id="copay" type="text" size="30" value="" onchange="updateFraisFamille()" />
    </label>
-   <label for="frais_famille" style="float:right; display:none" >Frais famille
+   <label for="frais_famille" style="float:right" >Frais famille
     <input id="frais_famille" type="text" value="" />
    </label>
   </div>
@@ -198,7 +198,7 @@
     <input id="versement1_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement1_montant" style="float:right">Montant
-    <input id="versement1_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
+    <input id="versement1_montant" type="text" value="" size="5" onchange="uSolde(); addOrRemoveVersements();" />
    </label>
   </div>
   </fieldset>
@@ -217,7 +217,7 @@
     <input id="versement2_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement2_montant" style="float:right">Montant
-    <input id="versement2_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
+    <input id="versement2_montant" type="text" value="" size="5" onchange="uSolde(); addOrRemoveVersements();" />
    </label>
   </div>
   </fieldset>
@@ -236,7 +236,7 @@
     <input id="versement3_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement3_montant" style="float:right">Montant
-    <input id="versement3_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
+    <input id="versement3_montant" type="text" value="" size="5" onchange="uSolde(); addOrRemoveVersements();" />
    </label>
   </div>
   </fieldset>
@@ -255,7 +255,7 @@
     <input id="versement4_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement4_montant" style="float:right">Montant
-    <input id="versement4_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
+    <input id="versement4_montant" type="text" value="" size="5" onchange="uSolde(); addOrRemoveVersements();" />
    </label>
   </div>
   </fieldset>
@@ -274,7 +274,7 @@
     <input id="versement5_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement5_montant" style="float:right">Montant
-    <input id="versement5_montant" type="text" value="" size="5" onchange="addOrRemoveVersements(); uSolde();" />
+    <input id="versement5_montant" type="text" value="" size="5" onchange="uSolde(); addOrRemoveVersements();" />
    </label>
   </div>
   </fieldset>

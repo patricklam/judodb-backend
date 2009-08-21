@@ -264,6 +264,12 @@ function pushToServer() {
   rs.close();
 }
 
+function isValidClient(n) {
+  var nt = n.trim();
+  var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE UPPER(prenom||" "||nom) = UPPER(?) OR UPPER(nom||" "||prenom) = UPPER(?)', [nt, nt]);
+  return rs.field(0);
+}
+
 DataStore.prototype.sync = function() {
   addStatus("un instant...");
 

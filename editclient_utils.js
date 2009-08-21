@@ -20,6 +20,7 @@ function localInit() {
   updateBlurb();
   uFrais();
   enableCustomFrais();
+  updateFraisFamille();
   clearStatus();
 }
 
@@ -62,7 +63,7 @@ function populateClient() {
     getElementById(cf).value = getElementById(cf).checked;
   }
 
-  addDollars('frais'); addDollars('judogi');
+  addDollarsById('frais'); addDollarsById('judogi');
 }
 
 function populateCoursEscomptes() {
@@ -85,21 +86,24 @@ function updateCarteAnjou() {
 		  (getElementById("carte_anjou").value == '');
 }
 
-function addDollars(id) {
+function addDollarsById(id) {
   var v = getElementById(id).value;
   if (v == '') return;
 
-  stripDollars(id);
+  stripDollarsById(id);
   getElementById(id).value += ' $';
 }
 
-function stripDollars(id) {
-  var v = getElementById(id).value;
-  if (v == '') return;
+function stripDollars(v) {
+  if (v == '') return v;
 
   if (v.substring(v.length-1, v.length) == '$')
     v = v.substring(v, v.length-1);
-  getElementById(id).value = v.trim();
+  return v.trim();    
+}
+
+function stripDollarsById(id) {
+  getElementById(id).value = stripDollars(getElementById(id).value);
 }
 
 // Does not modify the frais field, but does update all other subtotalling.
@@ -183,10 +187,10 @@ function enableCustomFrais() {
 }
 
 function updateModePaiement(i) {
-  var dis = false;
-  if (getElementById("versement"+i+"_mode").value == "2") dis = true;
-  getElementById("versement"+i+"_chqno").disabled = dis;
-  getElementById("versement"+i+"_date").disabled = dis;
+  var dis = "block";
+  if (getElementById("versement"+i+"_mode").value == "2") dis = "none";
+  getElementById("versement"+i+"_chqno").parentNode.style.display = dis;
+  getElementById("versement"+i+"_date").parentNode.style.display = dis;
 }
 
 function addOrRemoveVersements() {
@@ -195,10 +199,9 @@ function addOrRemoveVersements() {
       var l = "versement"+i+"_";
 
       if (getElementById(l+"montant").value != "")
-	  addDollars(l+"montant");
+	  addDollarsById(l+"montant");
 
       if (getElementById(l+"chqno").value=="" &&
-	  getElementById(l+"date").value=="" &&
 	  getElementById(l+"montant").value=="") {
 	  for (var j = i; j < MAX_VERSEMENTS; j++) {
 	      var l = "versement"+j+"_";
@@ -222,6 +225,8 @@ function addOrRemoveVersements() {
   if (getElementById("versement1_date").value == "")
     getElementById("versement1_date").value = formatDate(new Date());
 
+  var needMore = parseFloat(stripDollars(getElementById("solde").value)) > 0.0;
+
   for (var i = 2; i <= MAX_VERSEMENTS; i++) {
       var l = "versement"+i;
       getElementById(l).style.display="block";
@@ -229,7 +234,7 @@ function addOrRemoveVersements() {
 	  getElementById(l+"_date").value = SUGGESTED_PAIEMENTS[i-1];
       if (getElementById(l+"_chqno").value=="" &&
 	  getElementById(l+"_montant").value=="") {
-	  for (var j = i+1; j <= MAX_VERSEMENTS; j++) {
+	  for (var j = i + (needMore ? 1 : 0); j <= MAX_VERSEMENTS; j++) {
 	      var m = "versement"+j;
 	      getElementById(m).style.display='none';
 	  }
@@ -239,18 +244,76 @@ function addOrRemoveVersements() {
 }
 
 function uSolde() {
-  getElementById("solde").value = getElementById("frais").value;    
+  var versements = 0;
+  for (var i = 1; i <= MAX_VERSEMENTS; i++) {
+    var fn = "versement"+i+"_montant";
+    stripDollarsById(fn);
+    var v = getElementById(fn).value.trim();
+    addDollarsById(fn);
+    if (v != '')
+      versements += parseFloat(v);
+  }
+  getElementById("solde").value = 
+	parseFloat(getElementById("frais").value) - versements;
+  addDollarsById("solde");
+}
+
+function noPaiementGroup() {
+  var ff = getElementById("frais_famille");
+  ff.parentNode.style.display = "none";
+  ff.value = "";
+}
+
+function updateFraisFamille() {
+  getElementById("copayError").style.display = "none";
+  var gs = getElementById("copay").value;
+  if (gs == "") { 
+    noPaiementGroup();
+    return;
+  }
+
+  var group = gs.split(",");
+  var foundSelf = false;
+  var selfNom = getElementById("nom").value;
+  var selfPrenom = getElementById("prenom").value;
+  var selfName1 = (selfNom + " " + selfPrenom).toUpperCase();
+  var selfName2 = (selfPrenom + " " + selfNom).toUpperCase();
+
+  // validate, then sum
+  for (g in group) {
+    if (!isValidClient(group[g])) {
+	noPaiementGroup(); 
+	getElementById("copayError").style.display = "inline";
+	return;
+    }
+    if (group[g].toUpperCase() == selfName1 || 
+	group[g].toUpperCase() == selfName2)
+	foundSelf = true;
+  }
+
+  if (!foundSelf) group = group.concat([selfName2]);
+
+  var fraisTotal = 0.0;
+  for (g in group) {
+    var nt = group[g].trim();
+    var rs = db.execute('SELECT frais FROM `client` JOIN `services` WHERE (UPPER(prenom||" "||nom) = UPPER(?) OR UPPER(nom||" "||prenom) = UPPER(?)) AND services.client_id=client.id', [nt, nt]);
+    fraisTotal += parseFloat(rs.field(0));
+  }
+
+  getElementById("frais_famille").parentNode.style.display = "block";
+  getElementById("frais_famille").value = fraisTotal;
+  addDollarsById("frais_famille");
 }
 
 function handleSubmit() {
   var rs = {};
 
-  stripDollars('frais'); stripDollars('judogi');
+  stripDollarsById('frais'); stripDollarsById('judogi');
   for (var i = 1; i <= MAX_VERSEMENTS; i++) {
       var l = "versement"+i+"_";
 
       if (getElementById(l+"montant").value != "")
-	  stripDollars(l+"montant");
+	  stripDollarsById(l+"montant");
   }
 
   var f = ALL_FIELDS.concat(SERVICE_FIELDS);
@@ -286,7 +349,7 @@ function handleSubmit() {
 
   cid = storeOneClient(cid, rs);
 
-  addDollars('frais'); addDollars('judogi');
+  addDollarsById('frais'); addDollarsById('judogi');
 
   clearStatus(); addStatus("Sauvegardé."); setTimeout('clearStatus()', 3000);
 }
