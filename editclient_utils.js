@@ -219,11 +219,15 @@ function addOrRemoveVersements() {
       }
   }
 
+  if (getElementById("versement1_date").value == "")
+    getElementById("versement1_date").value = formatDate(new Date());
+
   for (var i = 2; i <= MAX_VERSEMENTS; i++) {
       var l = "versement"+i;
       getElementById(l).style.display="block";
+      if (getElementById(l+"_date").value=="" && SUGGESTED_PAIEMENTS[i-1] != "")
+	  getElementById(l+"_date").value = SUGGESTED_PAIEMENTS[i-1];
       if (getElementById(l+"_chqno").value=="" &&
-	  getElementById(l+"_date").value=="" &&
 	  getElementById(l+"_montant").value=="") {
 	  for (var j = i+1; j <= MAX_VERSEMENTS; j++) {
 	      var m = "versement"+j;
@@ -333,7 +337,7 @@ function updateBlurb() {
 		     "__________________________, parent ou tuteur du membre,");
     newBlurb = newBlurb.replace("*mp*", "parent");
   }
-  newBlurb = newBlurb.replace("*today*", ny+"-"+nm+"-"+nd);
+  newBlurb = newBlurb.replace("*today*", formatDate(today));
   getElementById("blurb").innerHTML = newBlurb;
 }
 
