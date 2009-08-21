@@ -15,8 +15,24 @@ body {
   font-size: 8pt;
 }
 
+label {
+  color: #888;
+}
+
 .noprint { 
   display: none; 
+}
+
+.casMedical {
+  position: fixed;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  padding-top: 0.1em; padding-bottom: 0.1em;
+  width: 20em;
+  display: block;
+  border: solid;
+  top: 12em;
+  right: 0;
 }
 
 #status {
@@ -40,6 +56,15 @@ legend {
 
 legend .versement {
  display:block;
+}
+
+#identite label input {
+ font-size: large;
+ font-weight: bold;
+}
+
+#identite {
+ width: auto;
 }
 
 .actions {

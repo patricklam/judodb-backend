@@ -22,6 +22,16 @@
 <h1 class="title">Renseignements judoka</h1>
 <div><span id="status">&nbsp;</span></div>
 
+<div class="casMedical">
+<p>L'état médical du judoka inscrit requiert de remplir une fiche médicale
+plus approfondie.</p>
+<p style="padding-left: 1em">
+ <span style="border:solid">&nbsp;&nbsp;&nbsp;&nbsp;</span> OUI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ <span style="border:solid">&nbsp;&nbsp;&nbsp;&nbsp;</span> NON
+</p>
+<p>Initiales ______</p>
+</div>
+
 <form name="client" class="compactform" onsubmit="handleSubmit(); return false;" action="#">
 
 <input type="hidden" id="cid" value="" />
@@ -34,10 +44,10 @@
 <input id="old_cas_special_note" type="hidden" value="" />
 
 <fieldset> <legend>Identit&eacute;</legend>
- <div class="threeper">
-  <label for="nom">Nom<input id="nom" type="text" size="24" value="" maxlength="50" /></label>
-  <label for="prenom">Prénom<input id="prenom" type="text" size="24" value="" maxlength="50" /></label>
-  <label for="ddn">Date de naissance (aaaa-mm-jj)
+ <div class="threeper" id="identite">
+  <label for="nom"><span class="noprint">Nom</span><input id="nom" type="text" size="24" value="" maxlength="50" /></label>
+  <label for="prenom"><span class="noprint">Prénom</span><input id="prenom" type="text" size="24" value="" maxlength="50" /></label>
+  <label for="ddn"><span class="noprint">Date de naissance (aaaa-mm-jj)</span>
    <input id="ddn" type="text" size="24" value="" maxlength="50" onchange="ddnChange()" />
   </label>
  </div>
@@ -45,15 +55,15 @@
 
 <fieldset> <legend>Adresse</legend>
  <div class="oneper">
-  <label for="adresse">Adresse
+  <label for="adresse"><span class="noprint"Adresse</span>
    <input id="adresse" type="text" size="60" value="" maxlength="80" />
   </label>
  </div>
  <div class="fourper">
-  <label for="ville">Ville
+  <label for="ville"><span class="noprint"Ville</span>
     <input id="ville" type="text" size="16" value="" maxlength="50" />
   </label>
-  <label for="tel">Code postal
+  <label for="tel"><span class="noprint">Code postal</span>
     <input id="code_postal" type="text" size="10" value="" maxlength="20"
 	   onchange="this.value = this.value.toUpperCase()" />
   </label>
@@ -80,7 +90,7 @@
     <input id="carte_anjou" type="text" size="19" value="" maxlength="20" onchange="updateCarteAnjou()" />
    </label>
   </div>
- <div class="oneper">
+ <div class="twoper">
    <label for="nom_recu_impot">Nom re&ccedil;u imp&ocirc;t
     <input id="nom_recu_impot" type="text" size="40" value="" maxlength="50" /> 
    </label>

@@ -15,6 +15,10 @@ h1 {
   margin-bottom:0.5em;
 }
 
+casMedical {
+  display:none;
+}
+
 #status {
   position:absolute;
   left:45%;
