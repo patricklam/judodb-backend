@@ -7,6 +7,7 @@ var cc = gup("cid"); if (cc != null) cid = cc;
 
 var catId;
 var db;
+var origBlurb = getElementById("blurb").innerHTML;
 
 store = new DataStore();
 store.init();
@@ -16,6 +17,7 @@ function localInit() {
   populateCoursEscomptes();
   if (cid)
     populateClient(cid);
+  updateBlurb();
   uFrais();
   enableCustomFrais();
   clearStatus();
@@ -307,7 +309,32 @@ function ddnChange() {
     setError("Date de naissance invalide.");
     setTimeout(function () { getElementById("ddn").focus(); }, 1);
   }
-  oldDDN = ddn;
+  var newDDN = getElementById("ddn").value;
+  oldDDN = newDDN;
+  updateBlurb();
+}
+
+function updateBlurb() {
+  var newDDN = getElementById("ddn").value;
+  var today = new Date();
+  var d = newDDN.split("-");
+  var by = parseInt(d[0]), bm = parseInt(d[1], 10)-1, bd = parseInt(d[2], 10);
+  var ny = today.getFullYear(), nm = today.getMonth(), nd = today.getDate();
+
+  var y = ny - by; if (bm > nm || (bm == nm && bd > nd)) y--;
+
+  var newBlurb = origBlurb;
+  var nom = getElementById("prenom").value + " " + getElementById("nom").value;
+  if (y >= 18) {
+    newBlurb = newBlurb.replace("*nom*", nom);
+    newBlurb = newBlurb.replace("*mp*", "membre");
+  } else {
+    newBlurb = newBlurb.replace("*nom*", 
+		     "__________________________, parent ou tuteur du membre,");
+    newBlurb = newBlurb.replace("*mp*", "parent");
+  }
+  newBlurb = newBlurb.replace("*today*", ny+"-"+nm+"-"+nd);
+  getElementById("blurb").innerHTML = newBlurb;
 }
 
 function updateCategorie() {

@@ -1,28 +1,28 @@
-.standardtitle { font-weight:bold; }
+html {
+  margin: 0;
+}
+
+body {
+  margin: 0;
+}
+
+.title {
+  display: none;
+}
 
 body {
   font-family: arial, sans-serif;
-  font-size: 83%;
-  background: white;
-  margin: 1.5em;
+  font-size: 8pt;
 }
 
-h1 {
-  background: #FFF4C2;
-  font-size: 135%;
-  padding: 0.1em 0 0.1em 3px;
-  border-top: 1px solid #FFCC33;
-  margin-bottom:0.5em;
+.noprint { 
+  display: none; 
 }
 
 #status {
   position:absolute;
   left:45%;
   padding:0.3em;
-}
-
-.error {
-  color: red;
 }
 
 #sync {
@@ -34,15 +34,16 @@ h1 {
   color: blue;
 }
 
-#login {
- position:absolute;
- padding: 1em;
- top:25%; left:40%; background:#ccc;
- cursor: pointer;
+legend {
+ display:none;
 }
 
-.actions a {
- color: blue;
+legend .versement {
+ display:block;
+}
+
+.actions {
+ display:none;
 }
 
 /* Inspired by http://2tbsp.com/content/flexible_and_efficient_htmlcss_form_layout */
@@ -51,12 +52,7 @@ h1 {
 form, fieldset, label, input, .checkbox, textarea, select, option, form div {
   margin: 0;
   padding: 0;
-}
-
-fieldset {
-  margin: 1em 0;
-  padding: 1em;
-  border: 1px solid #999;
+  border: 0;
 }
 
 legend {
@@ -68,6 +64,15 @@ option {
   float: none;
   clear: both;
   margin-right: 2em;
+}
+
+input {
+  border:none;
+  font-size:8pt;
+}
+
+select {
+  font-size:8pt;
 }
 
 input.radio, input.checkbox { 
@@ -155,5 +160,5 @@ input.text, input.button, textarea, select {
 }
 
 #blurb {
-  display: none;
+  display: block;
 }

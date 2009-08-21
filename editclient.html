@@ -7,6 +7,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link rel="shortcut icon" href="/files/favicon.ico" type="image/x-icon" />
   <style type="text/css" media="all">@import "styles.css";</style>
+  <style type="text/css" media="print">@import "print.css";</style>
 </head>
 
 <body>
@@ -18,7 +19,7 @@
 <script type="text/javascript"  src="utils.js"></script>
 <script type="text/javascript"  src="cookie.js"></script>
 
-<h1>Renseignements judoka</h1>
+<h1 class="title">Renseignements judoka</h1>
 <div><span id="status">&nbsp;</span></div>
 
 <form name="client" class="compactform" onsubmit="handleSubmit(); return false;" action="#">
@@ -70,12 +71,12 @@
    <label for="affiliation">Num&eacute;ro Judo Qu&eacute;bec
     <input id="affiliation" type="text" size="10" value="" maxlength="20" />
    </label>
-   <label for="grade">Grade judo (<a href="#" onclick="alert('Pas encore disponible.'); return false;">histoire</a>)
+   <label for="grade">Grade judo <span class="noprint">(<a href="#" onclick="alert('Pas encore disponible.'); return false;">histoire</a>)</span>
     <input id="grade" type="text" size="10" value="" maxlength="20" onchange="updateCategorie()" /></label>
    <label for="date_grade">Date du grade
     <input id="date_grade" type="text" size="10" value="" maxlength="20" />
    </label>
-   <label for="carte_anjou">Num&eacute;ro arrondissement Anjou
+   <label for="carte_anjou">N° arrondissement Anjou
     <input id="carte_anjou" type="text" size="19" value="" maxlength="20" onchange="updateCarteAnjou()" />
    </label>
   </div>
@@ -83,15 +84,13 @@
    <label for="nom_recu_impot">Nom re&ccedil;u imp&ocirc;t
     <input id="nom_recu_impot" type="text" size="40" value="" maxlength="50" /> 
    </label>
+   <label for="RAMQ">N° RAMQ
+    <input id="RAMQ" type="text" size="20" value="" maxlength="20" />
+   </label>
  </div>
  </fieldset>
 
  <fieldset> <legend>Urgence</legend>
-  <div class="oneper">
-    <label for="RAMQ">N<sup>o</sup> RAMQ
-     <input id="RAMQ" type="text" size="20" value="" maxlength="20" />
-    </label>
-  </div>
   <div class="twoper">
    <label for="nom_contact_urgence">Contact en cas d'urgence
     <input id="nom_contact_urgence" type="text" size="30" value="" maxlength="50" />
@@ -110,22 +109,22 @@
     <input id="saisons" type="text" value="" disabled="disabled" />
    </label>
   </div>
-  <div class="twoper">
-   <label for="cours">Cours
+  <div class="fourper">
+   <label for="cours" style="width:46%">Cours
     <select id="cours" onchange="ud();">
      <option />
     </select>
    </label>
-   <label for="sessions" style="width:5em">Sessions
+   <label for="horaire_special">Horaire sp&eacute;cial
+    <input id="horaire_special" type="text" value="" onchange="ud(); uFrais()" />
+   </label>
+   <label for="sessions" style="float:right">Sessions
     <select id="sessions" onchange="ud(); uFrais()">
      <option value="1">1</option>
      <option value="2">2</option>
     </select>
    </label>
   </div>
-  <label for="horaire_special">Horaire sp&eacute;cial
-    <input id="horaire_special" type="text" value="" onchange="ud(); uFrais()" />
-  </label>
   <div class="fourper">
    <label for="categorie">Cat&eacute;gorie d'&acirc;ge
     <input id="categorie" type="text" value="" onchange="uFrais()" disabled="disabled" />
@@ -148,7 +147,7 @@
    <label for="sans_affiliation">Déjà affili&eacute; Judo Qu&eacute;bec
     <input id="sans_affiliation" type="checkbox" onchange="ud(); uFrais()" />
    </label>
-   <label for="affiliationFrais" style="float:right">Frais d'affiliation Judo Qu&eacute;bec
+   <label for="affiliationFrais" style="float:right">Affiliation Judo Qu&eacute;bec
     <input id="affiliationFrais" type="text" value="" disabled="disabled" />
    </label>
   </div>
@@ -177,14 +176,14 @@
 
  <fieldset> <legend>Versements</legend>
   <div class="fourper">
-   <label for="copay">Paiement partag&eacute; avec <span id="copayError" style="color:red; display:none">&nbsp;&nbsp;(erreur!)</span>
+   <label for="copay" style="width:40%">Paiement partag&eacute; avec <span id="copayError" style="color:red; display:none">&nbsp;&nbsp;(erreur!)</span>
     <input id="copay" type="text" size="30" value="" onchange="" />
    </label>
    <label for="frais_famille" style="float:right; display:none" >Frais famille
     <input id="frais_famille" type="text" value="" />
    </label>
   </div>
-  <fieldset id="versement1"><legend>1er versement</legend>
+  <fieldset id="versement1" class="versement"><legend>1er versement</legend>
   <div class="fourper">
    <label for="versement1_mode">Mode
     <select id="versement1_mode" onchange="updateModePaiement('1');">
@@ -203,7 +202,7 @@
    </label>
   </div>
   </fieldset>
-  <fieldset id="versement2" style="display:none"><legend>2e versement</legend>
+  <fieldset id="versement2" class="versement" style="display:none"><legend>2e versement</legend>
   <div class="fourper">
    <label for="versement2_mode">Mode
     <select id="versement2_mode" onchange="updateModePaiement('2');">
@@ -222,7 +221,7 @@
    </label>
   </div>
   </fieldset>
-  <fieldset id="versement3" style="display:none"><legend>3e versement</legend>
+  <fieldset id="versement3" class="versement" style="display:none"><legend>3e versement</legend>
   <div class="fourper">
    <label for="versement3_mode">Mode
     <select id="versement3_mode" onchange="updateModePaiement('3');">
@@ -241,7 +240,7 @@
    </label>
   </div>
   </fieldset>
-  <fieldset id="versement4" style="display:none"><legend>4e versement</legend>
+  <fieldset id="versement4" class="versement" style="display:none"><legend>4e versement</legend>
   <div class="fourper">
    <label for="versement4_mode">Mode
     <select id="versement4_mode" onchange="updateModePaiement('4');">
@@ -260,7 +259,7 @@
    </label>
   </div>
   </fieldset>
-  <fieldset id="versement5" style="display:none"><legend>5e versement</legend>
+  <fieldset id="versement5" class="versement" style="display:none"><legend>5e versement</legend>
   <div class="fourper">
    <label for="versement5_mode">Mode
     <select id="versement5_mode" onchange="updateModePaiement('5');">
@@ -297,6 +296,25 @@
   <span style="padding-right:10em">&nbsp;</span>
   <a href="clients.html">Annuler</a>
 </div>
+</div>
+
+<div id="blurb">
+<p>Je *nom* certifie que les informations inscrites sur ce formulaire
+sont véridiques. J'adhère au Club Judo Anjou. J'accepte tous les
+risques d'accident liés à la pratique du judo qui pourraient survenir
+dans les locaux ou lors d'activités extérieurs organisées par le Club.
+J'accepte de respecter les règlements du Club.</p>
+
+<h4>Politique de remboursement</h4>
+
+<p>Aucun remboursement ne sera accordé sans présentation d'un
+certificat médical du participant. Seuls les frais de cours
+correspondant à la période restante sont remboursables. En cas
+d'annulation par le participant, un crédit pourra être émis par le
+Club, pour les frais de cours correspondant à la période restante.</p>
+
+<p>Signature *mp*: <span width="20em" style="text-style:underline">&nbsp;</span> <span style="float:right">Date: _________</span></p>
+<p>Signature résponsable du club: <span width="20em" style="text-style:underline">&nbsp;</span> <span style="float:right">Date: *today*</span></p>
 </div>
 
 <script type="text/javascript"  src="editclient_utils.js"></script>
