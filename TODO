@@ -2,8 +2,6 @@
 
 * effacer inscription (table of deletes)
 
-* display last sync
-
 * store payment group (what if you're merging groups?!)
 * store payments
 * implement table for payment information:
@@ -18,6 +16,8 @@
 * tweak list of stored html files locally with gears
 
 --- later:
+
+* autosuggest for payment groups
 
 * implement merges/conflicts
 * view/edit grade history 

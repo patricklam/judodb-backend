@@ -9,6 +9,7 @@ var db;
 createManagedStore();
 store = new DataStore();
 store.init();
+updateLastSync();
 
 var clients = [];
 var firstToDisplay = 0;
@@ -56,6 +57,7 @@ function loginAndSync() {
   function lsCheckLogin_(status, statusText, responseText, responseXML) {
     if (status == '200') {
       store.sync();
+      doRequest("POST", "update_last_sync.php", {didSync:1}, function (s,st,r,rx) {}, null);
       return;
     }
     doRequest("GET", "request_challenge.php", null, lsGotChallenge_, null);
@@ -87,6 +89,21 @@ function doLogin(arg, successContinuation) {
     } else {
       setError("Mot de passe invalide.");
       setTimeout(clearStatus, 1000);
+    }
+  }
+}
+
+function updateLastSync() {
+  var bail = doRequest
+    ("POST", "update_last_sync.php", null, printLastSync_, null);
+  setTimeout(bail, 1000);
+  function printLastSync_(status, statusText, responseText, responseXML) {
+    if (status == '200') {
+      var ls = responseXML.childNodes[0].childNodes;
+      getElementById("lastSync").innerHTML = 
+	    "dernier sync par " + 
+	    ls[0].textContent + " à " + 
+	    ls[1].textContent;
     }
   }
 }

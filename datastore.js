@@ -56,6 +56,12 @@ DataStore.prototype.init = function() {
 	     '`cas_special_note` varchar(50), '+
 	     '`horaire_special` varchar(50) '+
              ')');
+    db.execute('create table if not exists `payment_groups` (' +
+	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
+	     '`server_group_id` INTEGER)');
+    db.execute('create table if not exists `payment_group_members` (' +
+	     '`group_id` INTEGER,' +
+	     '`client_id` INTEGER)');
     } catch (ex) {
       setError('Could not create database: ' + ex.message);
     }
@@ -96,7 +102,8 @@ function pullEntry(cid, sid) {
   activeRequests--;
 }
 
-// for rs from either server or, adds rs information to client db.
+// Both server and form create rs objects.
+// Adds rs information to client db, trampling old cid information.
 function storeOneClient(cid, rs) {
   db.execute('INSERT OR REPLACE INTO `client` ' +
              'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
@@ -109,14 +116,13 @@ function storeOneClient(cid, rs) {
 
   var newCid = db.lastInsertRowId;
 
-    // XXX we currently overwrite old grades information; must merge
+    // XXX eventually write out the whole array
   db.execute('DELETE FROM `grades` WHERE client_id = ?', [newCid]);
   if (rs.grade != null && rs.grade.length > 0) {
     db.execute('INSERT INTO `grades` VALUES (?, ?, ?, ?)',
                [newCid, null, rs.grade[0], rs.date_grade[0]]);
   }
 
-    // XXX for now, we overwrite all old signups; fix this later.
   db.execute('DELETE FROM `services` WHERE client_id = ?', [newCid]);
   if (rs.date_inscription != null && rs.date_inscription.length > 0) {
     db.execute('INSERT INTO `services` ' +
@@ -126,6 +132,29 @@ function storeOneClient(cid, rs) {
                 rs.cours[0], rs.sessions[0], rs.passeport[0], rs.non_anjou[0], 
     		rs.judogi[0], rs.escompte[0], rs.frais[0], 
                 rs.cas_special_note[0], rs.horaire_special[0]]);
+
+  var gidCountRS = db.execute('SELECT COUNT(`group_id`) FROM `payment_group_members` WHERE client_id = ?', [newCid]);
+  var count = gidCountRS.field(0);
+
+  if (count > 1) {
+    // > 1 group: wipe out all payment groups containing cid
+      var gids = db.execute('SELECT `group_id` FROM `payment_group_members` WHERE client_id = ?', [newCid]);
+      while (gids.isValidRow()) {
+	  var gid = gids.field(0);
+	  db.execute('DELETE FROM `payment_group_members` WHERE group_id = ?', [gid]);
+	  db.execute('DELETE FROM `payment_groups` WHERE id = ?', [gid]);
+	  gid.next();
+      }
+  }
+
+  var gid;
+  if (count > 1 || count == 0) {
+      db.execute('INSERT INTO `payment_groups` VALUE (?, ?)', [null, -1]);
+      
+  }
+  else {
+      var gids = db.execute('SELECT `group_id` FROM `payment_group_members` WHERE client_id = ?', [newCid]);
+      gid = gids.field(0);     
   }
 
   return newCid;
