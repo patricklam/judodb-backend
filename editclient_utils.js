@@ -19,6 +19,7 @@ function localInit() {
     populateClient(cid);
   updateBlurb();
   uFrais();
+  addOrRemoveVersements();
   enableCustomFrais();
   updateNom();
   clearStatus();
@@ -74,6 +75,23 @@ function populateClient() {
     getElementById('copay').value = p;
   }
 
+  var pm = db.execute('select distinct p.* from `payment` as p, `payment_group_members` as pgm where p.client_id = ? or (pgm.client_id = ? and p.group_id=pgm.group_id)', [cid, cid]);
+
+  if (pm) {
+    var paiementNumber = 1;
+    while (pm.isValidRow()) {
+	var l = "versement"+paiementNumber+"_";
+	for (v in VERSEMENT_FIELDS) {
+	    var vf = VERSEMENT_FIELDS[v];
+	    getElementById(l+vf).value = pm.fieldByName(vf);
+	}
+
+	pm.next();
+	paiementNumber++; if (paiementNumber > MAX_VERSEMENTS) break;
+    }
+  }
+
+
   addDollarsById('frais'); addDollarsById('judogi');
 }
 
@@ -110,6 +128,10 @@ function stripDollars(v) {
 
   if (v.substring(v.length-1, v.length) == '$')
     v = v.substring(v, v.length-1);
+
+  if (v.substring(0, 1) == '$')
+    v = v.substring(1);
+
   return v.trim();    
 }
 
@@ -176,8 +198,8 @@ function ud() {
 function uFrais() {
   getElementById("saisons").value = calcSaison();
   getElementById("frais").value = calcFrais();
-  uSolde();
   uFraisFamille();
+  uSolde();
 }
 
 function enableCustomFrais() {
@@ -213,8 +235,7 @@ function addOrRemoveVersements() {
       if (getElementById(l+"montant").value != "")
 	  addDollarsById(l+"montant");
 
-      if (getElementById(l+"chqno").value=="" &&
-	  getElementById(l+"montant").value=="") {
+      if (paiementEmpty(i)) {
 	  for (var j = i; j < MAX_VERSEMENTS; j++) {
 	      var l = "versement"+j+"_";
 	      var m = "versement"+(j+1)+"_";
@@ -265,8 +286,12 @@ function uSolde() {
     if (v != '')
       versements += parseFloat(v);
   }
+  var total = getElementById("frais").value;
+  if (getElementById("frais_famille").style.display != "none")
+      total = getElementById("frais_famille").value;
+
   getElementById("solde").value = 
-	parseFloat(getElementById("frais").value) - versements;
+	parseFloat(total) - versements;
   addDollarsById("solde");
 }
 
@@ -337,6 +362,12 @@ function uFraisFamille() {
   addDollarsById("frais_famille");
 }
 
+function paiementEmpty(p) {
+    var l = "versement"+p+"_";
+    return getElementById(l+"chqno").value=="" &&
+	getElementById(l+"montant").value=="";
+}
+
 function handleSubmit() {
   var rs = {};
 
@@ -390,6 +421,18 @@ function handleSubmit() {
         var cc = db.execute('SELECT id FROM `client` WHERE UPPER(prenom||" "||nom) = ? OR UPPER(nom||" "||prenom) = ?', [nt, nt]);
 	rs.pgm = rs.pgm.concat(cc.field(0));
     }
+  }
+
+  rs.paiements = [];
+  for (i = 1; i <= MAX_VERSEMENTS; i++) {
+      var l = "versement"+i+"_";
+      if (!paiementEmpty(i)) {
+	  rs.paiements[i-1] = {};
+	  for (v in VERSEMENT_FIELDS) {
+	      var vf = VERSEMENT_FIELDS[v];
+	      rs.paiements[i-1][vf] = getElementById(l+vf).value;
+	  }
+      }
   }
 
   cid = storeOneClient(cid, rs);

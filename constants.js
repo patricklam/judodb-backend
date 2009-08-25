@@ -11,6 +11,7 @@ var SERVICE_FIELDS = ["date_inscription", "saisons", "sans_affiliation",
 
 var CHECKBOX_FIELDS = ['non_anjou', 'passeport', 'sans_affiliation'];
 var SELECT_FIELDS = ['cours', 'sessions', 'escompte'];
+var VERSEMENT_FIELDS = ['mode', 'chqno', 'date', 'montant'];
 
 var MULTI_FIELDS = [];
 for (sf in SERVICE_FIELDS) {
@@ -20,7 +21,7 @@ MULTI_FIELDS['grade'] = true;
 MULTI_FIELDS['date_grade'] = true;
 
 var STORE_NAME = "anjoudb";
-var MAX_VERSEMENTS = 5;
+var MAX_VERSEMENTS = 6;
 
 /* All this stuff below should eventually end up in the database. */
 

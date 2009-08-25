@@ -189,7 +189,7 @@ plus approfondie.</p>
  <fieldset> <legend>Versements</legend>
   <div class="fourper">
    <label for="copay" style="width:40%">Paiement partag&eacute; avec <span id="copayError" style="color:red; display:none">&nbsp;&nbsp;(erreur!)</span>
-    <input id="copay" type="text" size="30" value="" onchange="uFraisFamille()" />
+    <input id="copay" type="text" size="40" value="" onchange="uFraisFamille()" />
    </label>
    <label for="frais_famille" style="float:right" >Frais famille
     <input id="frais_famille" type="text" value="" disabled="disabled" />
@@ -287,6 +287,25 @@ plus approfondie.</p>
    </label>
    <label for="versement5_montant" style="float:right">Montant
     <input id="versement5_montant" type="text" value="" size="5" onchange="uSolde(); addOrRemoveVersements();" />
+   </label>
+  </div>
+  </fieldset>
+  <fieldset id="versement6" class="versement" style="display:none"><legend>6e versement</legend>
+  <div class="fourper">
+   <label for="versement6_mode">Mode
+    <select id="versement6_mode" onchange="updateModePaiement('6');">
+     <option value="1">Ch&egrave;que</option>
+     <option value="2">Comptant</option>
+    </select>
+   </label>
+   <label for="versement6_chqno">Num&eacute;ro du ch&egrave;que
+    <input id="versement6_chqno" type="text" value="" size="5" onchange="addOrRemoveVersements()" />
+   </label>
+   <label for="versement6_date">Date du chèque
+    <input id="versement6_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
+   </label>
+   <label for="versement6_montant" style="float:right">Montant
+    <input id="versement6_montant" type="text" value="" size="5" onchange="uSolde(); addOrRemoveVersements();" />
    </label>
   </div>
   </fieldset>

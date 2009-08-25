@@ -6,11 +6,10 @@
    - probably store an accent-stripped version of names in local db
    - fix stripAccent to strip ccedil.
 
+to server:
 * store payment group (what if you're merging groups?!)
 * store payments
-* implement table for payment information:
-   * payment includes amount, chq#/cash, name
-   * calculate outstanding balance for users
+   * calculate outstanding balance for users (use frais_famille if there)
 
 * export to CSV
 

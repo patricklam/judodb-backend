@@ -64,6 +64,14 @@ DataStore.prototype.init = function() {
     db.execute('create table if not exists `payment_group_members` (' +
 	     '`group_id` INTEGER,' +
 	     '`client_id` INTEGER)');
+    db.execute('create table if not exists `payment` (' +
+	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
+	     '`group_id` INTEGER,' +
+	     '`client_id` INTEGER, '+
+	     '`mode` INTEGER, '+
+	     '`chqno` INTEGER, '+
+	     '`date` DATE, '+
+	     '`montant` char(10))');
     } catch (ex) {
       setError('Could not create database: ' + ex.message);
     }
@@ -145,25 +153,40 @@ function storeOneClient(cid, rs) {
 	  var gid = gids.field(0);
 	  db.execute('DELETE FROM `payment_group_members` WHERE group_id = ?', [gid]);
 	  db.execute('DELETE FROM `payment_groups` WHERE id = ?', [gid]);
-	  gid.next();
+	  gids.next();
       }
   }
 
   var gid;
   if (count > 1 || count == 0) {
-      db.execute('INSERT INTO `payment_groups` VALUES (?, ?)', [null, -1]);
-      gid = db.lastInsertRowId;
+      if (rs.pgm.length > 1) {
+	  db.execute('INSERT INTO `payment_groups` VALUES (?, ?)', [null, -1]);
+	  gid = db.lastInsertRowId;
+      } else gid = -1;
   }
   else {
       var gids = db.execute('SELECT `group_id` FROM `payment_group_members` WHERE client_id = ?', [newCid]);
       gid = gids.field(0);     
   }
 
-  for (mi in rs.pgm) {
-      var m = rs.pgm[mi];
-      if (m == -1) m = newCid;
-      db.execute('INSERT INTO `payment_group_members` VALUES (?, ?)',
-		 [gid, m]);
+  if (gid != -1) {
+      for (mi in rs.pgm) {
+	  var m = rs.pgm[mi];
+	  if (m == -1) m = newCid;
+	  db.execute('INSERT INTO `payment_group_members` VALUES (?, ?)',
+		     [gid, m]);
+      }
+  }
+
+  // payments
+  db.execute('DELETE FROM `payment` WHERE client_id = ? OR group_id = ?', 
+	     [newCid, gid]);
+  var effectiveCid = (gid == -1) ? newCid : -1;
+  for (v in rs.paiements) {
+      var rsv = rs.paiements[v];
+      db.execute('INSERT INTO `payment` VALUES (?, ?, ?, ?, ?, ?, ?)',
+		 [null, gid, effectiveCid, rsv.mode, rsv.chqno,
+		 rsv.date, rsv.montant]);
   }
 
   return newCid;
