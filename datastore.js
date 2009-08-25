@@ -3,6 +3,8 @@ var activeRequests = 0; var MAX_REQUESTS = 2;
 function DataStore() {
 }
 
+var db;
+
 // Open this page's local database.
 DataStore.prototype.init = function() {
   if (window.google && google.gears) {
@@ -82,7 +84,7 @@ function pullEntry(cid, sid) {
     for (f in MULTI_FIELDS) {
 	rs[f] = [];
     }
-    for (i = 0; i < r.length; i++) {
+    for (var i = 0; i < r.length; i++) {
         var key = r[i].nodeName;
         if (MULTI_FIELDS[key]) {
 	    rs[key] = rs[key].concat(r[i].textContent);
@@ -124,7 +126,7 @@ function storeOneClient(cid, rs) {
   }
 
   db.execute('DELETE FROM `services` WHERE client_id = ?', [newCid]);
-  if (rs.date_inscription != null && rs.date_inscription.length > 0) {
+  if (rs.date_inscription != null && rs.date_inscription.length > 0)
     db.execute('INSERT INTO `services` ' +
                'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
                [newCid, null, rs.date_inscription[0], 
@@ -149,12 +151,19 @@ function storeOneClient(cid, rs) {
 
   var gid;
   if (count > 1 || count == 0) {
-      db.execute('INSERT INTO `payment_groups` VALUE (?, ?)', [null, -1]);
-      
+      db.execute('INSERT INTO `payment_groups` VALUES (?, ?)', [null, -1]);
+      gid = db.lastInsertRowId;
   }
   else {
       var gids = db.execute('SELECT `group_id` FROM `payment_group_members` WHERE client_id = ?', [newCid]);
       gid = gids.field(0);     
+  }
+
+  for (mi in rs.pgm) {
+      var m = rs.pgm[mi];
+      if (m == -1) m = newCid;
+      db.execute('INSERT INTO `payment_group_members` VALUES (?, ?)',
+		 [gid, m]);
   }
 
   return newCid;

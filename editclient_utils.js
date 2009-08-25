@@ -20,7 +20,7 @@ function localInit() {
   updateBlurb();
   uFrais();
   enableCustomFrais();
-  updateFraisFamille();
+  updateNom();
   clearStatus();
 }
 
@@ -33,25 +33,25 @@ function populateClient() {
     getElementById(key).value = rs[key];
   }
 
-  var rs = executeToObjects(db, 'select id, grade, date_grade from `grades` where client_id = ?', [cid])[0];
-  if (rs) {
-    getElementById('grade_id').value = rs['id'];
-    getElementById('grade').value = rs['grade'];
-    getElementById('date_grade').value = rs['date_grade'];
+  var gs = executeToObjects(db, 'select id, grade, date_grade from `grades` where client_id = ?', [cid])[0];
+  if (gs) {
+    getElementById('grade_id').value = gs['id'];
+    getElementById('grade').value = gs['grade'];
+    getElementById('date_grade').value = gs['date_grade'];
   }
 
   updateCategorie();
 
-  var rs = executeToObjects(db, 'select * from `services` where client_id = ?', [cid])[0];
-  if (rs) {
+  var ss = executeToObjects(db, 'select * from `services` where client_id = ?', [cid])[0];
+  if (ss) {
     for (i = 0; i < SERVICE_FIELDS.length; i++) {
       key = SERVICE_FIELDS[i];
       if (getElementById(key).type == "select-one")
-          getElementById(key).selectedIndex = parseInt(rs[key]);
+          getElementById(key).selectedIndex = parseInt(ss[key]);
       else
-          getElementById(key).value = rs[key];
+          getElementById(key).value = ss[key];
     }
-    getElementById('service_id').value = rs['id'];
+    getElementById('service_id').value = ss['id'];
   }
 
   for (c in CHECKBOX_FIELDS) {
@@ -61,6 +61,17 @@ function populateClient() {
     if (getElementById(cf).value == 1 || getElementById(cf).value == 'true') 
       getElementById(cf).checked = true;
     getElementById(cf).value = getElementById(cf).checked;
+  }
+
+  var pgs = db.execute('select distinct c.prenom, c.nom from `payment_group_members` as o, `payment_group_members` as p, `client` as c where p.client_id = ? and o.group_id = p.group_id and o.client_id=c.id and c.id <> p.client_id', [cid]);
+  if (pgs) {
+    var p = '';
+    while (pgs.isValidRow()) {
+	p += pgs.field(0)+' '+pgs.field(1);
+        pgs.next();
+        if (pgs.isValidRow()) p += ', ';
+    }
+    getElementById('copay').value = p;
   }
 
   addDollarsById('frais'); addDollarsById('judogi');
@@ -166,6 +177,7 @@ function uFrais() {
   getElementById("saisons").value = calcSaison();
   getElementById("frais").value = calcFrais();
   uSolde();
+  uFraisFamille();
 }
 
 function enableCustomFrais() {
@@ -258,46 +270,66 @@ function uSolde() {
   addDollarsById("solde");
 }
 
-function noPaiementGroup() {
+function hidePaiementGroup() {
   var ff = getElementById("frais_famille");
   ff.parentNode.style.display = "none";
   ff.value = "";
 }
 
-function updateFraisFamille() {
+var selfNom, selfPrenom, selfName1, selfName2;
+
+function updateNom() {
+  selfNom = getElementById("nom").value;
+  selfPrenom = getElementById("prenom").value;
+  selfName1 = (selfNom + " " + selfPrenom).toUpperCase();
+  selfName2 = (selfPrenom + " " + selfNom).toUpperCase();
+  getElementById("nom_no_accents").value = stripAccent(selfNom);
+  getElementById("prenom_no_accents").value = stripAccent(selfPrenom);
+}
+
+function computePaymentGroup() {
+  updateNom();
   getElementById("copayError").style.display = "none";
   var gs = getElementById("copay").value;
   if (gs == "") { 
-    noPaiementGroup();
-    return;
+    hidePaiementGroup();
+    return -1;
   }
 
   var group = gs.split(",");
   var foundSelf = false;
-  var selfNom = getElementById("nom").value;
-  var selfPrenom = getElementById("prenom").value;
-  var selfName1 = (selfNom + " " + selfPrenom).toUpperCase();
-  var selfName2 = (selfPrenom + " " + selfNom).toUpperCase();
 
   // validate, then sum
   for (g in group) {
     if (!isValidClient(group[g])) {
-	noPaiementGroup(); 
+	hidePaiementGroup(); 
 	getElementById("copayError").style.display = "inline";
-	return;
+	return -1;
     }
     if (group[g].toUpperCase() == selfName1 || 
 	group[g].toUpperCase() == selfName2)
 	foundSelf = true;
   }
 
-  if (!foundSelf) group = group.concat([selfName2]);
+  if (!foundSelf) { group = group.concat(selfName2); }
+  return group;
+}
+
+function uFraisFamille() {
+  var group = computePaymentGroup();
+  if (group == -1) return;
 
   var fraisTotal = 0.0;
   for (g in group) {
-    var nt = group[g].trim();
-    var rs = db.execute('SELECT frais FROM `client` JOIN `services` WHERE (UPPER(prenom||" "||nom) = UPPER(?) OR UPPER(nom||" "||prenom) = UPPER(?)) AND services.client_id=client.id', [nt, nt]);
-    fraisTotal += parseFloat(rs.field(0));
+    var nt = group[g].trim().toUpperCase();
+
+    // for self, services in db is not updated yet; take immediate value
+    if (nt == selfName1 || nt == selfName2) {
+	fraisTotal += parseFloat(getElementById("frais").value);
+    } else {
+        var rs = db.execute('SELECT frais FROM `client` JOIN `services` WHERE (UPPER(prenom||" "||nom) = ? OR UPPER(nom||" "||prenom) = ?) AND services.client_id=client.id', [nt, nt]);
+        fraisTotal += parseFloat(rs.field(0));
+    }
   }
 
   getElementById("frais_famille").parentNode.style.display = "block";
@@ -329,7 +361,7 @@ function handleSubmit() {
   if (rs['grade_id'] == -1) rs['grade_id'] = null;
   if (rs['service_id'] == -1) rs['service_id'] = null;
 
-  // TODO must List.map once we have a list of services.
+  // TODO must List.map once we have a list of services over multiple terms.
   for (c in CHECKBOX_FIELDS) {
     var cf = CHECKBOX_FIELDS[c];
     rs[cf] = getElementById(cf).checked;
@@ -347,10 +379,22 @@ function handleSubmit() {
 
   rs.version++; getElementById("version").value = rs.version;
 
+  var group = computePaymentGroup();
+  rs.pgm = [];
+  for (g in group) {
+    var nt = group[g].trim().toUpperCase();
+
+    if (nt == selfName1 || nt == selfName2) {
+	rs.pgm = rs.pgm.concat(cid);
+    } else {
+        var cc = db.execute('SELECT id FROM `client` WHERE UPPER(prenom||" "||nom) = ? OR UPPER(nom||" "||prenom) = ?', [nt, nt]);
+	rs.pgm = rs.pgm.concat(cc.field(0));
+    }
+  }
+
   cid = storeOneClient(cid, rs);
 
   addDollarsById('frais'); addDollarsById('judogi');
-
   clearStatus(); addStatus("Sauvegardé."); setTimeout('clearStatus()', 3000);
 }
 

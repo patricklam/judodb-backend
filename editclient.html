@@ -42,11 +42,13 @@ plus approfondie.</p>
 <input id="grade_id" type="hidden" value="-1" />
 <input id="service_id" type="hidden" value="-1" />
 <input id="old_cas_special_note" type="hidden" value="" />
+<input id="nom_no_accents" type="hidden" value="" />
+<input id="prenom_no_accents" type="hidden" value="" />
 
 <fieldset> <legend>Identit&eacute;</legend>
  <div class="threeper" id="identite">
-  <label for="nom"><span class="noprint">Nom</span><input id="nom" type="text" size="24" value="" maxlength="50" /></label>
-  <label for="prenom"><span class="noprint">Prénom</span><input id="prenom" type="text" size="24" value="" maxlength="50" /></label>
+  <label for="nom"><span class="noprint">Nom</span><input id="nom" type="text" size="24" value="" maxlength="50" onchange="updateNom()" /></label>
+  <label for="prenom"><span class="noprint">Prénom</span><input id="prenom" type="text" size="24" value="" maxlength="50" onchange="updateNom()" /></label>
   <label for="ddn"><span class="noprint">Date de naissance (aaaa-mm-jj)</span>
    <input id="ddn" type="text" size="24" value="" maxlength="50" onchange="ddnChange()" />
   </label>
@@ -187,10 +189,10 @@ plus approfondie.</p>
  <fieldset> <legend>Versements</legend>
   <div class="fourper">
    <label for="copay" style="width:40%">Paiement partag&eacute; avec <span id="copayError" style="color:red; display:none">&nbsp;&nbsp;(erreur!)</span>
-    <input id="copay" type="text" size="30" value="" onchange="updateFraisFamille()" />
+    <input id="copay" type="text" size="30" value="" onchange="uFraisFamille()" />
    </label>
    <label for="frais_famille" style="float:right" >Frais famille
-    <input id="frais_famille" type="text" value="" />
+    <input id="frais_famille" type="text" value="" disabled="disabled" />
    </label>
   </div>
   <fieldset id="versement1" class="versement"><legend>1er versement</legend>

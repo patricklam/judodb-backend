@@ -139,3 +139,27 @@ function gup( name )
   else
     return results[1];
 }
+
+// Courtesy http://bytes.com/topic/javascript/answers/145532-replace-french-characters-form-input
+/* (C)Stephen Chalmers
+* Strips grave, acute & circumflex accents from vowels
+*/
+
+function stripAccent(str)
+{
+var s=str;
+
+var rExps=[ /[\xC0-\xC2]/g, /[\xE0-\xE2]/g,
+/[\xC8-\xCA]/g, /[\xE8-\xEB]/g,
+/[\xCC-\xCE]/g, /[\xEC-\xEE]/g,
+/[\xD2-\xD4]/g, /[\xF2-\xF4]/g,
+/[\xD9-\xDB]/g, /[\xF9-\xFB]/g ];
+
+var repChar=['A','a','E','e','I','i','O','o','U','u'];
+
+for(var i=0; i<rExps.length; i++)
+s=s.replace(rExps[i],repChar[i]);
+
+return s;
+}
+

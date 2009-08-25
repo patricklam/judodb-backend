@@ -2,6 +2,10 @@
 
 * effacer inscription (table of deletes)
 
+* case insensitive search for client names
+   - probably store an accent-stripped version of names in local db
+   - fix stripAccent to strip ccedil.
+
 * store payment group (what if you're merging groups?!)
 * store payments
 * implement table for payment information:
