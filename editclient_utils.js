@@ -75,7 +75,7 @@ function populateClient() {
     getElementById('copay').value = p;
   }
 
-  var pm = db.execute('select distinct p.* from `payment` as p, `payment_group_members` as pgm where p.client_id = ? or (pgm.client_id = ? and p.group_id=pgm.group_id)', [cid, cid]);
+  var pm = db.execute('select distinct p.* from `payment` as p left outer join `payment_group_members` as pgm where p.client_id = ? or (pgm.client_id = ? and p.group_id=pgm.group_id)', [cid, cid]);
 
   if (pm) {
     var paiementNumber = 1;
@@ -265,8 +265,7 @@ function addOrRemoveVersements() {
       getElementById(l).style.display="block";
       if (getElementById(l+"_date").value=="" && SUGGESTED_PAIEMENTS[i-1] != "")
 	  getElementById(l+"_date").value = SUGGESTED_PAIEMENTS[i-1];
-      if (getElementById(l+"_chqno").value=="" &&
-	  getElementById(l+"_montant").value=="") {
+      if (paiementEmpty(i)) {
 	  for (var j = i + (needMore ? 1 : 0); j <= MAX_VERSEMENTS; j++) {
 	      var m = "versement"+j;
 	      getElementById(m).style.display='none';
