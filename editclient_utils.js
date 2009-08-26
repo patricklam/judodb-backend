@@ -29,8 +29,8 @@ function populateClient() {
   var rs = executeToObjects(db, 'select * from `client` where id = ?', [cid])[0];
   if (!rs) { addStatus('cid not found'); return; }
 
-  for (i = 0; i < ALL_FIELDS.length; i++) {
-    key = ALL_FIELDS[i];
+  for (var i = 0; i < ALL_FIELDS.length; i++) {
+    var key = ALL_FIELDS[i];
     getElementById(key).value = rs[key];
   }
 
@@ -46,7 +46,7 @@ function populateClient() {
   var ss = executeToObjects(db, 'select * from `services` where client_id = ?', [cid])[0];
   if (ss) {
     for (i = 0; i < SERVICE_FIELDS.length; i++) {
-      key = SERVICE_FIELDS[i];
+      var key = SERVICE_FIELDS[i];
       if (getElementById(key).type == "select-one")
           getElementById(key).selectedIndex = parseInt(ss[key]);
       else
@@ -286,9 +286,9 @@ function uSolde() {
     if (v != '')
       versements += parseFloat(v);
   }
-  var total = getElementById("frais").value;
-  if (getElementById("frais_famille").style.display != "none")
-      total = getElementById("frais_famille").value;
+  var total = stripDollars(getElementById("frais").value);
+  if (getElementById("frais_famille").parentNode.style.display != "none")
+      total = stripDollars(getElementById("frais_famille").value);
 
   getElementById("solde").value = 
 	parseFloat(total) - versements;
@@ -308,8 +308,8 @@ function updateNom() {
   selfPrenom = getElementById("prenom").value;
   selfName1 = (selfNom + " " + selfPrenom).toUpperCase();
   selfName2 = (selfPrenom + " " + selfNom).toUpperCase();
-  getElementById("nom_no_accents").value = stripAccent(selfNom);
-  getElementById("prenom_no_accents").value = stripAccent(selfPrenom);
+  getElementById("nom_stripped").value = stripAccent(selfNom);
+  getElementById("prenom_stripped").value = stripAccent(selfPrenom);
 }
 
 function computePaymentGroup() {
@@ -352,7 +352,7 @@ function uFraisFamille() {
     if (nt == selfName1 || nt == selfName2) {
 	fraisTotal += parseFloat(getElementById("frais").value);
     } else {
-        var rs = db.execute('SELECT frais FROM `client` JOIN `services` WHERE (UPPER(prenom||" "||nom) = ? OR UPPER(nom||" "||prenom) = ?) AND services.client_id=client.id', [nt, nt]);
+        var rs = db.execute('SELECT frais FROM `client` JOIN `services` WHERE (UPPER(prenom_stripped||" "||nom_stripped) = ? OR UPPER(nom_stripped||" "||prenom_stripped) = ?) AND services.client_id=client.id', [nt, nt]);
         fraisTotal += parseFloat(rs.field(0));
     }
   }
@@ -418,7 +418,7 @@ function handleSubmit() {
     if (nt == selfName1 || nt == selfName2) {
 	rs.pgm = rs.pgm.concat(cid);
     } else {
-        var cc = db.execute('SELECT id FROM `client` WHERE UPPER(prenom||" "||nom) = ? OR UPPER(nom||" "||prenom) = ?', [nt, nt]);
+        var cc = db.execute('SELECT id FROM `client` WHERE UPPER(prenom_stripped||" "||nom_stripped) = ? OR UPPER(nom_stripped||" "||prenom_stripped) = ?', [nt, nt]);
 	rs.pgm = rs.pgm.concat(cc.field(0));
     }
   }

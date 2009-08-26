@@ -32,6 +32,8 @@ DataStore.prototype.init = function() {
       	     '`nom_contact_urgence` varchar(255), ' +
       	     '`tel_contact_urgence` varchar(255), ' +
       	     '`RAMQ` varchar(20), ' +
+             '`nom_stripped` varchar(50), '+
+             '`prenom_stripped` varchar(50), '+
       	     '`version` int(5) NOT NULL, ' +
       	     '`server_version` int(5) NOT NULL, ' +
       	     '`server_id` int(5) NOT NULL ' +
@@ -101,6 +103,12 @@ function pullEntry(cid, sid) {
     }
     rs.server_id = sid;
     rs.server_version = rs.version;
+    rs.nom_stripped = stripAccent(rs.nom);
+    rs.prenom_stripped = stripAccent(rs.prenom);
+
+    // paiement info!
+    rs.pgm = [];
+    rs.paiements = [];
     storeOneClient(cid, rs);
   }
 
@@ -116,12 +124,13 @@ function pullEntry(cid, sid) {
 // Adds rs information to client db, trampling old cid information.
 function storeOneClient(cid, rs) {
   db.execute('INSERT OR REPLACE INTO `client` ' +
-             'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
+             'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ',
               [cid, rs.nom, rs.prenom, rs.ddn, rs.courriel,
               rs.adresse, rs.ville, rs.code_postal,
               rs.tel, rs.affiliation, rs.carte_anjou,
               rs.nom_recu_impot, 
               rs.nom_contact_urgence, rs.tel_contact_urgence, rs.RAMQ,
+	      rs.nom_stripped, rs.prenom_stripped,
               rs.version, rs.server_version, rs.server_id]);
 
   var newCid = db.lastInsertRowId;
@@ -241,7 +250,6 @@ function pushOneEntry(handler, body) {
     setTimer(function() { pushOneEntry(handler, body); }, 100);
 
   activeRequests++;
-    // should probably actually be PUT, not POST.
   doRequest("POST", "push_one_client.php", null, handler, body);
   activeRequests--;
 }
@@ -295,6 +303,10 @@ function pushToServer() {
 	    body += fn + "=" + r[fn].substring(1, r[fn].length) +"&";
 	}
     }
+
+    // XXX
+    r['pgm'] = {};
+    r['paiements'] = [];
 
       // pulling out my COMP302 skillz:
       // create a closure which binds sv+id.

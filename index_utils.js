@@ -32,8 +32,8 @@ function refreshResults() {
 }
 
 function doSearch() {
-  var f = '%'+getElementById('query').value+'%';
-  var rs = db.execute('SELECT id, nom, prenom FROM `client` WHERE prenom||" "||nom LIKE ? OR nom||" "||prenom LIKE ? ORDER BY nom COLLATE NOCASE', [f, f]);
+  var f = '%'+stripAccent(getElementById('query').value)+'%';
+  var rs = db.execute('SELECT id, nom, prenom FROM `client` WHERE prenom_stripped||" "||nom_stripped LIKE ? OR nom_stripped||" "||prenom_stripped LIKE ? ORDER BY nom COLLATE NOCASE', [f, f]);
   var index = 0;
   clients = [];
   while (rs.isValidRow()) {
