@@ -1,8 +1,19 @@
 {
   "betaManifestVersion": 1,
-  "version": "pre1",
+  "version": "090825",
   "entries": [
-    { "url": "clients.html", "editclient.html", "base.js", "constants.js",
-             "datastore.js", "md5.js", "utils.js", "xhr.js", "gears_init.js" }
+    { "url": "index.html" },
+    { "url": ".", "redirect": "index.html" },
+    { "url": "editclient.html", "ignoreQuery": true },
+    { "url": "base.js" },
+    { "url": "constants.js" },
+    { "url": "datastore.js" },
+    { "url": "md5.js" },
+    { "url": "utils.js" },
+    { "url": "index_utils.js" },
+    { "url": "editclient_utils.js" },
+    { "url": "localserver.js" },
+    { "url": "xhr.js" },
+    { "url": "gears_init.js" }
   ]
 }

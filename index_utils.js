@@ -7,9 +7,10 @@ if (!window.google || !google.gears) {
 var db;
 
 createManagedStore();
-store = new DataStore();
+var store = new DataStore();
 store.init();
 updateLastSync();
+getElementById('version').innerHTML = 'version ' + VERSION;
 
 var clients = [];
 var firstToDisplay = 0;
@@ -18,7 +19,7 @@ function refreshResults() {
   var resultBox = getElementById('results');
   resultBox.innerHTML = '';
   for (var i = firstToDisplay; i < min(firstToDisplay+10, clients.length); ++i) {
-    resultBox.innerHTML += '<a href="editclient.html" onclick="createCookie(\'cid\', '+clients[i].id+', 1)">'+clients[i].nom+', '+clients[i].prenom+'</a><br />';
+    resultBox.innerHTML += '<a href="editclient.html?cid='+clients[i].id+'">'+clients[i].prenom+' '+clients[i].nom+'</a><br />';
   }
 
   if (firstToDisplay > 0 || firstToDisplay + 10 < clients.length) 

@@ -1,7 +1,7 @@
 var cid;
 
 // First try the cookie; then override with the GET parameter.
-cid = readCookie("cid");
+// cid = readCookie("cid");
 
 var cc = gup("cid"); if (cc != null) cid = cc;
 
