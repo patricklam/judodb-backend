@@ -304,12 +304,12 @@ function hidePaiementGroup() {
 var selfNom, selfPrenom, selfName1, selfName2;
 
 function updateNom() {
-  selfNom = getElementById("nom").value;
-  selfPrenom = getElementById("prenom").value;
+  selfNom = stripAccent(getElementById("nom").value);
+  selfPrenom = stripAccent(getElementById("prenom").value);
   selfName1 = (selfNom + " " + selfPrenom).toUpperCase();
   selfName2 = (selfPrenom + " " + selfNom).toUpperCase();
-  getElementById("nom_stripped").value = stripAccent(selfNom);
-  getElementById("prenom_stripped").value = stripAccent(selfPrenom);
+  getElementById("nom_stripped").value = selfNom;
+  getElementById("prenom_stripped").value = selfPrenom;
 }
 
 function computePaymentGroup() {
@@ -326,13 +326,14 @@ function computePaymentGroup() {
 
   // validate, then sum
   for (g in group) {
-    if (!isValidClient(group[g])) {
+    var gn = stripAccent(group[g]);
+    if (!isValidClient(gn)) {
 	hidePaiementGroup(); 
 	getElementById("copayError").style.display = "inline";
 	return -1;
     }
-    if (group[g].toUpperCase() == selfName1 || 
-	group[g].toUpperCase() == selfName2)
+    if (gn.toUpperCase() == selfName1 || 
+	gn.toUpperCase() == selfName2)
 	foundSelf = true;
   }
 
@@ -346,7 +347,7 @@ function uFraisFamille() {
 
   var fraisTotal = 0.0;
   for (g in group) {
-    var nt = group[g].trim().toUpperCase();
+    var nt = stripAccent(group[g].trim().toUpperCase());
 
     // for self, services in db is not updated yet; take immediate value
     if (nt == selfName1 || nt == selfName2) {
@@ -413,7 +414,7 @@ function handleSubmit() {
   var group = computePaymentGroup();
   rs.pgm = [];
   for (g in group) {
-    var nt = group[g].trim().toUpperCase();
+    var nt = stripAccent(group[g].trim().toUpperCase());
 
     if (nt == selfName1 || nt == selfName2) {
 	rs.pgm = rs.pgm.concat(cid);
