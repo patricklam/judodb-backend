@@ -339,7 +339,7 @@ function pushToServer() {
 
 function isValidClient(n) {
   var nt = n.trim();
-  var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE UPPER(prenom||" "||nom) = UPPER(?) OR UPPER(nom||" "||prenom) = UPPER(?)', [nt, nt]);
+  var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE UPPER(prenom_stripped||" "||nom_stripped) = UPPER(?) OR UPPER(nom_stripped||" "||prenom_stripped) = UPPER(?)', [nt, nt]);
   return rs.field(0);
 }
 

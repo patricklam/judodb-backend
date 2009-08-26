@@ -242,7 +242,8 @@ function addOrRemoveVersements() {
 
 	      getElementById(l+"mode").value=getElementById(m+"mode").value;
 	      getElementById(l+"chqno").value=getElementById(m+"chqno").value;
-	      getElementById(l+"date").value=getElementById(m+"date").value;
+	      if (!paiementEmpty(j+1))
+		  getElementById(l+"date").value=getElementById(m+"date").value;
 	      getElementById(l+"montant").value=getElementById(m+"montant").value;
 	  }
 
@@ -260,10 +261,10 @@ function addOrRemoveVersements() {
 
   var needMore = parseFloat(stripDollars(getElementById("solde").value)) > 0.0;
 
-  for (var i = 2; i <= MAX_VERSEMENTS; i++) {
+  for (var i = 1; i <= MAX_VERSEMENTS; i++) {
       var l = "versement"+i;
       getElementById(l).style.display="block";
-      if (getElementById(l+"_date").value=="" && SUGGESTED_PAIEMENTS[i-1] != "")
+      if (getElementById(l+"_date").value=="")
 	  getElementById(l+"_date").value = SUGGESTED_PAIEMENTS[i-1];
       if (paiementEmpty(i)) {
 	  for (var j = i + (needMore ? 1 : 0); j <= MAX_VERSEMENTS; j++) {
@@ -432,6 +433,7 @@ function handleSubmit() {
 	      rs.paiements[i-1][vf] = getElementById(l+vf).value;
 	  }
       }
+      addDollarsById(l+'montant');
   }
 
   cid = storeOneClient(cid, rs);

@@ -49,7 +49,7 @@ var COURS = ["Adultes (LM2015-2145, V1930-2130)",
              "Filles 7-11",
              "Autre"];
 
-var SUGGESTED_PAIEMENTS = ["", "2009-11-13", "2010-02-05", "", ""];
+var SUGGESTED_PAIEMENTS = ["", "2009-11-13", "2010-02-05", "", "", ""];
 
 function computeCategoryId(yr, grade) {
     var rv;
