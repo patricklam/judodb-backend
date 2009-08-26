@@ -12,8 +12,6 @@ to server:
 * more testing of roundtripping of all information to remote server
    + (it seems to work)
 
-* tweak list of stored html files locally with gears
-
 --- later:
 
 * autosuggest for payment groups
