@@ -72,6 +72,7 @@ function populateClient() {
         pgs.next();
         if (pgs.isValidRow()) p += ', ';
     }
+    pgs.close();
     getElementById('copay').value = p;
   }
 
@@ -89,6 +90,7 @@ function populateClient() {
 	pm.next();
 	paiementNumber++; if (paiementNumber > MAX_VERSEMENTS) break;
     }
+    pm.close();
   }
 
 
@@ -354,7 +356,9 @@ function uFraisFamille() {
 	fraisTotal += parseFloat(getElementById("frais").value);
     } else {
         var rs = db.execute('SELECT frais FROM `client` JOIN `services` WHERE (UPPER(prenom_stripped||" "||nom_stripped) = ? OR UPPER(nom_stripped||" "||prenom_stripped) = ?) AND services.client_id=client.id', [nt, nt]);
-        fraisTotal += parseFloat(rs.field(0));
+	var f = rs.field(0);
+	rs.close();
+        fraisTotal += parseFloat(f);
     }
   }
 
@@ -420,7 +424,9 @@ function handleSubmit() {
 	rs.pgm = rs.pgm.concat(cid);
     } else {
         var cc = db.execute('SELECT id FROM `client` WHERE UPPER(prenom_stripped||" "||nom_stripped) = ? OR UPPER(nom_stripped||" "||prenom_stripped) = ?', [nt, nt]);
-	rs.pgm = rs.pgm.concat(cc.field(0));
+	var id = cc.field(0);
+	cc.close();
+	rs.pgm = rs.pgm.concat(id);
     }
   }
 

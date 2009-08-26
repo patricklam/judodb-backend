@@ -1,6 +1,6 @@
 --- version beta1:
 
-* effacer inscription (table of deletes)
+* push deleted clients and groups to server
 
 to server:
 * store payment group (what if you're merging groups?!)

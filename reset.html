@@ -29,6 +29,10 @@ store.init();
 function zapLocal() {
   db.execute("drop table services");
   db.execute("drop table grades");
+  db.execute("drop table payment_groups");
+  db.execute("drop table deleted_payment_groups");
+  db.execute("drop table payment_group_members");
+  db.execute("drop table payment");
   db.execute("drop table client");
 }
 </script>

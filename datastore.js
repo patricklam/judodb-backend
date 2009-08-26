@@ -65,10 +65,10 @@ DataStore.prototype.init = function() {
 	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
       	     '`version` int(5) NOT NULL, ' +
       	     '`server_version` int(5) NOT NULL, ' +
-	     '`server_group_id` INTEGER)');
+	     '`server_id` INTEGER)');
     db.execute('create table if not exists `deleted_payment_groups` (' +
 	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
-	     '`server_group_id` INTEGER)');
+	     '`server_id` INTEGER)');
     db.execute('create table if not exists `payment_group_members` (' +
 	     '`group_id` INTEGER,' +
 	     '`client_id` INTEGER)');
@@ -127,6 +127,46 @@ function pullEntry(cid, sid) {
   activeRequests--;
 }
 
+// overwrites client's current entry for gid with server info
+function pullGroup(cid, sid) {
+  function integrateGroup(status, statusText, responseText, responseXML) {
+    if (status != '200') {
+	setError('Problème de connexion: pullGroup ('+status+')');
+        setTimeout(clearStatus, 1000);
+        return null;
+    }
+
+    var r = responseXML.childNodes[0].childNodes; // group
+
+    if (cid != null)
+	db.execute('DELETE FROM `payment_group_members` WHERE `group_id`=?',
+		   [cid]);
+
+    var newCid = cid;
+    for (var i = 0; i < r.length; i++) {
+        var key = r[i].nodeName;
+	var val = r[i].textContent;
+        if (key == 'version') {
+	    db.execute('INSERT OR REPLACE INTO `payment_groups`'+ 
+                       ' VALUES (?,?,?,?)', [cid, val, val, sid]);
+	    newCid = db.lastInsertRowId;
+	}
+        else
+	    db.execute('INSERT INTO `payment_group_members`'+
+                       ' SELECT ?, id FROM `client` WHERE server_id=?', 
+		       [newCid, val]);
+    }
+
+  }
+
+  if (activeRequests >= MAX_REQUESTS)
+    setTimer(function() { pullGroup(cid, sid); }, 100);
+
+  activeRequests++;
+  doRequest("GET", "pull_one_group.php", {id: sid}, integrateGroup, null);
+  activeRequests--;
+}
+
 // Both server and form create rs objects.
 // Adds rs information to client db, trampling old cid information.
 function storeOneClient(cid, rs) {
@@ -161,11 +201,11 @@ function storeOneClient(cid, rs) {
 
   var gidCountRS = db.execute('SELECT COUNT(DISTINCT `group_id`) FROM `payment_group_members` WHERE client_id = ?', [newCid]);
   var count = gidCountRS.field(0);
+  gidCountRS.close();
 
-alert(rs.pgm.length);
   if (count > 1 || rs.pgm.length < 2) {
     // > 1 group or nogroup: wipe out all payment groups containing cid
-      var gids = db.execute('SELECT pgm.`group_id`, pg.server_group_id FROM `payment_group_members` as pgm, `payment_groups` AS pg WHERE pgm.client_id = ? AND pgm.group_id=pg.id', [newCid]);
+      var gids = db.execute('SELECT pgm.`group_id`, pg.server_id FROM `payment_group_members` as pgm, `payment_groups` AS pg WHERE pgm.client_id = ? AND pgm.group_id=pg.id', [newCid]);
       while (gids.isValidRow()) {
 	  var gid = gids.field(0);
 
@@ -173,12 +213,12 @@ alert(rs.pgm.length);
 	  db.execute('DELETE FROM `payment_groups` WHERE id = ?', [gid]);
 
 	  var sgid = gids.field(1);
-alert(sgid);
 	  if (sgid != -1)
 	      db.execute('INSERT INTO `deleted_payment_groups` VALUES (?, ?)', 
 			 [null, sgid]);
 	  gids.next();
       }
+      gids.close();
   }
 
   var gid;
@@ -190,7 +230,8 @@ alert(sgid);
   }
   else {
       var gids = db.execute('SELECT `group_id` FROM `payment_group_members` WHERE client_id = ?', [newCid]);
-      gid = gids.field(0);     
+      gid = gids.field(0);
+      gids.close();
   }
 
   if (gid != -1) {
@@ -220,8 +261,8 @@ alert(sgid);
   return newCid;
 }
 
-function pullFromServer() {
-  var rs = db.execute('SELECT id, version, server_id, server_version FROM `client`');
+function pullIndex(tableName, requestURL, pullOneCallback, mergeOneCallback) {
+  var rs = db.execute('SELECT id, version, server_id, server_version FROM `'+tableName+'`');
   // create array indexed by server_id
   var localEntries = []; var i = 0;
   while (rs.isValidRow()) {
@@ -249,31 +290,54 @@ function pullFromServer() {
 	    var svers = t[i].childNodes[1].textContent;
 
             if (!(sid in localEntries))
-              pullEntry(null, sid); // Can just pull, no merge needed.
+              pullOneCallback(null, sid); // Can just pull, no merge needed.
 	    else if (localEntries[sid].server_version < svers) {
               var cid = localEntries[sid].id;
             
               if (localEntries[sid].version == localEntries[sid].server_version)
-		pullEntry(cid, sid); // This too.
+		pullOneCallback(cid, sid); // This too.
               else
-		pullEntry(cid, sid); // XXX merge! uh oh!
+		mergeOneCallback(cid, sid); // XXX merge! uh oh!
             }
 	}
   }
 
-  doRequest("GET", "allids.php", null, parseIds, null);
+  doRequest("GET", requestURL, null, parseIds, null);
 }
 
-function pushOneEntry(handler, body) {
-  if (activeRequests >= MAX_REQUESTS)
-    setTimer(function() { pushOneEntry(handler, body); }, 100);
-
-  activeRequests++;
-  doRequest("POST", "push_one_client.php", null, handler, body);
-  activeRequests--;
+function pullClients() {
+  pullIndex('client', 'allids.php', pullEntry, pullEntry);
 }
 
-function pushToServer() {
+function pullGroups() {
+  pullIndex('payment_groups', 'allgids.php', pullGroup, pullGroup);
+}
+
+function pushClients() {
+    // pulling out my COMP302 skillz:
+    // create a closure which binds sv+id.
+  var makeHandler = function(sv, id, body, r) {
+      var r = function(status, statusText, responseText, responseXML) {
+          if (status != '200') {
+              setError('Problème de connexion:pushToServer.');
+              setTimeout(clearStatus, 1000);
+              return null;
+          }
+	  
+          var sidp = responseText.trim();
+          if (sidp == '' || sidp.length > 20) {
+              var retry = function(r) {
+		  pushOneEntry(makeHandler(sv, id, body, r-1), body);
+	      }
+              if (r > 0)
+  		  setTimeout(retry, 100);
+	  } else {
+  	      db.execute
+              ('UPDATE `client` SET server_id=?, server_version=? WHERE id=?',
+  	       [sidp, sv, id]);
+          }
+      }; return r; };
+    
   var rs = db.execute('SELECT * FROM `client` WHERE version > server_version');
   while (rs.isValidRow()) {
     var cid = rs.fieldByName('id');
@@ -299,6 +363,7 @@ function pushToServer() {
         date_grade = date_grade + ',' + gs.fieldByName('date_grade');
 	gs.next();
     }
+    gs.close();
     if (gotRowGS)
         body += "grade="+grade.substring(1, grade.length)+
                 "&date_grade="+date_grade.substring(1, date_grade.length)+"&";
@@ -316,6 +381,7 @@ function pushToServer() {
 	}
 	ss.next();
     }
+    ss.close();
     if (gotRowSS) {
 	for (i in SERVICE_FIELDS) {
             var fn = SERVICE_FIELDS[i];
@@ -323,34 +389,64 @@ function pushToServer() {
 	}
     }
 
-    // XXX
-    r['pgm'] = {};
-    r['paiements'] = [];
+    pushOne("client", makeHandler(rs.fieldByName('version'), cid, body, 3), body);
+    rs.next();
+  }
+  rs.close();
+}
 
-      // pulling out my COMP302 skillz:
-      // create a closure which binds sv+id.
-    var makeHandler = function(sv, id, body, r) {
+function pushOne(what, handler, body) {
+  if (activeRequests >= MAX_REQUESTS)
+    setTimer(function() { pushOneEntry(handler, body); }, 100);
+
+  activeRequests++;
+  doRequest("POST", "push_one_"+what+".php", null, handler, body);
+  activeRequests--;
+}
+
+function pushGroups() {
+  var makeHandler = function(sv, id, body, r) {
       var r = function(status, statusText, responseText, responseXML) {
-        if (status != '200') {
-          setError('Problème de connexion:pushToServer.');
-          setTimeout(clearStatus, 1000);
-          return null;
-        }
+          if (status != '200') {
+              setError('Problème de connexion: pushGroups.');
+              setTimeout(clearStatus, 1000);
+              return null;
+          }
+	  
+          var sidp = responseText.trim();
+          if (sidp == '' || sidp.length > 20) {
+              var retry = function(r) {
+		  pushOne("group", makeHandler(sv, id, body, r-1), body);
+	      }
+              if (r > 0)
+  		  setTimeout(retry, 100);
+	  } else {
+  	      db.execute
+              ('UPDATE `payment_groups` SET server_id=?, server_version=? WHERE id=?',
+  	       [sidp, sv, id]);
+          }
+      }; return r; };
 
-        var sidp = responseText.trim();
-        if (sidp == '' || sidp.length > 20) {
-          var retry = function(r) {
-	       pushOneEntry(makeHandler(sv, id, body, r-1), body);
-	  }
-          if (r > 0)
-  	      setTimeout(retry, 100);
-	} else {
-  	  db.execute
-            ('UPDATE `client` SET server_id=?, server_version=? WHERE id=?',
-  	     [sidp, sv, id]);
-        }
-    }; return r; };
-    pushOneEntry(makeHandler(rs.fieldByName('version'), cid, body, 3), body);
+  var rs = db.execute('SELECT * FROM `payment_groups` WHERE version > server_version');
+  while (rs.isValidRow()) {
+    var cid = rs.fieldByName('id');
+    var body = "server_id="+rs.fieldByName('server_id') + 
+	       "&version="+rs.fieldByName('version');
+
+    var gs = db.execute('SELECT c.server_id FROM `payment_group_members` AS pgm, `client` as c WHERE group_id=? AND pgm.client_id=c.id', [cid]);
+
+    var gotRowGS = gs.isValidRow();
+    var ids = '';
+    while (gs.isValidRow()) {
+        ids = gs.field(0);
+	gs.next();
+        if (gs.isValidRow()) ids += ',';
+    }
+    gs.close();
+    if (gotRowGS)
+        body += "&id="+ids;
+
+    pushOne("group", makeHandler(rs.fieldByName('version'), cid, body, 3), body);
     rs.next();
   }
   rs.close();
@@ -359,18 +455,40 @@ function pushToServer() {
 function isValidClient(n) {
   var nt = stripAccent(n.trim());
   var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE UPPER(prenom_stripped||" "||nom_stripped) = UPPER(?) OR UPPER(nom_stripped||" "||prenom_stripped) = UPPER(?)', [nt, nt]);
-  return rs.field(0);
+  var count = rs.field(0);
+  rs.close();
+  return count;
 }
 
 DataStore.prototype.sync = function() {
-  addStatus("un instant...");
+  addStatus("un instant (lecture des clients)...");
 
-  pullFromServer();
-  pushToServer();
+  pullClients();
+
+  function phase2() { 
+      if (activeRequests == 0) {
+	  clearStatus();
+	  addStatus("un instant (écriture des clients)...");
+	  pushClients();
+	  setTimeout(phase3, 100);
+      }
+      else setTimeout(phase2, 100); 
+  }
+  setTimeout(phase2, 1000);
+
+  function phase3() { 
+      if (activeRequests == 0) {
+	  clearStatus();
+	  addStatus("un instant (syncronisation des groupes)...");
+	  pullGroups();
+	  pushGroups();
+	  setTimeout(clearWhenDone, 1000);
+      }
+      else setTimeout(phase3, 100); 
+  }
 
   function clearWhenDone() { 
       if (activeRequests == 0) clearStatus(); 
       else setTimeout(clearWhenDone, 100); 
   }
-  setTimeout(clearWhenDone, 1000);
 }
