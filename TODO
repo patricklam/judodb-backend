@@ -1,34 +1,21 @@
 --- version beta1:
 
-* effacer inscription
+* push deleted clients and groups to server
 
-* implement table for payment information:
-   * a payment applies to a number of users (divide by number of users)
-   * payment includes amount, chq#/cash, name
-   * calculate outstanding balance for users
-
-   algorithm for dividing costs:
-   X owes $500, Y owes $300.
-   X and Y pay $700.
-   -> Apply credit of (700/800)*500 to X, 700/800*300 to Y.
-
-* printing functionality
-* export to CSV
+* export to CSV, especially classes
+* nightly dumps of database
 
 * more testing of roundtripping of all information to remote server
    + (it seems to work)
 
-* tweak list of stored html files locally with gears
-
 --- later:
+
+* autosuggest for payment groups
 
 * implement merges/conflicts
 * view/edit grade history 
    + (I think the current UI for both grades & services is OK,
       but we need to add 'view history' pop-up link.)
-
-* push deletes to server: put another table for deletes with id & version,
-                          send delete requests to the server?
 
 * implement table for tournament results
 
@@ -37,4 +24,7 @@
    - saison
    - groupes
    - frais
-   - dates for cheques
+   - suggested dates for cheques
+
+old cookies document:
+// http://www.quirksmode.org/js/cookies.html

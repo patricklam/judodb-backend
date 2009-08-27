@@ -41,6 +41,16 @@ if (isset($rs)) {
  }
 }
 
+$rs = db_query_get("SELECT * from `payment` " .
+           "WHERE client_id=$id ORDER BY date ASC");
+if (isset($rs)) {
+ foreach ($rs as $r) {
+  foreach ($PAYMENT_FIELDS as $f) {
+   print "<$f>" . $r[$f] . "</$f>";
+  }
+ }
+}
+
 print "</client>";
 
 ?>

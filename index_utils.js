@@ -7,8 +7,10 @@ if (!window.google || !google.gears) {
 var db;
 
 createManagedStore();
-store = new DataStore();
+var store = new DataStore();
 store.init();
+updateLastSync();
+getElementById('version').innerHTML = 'version ' + VERSION;
 
 var clients = [];
 var firstToDisplay = 0;
@@ -17,7 +19,7 @@ function refreshResults() {
   var resultBox = getElementById('results');
   resultBox.innerHTML = '';
   for (var i = firstToDisplay; i < min(firstToDisplay+10, clients.length); ++i) {
-    resultBox.innerHTML += '<a href="editclient.html" onclick="createCookie(\'cid\', '+clients[i].id+', 1)">'+clients[i].nom+', '+clients[i].prenom+'</a><br />';
+    resultBox.innerHTML += '<a href="editclient.html?cid='+clients[i].id+'">'+clients[i].prenom+' '+clients[i].nom+'</a><br />';
   }
 
   if (firstToDisplay > 0 || firstToDisplay + 10 < clients.length) 
@@ -30,8 +32,8 @@ function refreshResults() {
 }
 
 function doSearch() {
-  var f = '%'+getElementById('query').value+'%';
-  var rs = db.execute('SELECT id, nom, prenom FROM `client` WHERE prenom||" "||nom LIKE ? OR nom||" "||prenom LIKE ? ORDER BY nom COLLATE NOCASE', [f, f]);
+  var f = '%'+stripAccent(getElementById('query').value)+'%';
+  var rs = db.execute('SELECT id, nom, prenom FROM `client` WHERE prenom_stripped||" "||nom_stripped LIKE ? OR nom_stripped||" "||prenom_stripped LIKE ? ORDER BY nom COLLATE NOCASE', [f, f]);
   var index = 0;
   clients = [];
   while (rs.isValidRow()) {
@@ -56,6 +58,7 @@ function loginAndSync() {
   function lsCheckLogin_(status, statusText, responseText, responseXML) {
     if (status == '200') {
       store.sync();
+      doRequest("POST", "update_last_sync.php", {didSync:1}, function (s,st,r,rx) {}, null);
       return;
     }
     doRequest("GET", "request_challenge.php", null, lsGotChallenge_, null);
@@ -87,6 +90,21 @@ function doLogin(arg, successContinuation) {
     } else {
       setError("Mot de passe invalide.");
       setTimeout(clearStatus, 1000);
+    }
+  }
+}
+
+function updateLastSync() {
+  var bail = doRequest
+    ("POST", "update_last_sync.php", null, printLastSync_, null);
+  setTimeout(bail, 1000);
+  function printLastSync_(status, statusText, responseText, responseXML) {
+    if (status == '200') {
+      var ls = responseXML.childNodes[0].childNodes;
+      getElementById("lastSync").innerHTML = 
+	    "dernier sync par " + 
+	    ls[0].textContent + " à " + 
+	    ls[1].textContent;
     }
   }
 }

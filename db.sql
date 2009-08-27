@@ -35,6 +35,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int(11) NOT NULL auto_increment,
+  `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `last_client_id` int(11) NOT NULL default 0,
@@ -89,3 +90,33 @@ CREATE TABLE `services` (
   `cas_special_note` varchar(50),
   `horaire_special` varchar(50)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `last_sync`;
+CREATE TABLE `last_sync` (
+  `username` varchar(255) NOT NULL,
+  `last_sync_time` timestamp
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `payment_groups`;
+CREATE TABLE `payment_groups` (
+  `id` INTEGER PRIMARY KEY auto_increment,
+  `version` int(5) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `payment_group_members`;
+CREATE TABLE `payment_group_members` (
+  `group_id` INTEGER,
+  `client_id` INTEGER
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `payment`;
+CREATE TABLE `payment` (
+  `id` INTEGER PRIMARY KEY auto_increment,
+  `group_id` INTEGER,
+  `client_id` INTEGER,
+  `mode` INTEGER,
+  `chqno` INTEGER,
+  `date` DATE,
+  `montant` char(10)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+

@@ -85,6 +85,27 @@ foreach ($sfs['date_inscription'] as $s) {
   $i++; 
 }
 
+// update single-payer info; create lists
+$payment_namelist = '(client_id';
+foreach ($PAYMENT_FIELDS as $s) {
+  $sfs[$s] = explode(',', $_POST[$s]);
+  $payment_namelist .= ", $s";
+}
+$payment_namelist .= ')';
+
+$i = 0;
+db_query_set("DELETE FROM `payment` WHERE client_id='$sid'");
+foreach ($sfs['mode'] as $s) {
+  $payment_tuple = "VALUES ($sid";
+  foreach ($PAYMENT_FIELDS as $s) {
+    $payment_tuple .= ", '".$sfs[$s][$i] . "'";
+  }
+  $payment_tuple .= ")";
+
+  db_query_set("INSERT INTO `payment` $payment_namelist $payment_tuple");
+  $i++; 
+}
+
 print($sid);
 
 //fclose($fh);

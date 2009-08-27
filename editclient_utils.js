@@ -1,12 +1,13 @@
 var cid;
 
 // First try the cookie; then override with the GET parameter.
-cid = readCookie("cid");
+// cid = readCookie("cid");
 
 var cc = gup("cid"); if (cc != null) cid = cc;
 
 var catId;
 var db;
+var origBlurb = getElementById("blurb").innerHTML;
 
 store = new DataStore();
 store.init();
@@ -16,8 +17,11 @@ function localInit() {
   populateCoursEscomptes();
   if (cid)
     populateClient(cid);
+  updateBlurb();
   uFrais();
+  addOrRemoveVersements();
   enableCustomFrais();
+  updateNom();
   clearStatus();
 }
 
@@ -25,30 +29,30 @@ function populateClient() {
   var rs = executeToObjects(db, 'select * from `client` where id = ?', [cid])[0];
   if (!rs) { addStatus('cid not found'); return; }
 
-  for (i = 0; i < ALL_FIELDS.length; i++) {
-    key = ALL_FIELDS[i];
+  for (var i = 0; i < ALL_FIELDS.length; i++) {
+    var key = ALL_FIELDS[i];
     getElementById(key).value = rs[key];
   }
 
-  var rs = executeToObjects(db, 'select id, grade, date_grade from `grades` where client_id = ?', [cid])[0];
-  if (rs) {
-    getElementById('grade_id').value = rs['id'];
-    getElementById('grade').value = rs['grade'];
-    getElementById('date_grade').value = rs['date_grade'];
+  var gs = executeToObjects(db, 'select id, grade, date_grade from `grades` where client_id = ?', [cid])[0];
+  if (gs) {
+    getElementById('grade_id').value = gs['id'];
+    getElementById('grade').value = gs['grade'];
+    getElementById('date_grade').value = gs['date_grade'];
   }
 
   updateCategorie();
 
-  var rs = executeToObjects(db, 'select * from `services` where client_id = ?', [cid])[0];
-  if (rs) {
+  var ss = executeToObjects(db, 'select * from `services` where client_id = ?', [cid])[0];
+  if (ss) {
     for (i = 0; i < SERVICE_FIELDS.length; i++) {
-      key = SERVICE_FIELDS[i];
+      var key = SERVICE_FIELDS[i];
       if (getElementById(key).type == "select-one")
-          getElementById(key).selectedIndex = parseInt(rs[key]);
+          getElementById(key).selectedIndex = parseInt(ss[key]);
       else
-          getElementById(key).value = rs[key];
+          getElementById(key).value = ss[key];
     }
-    getElementById('service_id').value = rs['id'];
+    getElementById('service_id').value = ss['id'];
   }
 
   for (c in CHECKBOX_FIELDS) {
@@ -60,7 +64,37 @@ function populateClient() {
     getElementById(cf).value = getElementById(cf).checked;
   }
 
-  addDollars('frais'); addDollars('judogi');
+  var pgs = db.execute('select distinct c.prenom, c.nom from `payment_group_members` as o, `payment_group_members` as p, `client` as c where p.client_id = ? and o.group_id = p.group_id and o.client_id=c.id and c.id <> p.client_id', [cid]);
+  if (pgs) {
+    var p = '';
+    while (pgs.isValidRow()) {
+	p += pgs.field(0)+' '+pgs.field(1);
+        pgs.next();
+        if (pgs.isValidRow()) p += ', ';
+    }
+    pgs.close();
+    getElementById('copay').value = p;
+  }
+
+  var pm = db.execute('select distinct p.* from `payment` as p left outer join `payment_group_members` as pgm where p.client_id = ? or (pgm.client_id = ? and p.group_id=pgm.group_id)', [cid, cid]);
+
+  if (pm) {
+    var paiementNumber = 1;
+    while (pm.isValidRow()) {
+	var l = "versement"+paiementNumber+"_";
+	for (v in PAYMENT_FIELDS) {
+	    var vf = PAYMENT_FIELDS[v];
+	    getElementById(l+vf).value = pm.fieldByName(vf);
+	}
+
+	pm.next();
+	paiementNumber++; if (paiementNumber > MAX_VERSEMENTS) break;
+    }
+    pm.close();
+  }
+
+
+  addDollarsById('frais'); addDollarsById('judogi');
 }
 
 function populateCoursEscomptes() {
@@ -83,21 +117,28 @@ function updateCarteAnjou() {
 		  (getElementById("carte_anjou").value == '');
 }
 
-function addDollars(id) {
+function addDollarsById(id) {
   var v = getElementById(id).value;
   if (v == '') return;
 
-  stripDollars(id);
+  stripDollarsById(id);
   getElementById(id).value += ' $';
 }
 
-function stripDollars(id) {
-  var v = getElementById(id).value;
-  if (v == '') return;
+function stripDollars(v) {
+  if (v == '') return v;
 
   if (v.substring(v.length-1, v.length) == '$')
     v = v.substring(v, v.length-1);
-  getElementById(id).value = v.trim();
+
+  if (v.substring(0, 1) == '$')
+    v = v.substring(1);
+
+  return v.trim();    
+}
+
+function stripDollarsById(id) {
+  getElementById(id).value = stripDollars(getElementById(id).value);
 }
 
 // Does not modify the frais field, but does update all other subtotalling.
@@ -112,7 +153,7 @@ function calcFrais() {
 
   var escompte = parseFloat(getElementById("escompte").value);
   var escomptePrice = -(price * escompte/100);
-  price -= escomptePrice;
+  price += escomptePrice;
   getElementById("escompteFrais").value = asCurrency(escomptePrice) + ' $';
 
   var judoQCPrice = categoryPrixJQ(catId);
@@ -159,6 +200,7 @@ function ud() {
 function uFrais() {
   getElementById("saisons").value = calcSaison();
   getElementById("frais").value = calcFrais();
+  uFraisFamille();
   uSolde();
 }
 
@@ -180,13 +222,11 @@ function enableCustomFrais() {
     getElementById("cas_special_note").value;
 }
 
-function updateModePaiement() {
-  var dis = false;
-  if (getElementById("mode").value == "2") dis = true;
-  for (var i = 1; i <= MAX_VERSEMENTS; i++) {
-    getElementById("versement"+i+"_chqno").disabled = dis;
-    getElementById("versement"+i+"_date").disabled = dis;
-  }
+function updateModePaiement(i) {
+  var dis = "block";
+  if (getElementById("versement"+i+"_mode").value == "2") dis = "none";
+  getElementById("versement"+i+"_chqno").parentNode.style.display = dis;
+  getElementById("versement"+i+"_date").parentNode.style.display = dis;
 }
 
 function addOrRemoveVersements() {
@@ -195,34 +235,41 @@ function addOrRemoveVersements() {
       var l = "versement"+i+"_";
 
       if (getElementById(l+"montant").value != "")
-	  addDollars(l+"montant");
+	  addDollarsById(l+"montant");
 
-      if (getElementById(l+"chqno").value=="" &&
-	  getElementById(l+"date").value=="" &&
-	  getElementById(l+"montant").value=="") {
+      if (paiementEmpty(i)) {
 	  for (var j = i; j < MAX_VERSEMENTS; j++) {
 	      var l = "versement"+j+"_";
 	      var m = "versement"+(j+1)+"_";
 
+	      getElementById(l+"mode").value=getElementById(m+"mode").value;
 	      getElementById(l+"chqno").value=getElementById(m+"chqno").value;
-	      getElementById(l+"date").value=getElementById(m+"date").value;
+	      if (!paiementEmpty(j+1))
+		  getElementById(l+"date").value=getElementById(m+"date").value;
 	      getElementById(l+"montant").value=getElementById(m+"montant").value;
 	  }
 
 	  var m = "versement"+(MAX_VERSEMENTS)+"_";
+	  getElementById(m+"mode").value="1";
+	  getElementById(m+"mode").selectedIndex=0;
 	  getElementById(m+"chqno").value='';
 	  getElementById(m+"date").value='';
 	  getElementById(m+"montant").value='';
       }
   }
 
-  for (var i = 2; i <= MAX_VERSEMENTS; i++) {
+  if (getElementById("versement1_date").value == "")
+    getElementById("versement1_date").value = formatDate(new Date());
+
+  var needMore = parseFloat(stripDollars(getElementById("solde").value)) > 0.0;
+
+  for (var i = 1; i <= MAX_VERSEMENTS; i++) {
       var l = "versement"+i;
       getElementById(l).style.display="block";
-      if (getElementById(l+"_chqno").value=="" &&
-	  getElementById(l+"_date").value=="" &&
-	  getElementById(l+"_montant").value=="") {
-	  for (var j = i+1; j <= MAX_VERSEMENTS; j++) {
+      if (getElementById(l+"_date").value=="")
+	  getElementById(l+"_date").value = SUGGESTED_PAIEMENTS[i-1];
+      if (paiementEmpty(i)) {
+	  for (var j = i + (needMore ? 1 : 0); j <= MAX_VERSEMENTS; j++) {
 	      var m = "versement"+j;
 	      getElementById(m).style.display='none';
 	  }
@@ -232,18 +279,109 @@ function addOrRemoveVersements() {
 }
 
 function uSolde() {
-  getElementById("solde").value = getElementById("frais").value;    
+  var versements = 0;
+  for (var i = 1; i <= MAX_VERSEMENTS; i++) {
+    var fn = "versement"+i+"_montant";
+    stripDollarsById(fn);
+    var v = getElementById(fn).value.trim();
+    addDollarsById(fn);
+    if (v != '')
+      versements += parseFloat(v);
+  }
+  var total = stripDollars(getElementById("frais").value);
+  if (getElementById("frais_famille").parentNode.style.display != "none")
+      total = stripDollars(getElementById("frais_famille").value);
+
+  getElementById("solde").value = 
+	parseFloat(total) - versements;
+  addDollarsById("solde");
+}
+
+function hidePaiementGroup() {
+  var ff = getElementById("frais_famille");
+  ff.parentNode.style.display = "none";
+  ff.value = "";
+}
+
+var selfNom, selfPrenom, selfName1, selfName2;
+
+function updateNom() {
+  selfNom = stripAccent(getElementById("nom").value);
+  selfPrenom = stripAccent(getElementById("prenom").value);
+  selfName1 = (selfNom + " " + selfPrenom).toUpperCase();
+  selfName2 = (selfPrenom + " " + selfNom).toUpperCase();
+  getElementById("nom_stripped").value = selfNom;
+  getElementById("prenom_stripped").value = selfPrenom;
+}
+
+function computePaymentGroup() {
+  updateNom();
+  getElementById("copayError").style.display = "none";
+  var gs = getElementById("copay").value;
+  if (gs == "") { 
+    hidePaiementGroup();
+    return -1;
+  }
+
+  var group = gs.split(",");
+  var foundSelf = false;
+
+  // validate, then sum
+  for (g in group) {
+    var gn = stripAccent(group[g]);
+    if (!isValidClient(gn)) {
+	hidePaiementGroup(); 
+	getElementById("copayError").style.display = "inline";
+	return -1;
+    }
+    if (gn.toUpperCase() == selfName1 || 
+	gn.toUpperCase() == selfName2)
+	foundSelf = true;
+  }
+
+  if (!foundSelf) { group = group.concat(selfName2); }
+  return group;
+}
+
+function uFraisFamille() {
+  var group = computePaymentGroup();
+  if (group == -1) return;
+
+  var fraisTotal = 0.0;
+  for (g in group) {
+    var nt = stripAccent(group[g].trim().toUpperCase());
+
+    // for self, services in db is not updated yet; take immediate value
+    if (nt == selfName1 || nt == selfName2) {
+	fraisTotal += parseFloat(getElementById("frais").value);
+    } else {
+        var rs = db.execute('SELECT frais FROM `client` JOIN `services` WHERE (UPPER(prenom_stripped||" "||nom_stripped) = ? OR UPPER(nom_stripped||" "||prenom_stripped) = ?) AND services.client_id=client.id', [nt, nt]);
+	var f = rs.field(0);
+	rs.close();
+        fraisTotal += parseFloat(f);
+    }
+  }
+
+  getElementById("frais_famille").parentNode.style.display = "block";
+  getElementById("frais_famille").value = fraisTotal;
+  addDollarsById("frais_famille");
+}
+
+function paiementEmpty(p) {
+    var l = "versement"+p+"_";
+    return getElementById(l+"chqno").value=="" &&
+	getElementById(l+"montant").value=="";
 }
 
 function handleSubmit() {
   var rs = {};
 
-  stripDollars('frais'); stripDollars('judogi');
+  stripDollarsById('frais'); stripDollarsById('judogi');
   for (var i = 1; i <= MAX_VERSEMENTS; i++) {
       var l = "versement"+i+"_";
 
       if (getElementById(l+"montant").value != "")
-	  stripDollars(l+"montant");
+	  stripDollarsById(l+"montant");
   }
 
   var f = ALL_FIELDS.concat(SERVICE_FIELDS);
@@ -259,7 +397,7 @@ function handleSubmit() {
   if (rs['grade_id'] == -1) rs['grade_id'] = null;
   if (rs['service_id'] == -1) rs['service_id'] = null;
 
-  // TODO must List.map once we have a list of services.
+  // TODO must List.map once we have a list of services over multiple terms.
   for (c in CHECKBOX_FIELDS) {
     var cf = CHECKBOX_FIELDS[c];
     rs[cf] = getElementById(cf).checked;
@@ -277,10 +415,37 @@ function handleSubmit() {
 
   rs.version++; getElementById("version").value = rs.version;
 
+  var group = computePaymentGroup();
+  rs.pgm = [];
+  for (g in group) {
+    var nt = stripAccent(group[g].trim().toUpperCase());
+
+    if (nt == selfName1 || nt == selfName2) {
+	rs.pgm = rs.pgm.concat(cid);
+    } else {
+        var cc = db.execute('SELECT id FROM `client` WHERE UPPER(prenom_stripped||" "||nom_stripped) = ? OR UPPER(nom_stripped||" "||prenom_stripped) = ?', [nt, nt]);
+	var id = cc.field(0);
+	cc.close();
+	rs.pgm = rs.pgm.concat(id);
+    }
+  }
+
+  rs.paiements = [];
+  for (i = 1; i <= MAX_VERSEMENTS; i++) {
+      var l = "versement"+i+"_";
+      if (!paiementEmpty(i)) {
+	  rs.paiements[i-1] = {};
+	  for (v in PAYMENT_FIELDS) {
+	      var vf = PAYMENT_FIELDS[v];
+	      rs.paiements[i-1][vf] = getElementById(l+vf).value;
+	  }
+      }
+      addDollarsById(l+'montant');
+  }
+
   cid = storeOneClient(cid, rs);
 
-  addDollars('frais'); addDollars('judogi');
-
+  addDollarsById('frais'); addDollarsById('judogi');
   clearStatus(); addStatus("Sauvegardé."); setTimeout('clearStatus()', 3000);
 }
 
@@ -290,7 +455,7 @@ function handleDelete() {
                 getElementById("nom").value+"?"))
     return false;
 
-  db.execute('DELETE FROM `client` WHERE id=?', [cid]);
+  deleteEntry(cid);
   return true;
 }
 
@@ -306,7 +471,32 @@ function ddnChange() {
     setError("Date de naissance invalide.");
     setTimeout(function () { getElementById("ddn").focus(); }, 1);
   }
-  oldDDN = ddn;
+  var newDDN = getElementById("ddn").value;
+  oldDDN = newDDN;
+  updateBlurb();
+}
+
+function updateBlurb() {
+  var newDDN = getElementById("ddn").value;
+  var today = new Date();
+  var d = newDDN.split("-");
+  var by = parseInt(d[0]), bm = parseInt(d[1], 10)-1, bd = parseInt(d[2], 10);
+  var ny = today.getFullYear(), nm = today.getMonth(), nd = today.getDate();
+
+  var y = ny - by; if (bm > nm || (bm == nm && bd > nd)) y--;
+
+  var newBlurb = origBlurb;
+  var nom = getElementById("prenom").value + " " + getElementById("nom").value;
+  if (y >= 18) {
+    newBlurb = newBlurb.replace("*nom*", nom);
+    newBlurb = newBlurb.replace("*mp*", "membre");
+  } else {
+    newBlurb = newBlurb.replace("*nom*", 
+		     "__________________________, parent ou tuteur du membre,");
+    newBlurb = newBlurb.replace("*mp*", "parent");
+  }
+  newBlurb = newBlurb.replace("*today*", formatDate(today));
+  getElementById("blurb").innerHTML = newBlurb;
 }
 
 function updateCategorie() {
