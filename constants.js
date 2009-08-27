@@ -13,11 +13,14 @@ var SERVICE_FIELDS = ["date_inscription", "saisons", "sans_affiliation",
 
 var CHECKBOX_FIELDS = ['non_anjou', 'passeport', 'sans_affiliation'];
 var SELECT_FIELDS = ['cours', 'sessions', 'escompte'];
-var VERSEMENT_FIELDS = ['mode', 'chqno', 'date', 'montant'];
+var PAYMENT_FIELDS = ['mode', 'chqno', 'date', 'montant'];
 
 var MULTI_FIELDS = [];
 for (sf in SERVICE_FIELDS) {
     MULTI_FIELDS[SERVICE_FIELDS[sf]] = true;
+}
+for (pf in PAYMENT_FIELDS) {
+    MULTI_FIELDS[PAYMENT_FIELDS[pf]] = true;
 }
 MULTI_FIELDS['grade'] = true;
 MULTI_FIELDS['date_grade'] = true;

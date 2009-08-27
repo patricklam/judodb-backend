@@ -82,8 +82,8 @@ function populateClient() {
     var paiementNumber = 1;
     while (pm.isValidRow()) {
 	var l = "versement"+paiementNumber+"_";
-	for (v in VERSEMENT_FIELDS) {
-	    var vf = VERSEMENT_FIELDS[v];
+	for (v in PAYMENT_FIELDS) {
+	    var vf = PAYMENT_FIELDS[v];
 	    getElementById(l+vf).value = pm.fieldByName(vf);
 	}
 
@@ -435,8 +435,8 @@ function handleSubmit() {
       var l = "versement"+i+"_";
       if (!paiementEmpty(i)) {
 	  rs.paiements[i-1] = {};
-	  for (v in VERSEMENT_FIELDS) {
-	      var vf = VERSEMENT_FIELDS[v];
+	  for (v in PAYMENT_FIELDS) {
+	      var vf = PAYMENT_FIELDS[v];
 	      rs.paiements[i-1][vf] = getElementById(l+vf).value;
 	  }
       }
@@ -455,7 +455,7 @@ function handleDelete() {
                 getElementById("nom").value+"?"))
     return false;
 
-  db.execute('DELETE FROM `client` WHERE id=?', [cid]);
+  deleteEntry(cid);
   return true;
 }
 

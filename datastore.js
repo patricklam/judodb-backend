@@ -112,10 +112,17 @@ function pullEntry(cid, sid) {
     rs.nom_stripped = stripAccent(rs.nom);
     rs.prenom_stripped = stripAccent(rs.prenom);
     rs.deleted = false;
-
-    // paiement info!
+    // paiement info -- pgm to be updated in group updates
     rs.pgm = [];
+
     rs.paiements = [];
+    for (i = 0; i < rs[PAYMENT_FIELDS[0]].length; i++) {
+	rs.paiements[i] = [];
+	for (v in PAYMENT_FIELDS) {
+	    var vf = PAYMENT_FIELDS[v];
+	    rs.paiements[i][vf] = rs[vf][i];
+	}
+    }
     storeOneClient(cid, rs);
   }
 
@@ -210,6 +217,8 @@ function storeOneClient(cid, rs) {
 	  var gid = gids.field(0);
 
 	  db.execute('DELETE FROM `payment_group_members` WHERE group_id = ?', [gid]);
+	  db.execute('DELETE FROM `payment` WHERE client_id = ? OR group_id = ?', 
+	     [newCid, gid]);
 	  db.execute('DELETE FROM `payment_groups` WHERE id = ?', [gid]);
 
 	  var sgid = gids.field(1);
@@ -231,6 +240,7 @@ function storeOneClient(cid, rs) {
   else {
       var gids = db.execute('SELECT `group_id` FROM `payment_group_members` WHERE client_id = ?', [newCid]);
       gid = gids.field(0);
+      if (gid == null) gid = -1; // just wiped out
       gids.close();
   }
 
@@ -261,7 +271,7 @@ function storeOneClient(cid, rs) {
   return newCid;
 }
 
-function pullIndex(tableName, requestURL, pullOneCallback, mergeOneCallback) {
+function pullIndex(tableName, requestURL, pullOneCallback, mergeOneCallback, deleteCallback) {
   var rs = db.execute('SELECT id, version, server_id, server_version FROM `'+tableName+'`');
   // create array indexed by server_id
   var localEntries = []; var i = 0;
@@ -284,33 +294,53 @@ function pullIndex(tableName, requestURL, pullOneCallback, mergeOneCallback) {
 
       var t = responseXML.childNodes[0].childNodes; // table
       for (i = 0; i < t.length; i++) {
+          if (t[i].nodeName == "del") {
+	      var sid = t[i].textContent;
+	      if (sid in localEntries)
+		  deleteCallback(localEntries[sid].id);
+	  }
           if (t[i].nodeName != "tr") continue;
 
-	    var sid = t[i].childNodes[0].textContent;
-	    var svers = t[i].childNodes[1].textContent;
-
-            if (!(sid in localEntries))
+	  var sid = t[i].childNodes[0].textContent;
+	  var svers = t[i].childNodes[1].textContent;
+	  
+          if (!(sid in localEntries))
               pullOneCallback(null, sid); // Can just pull, no merge needed.
-	    else if (localEntries[sid].server_version < svers) {
+	  else if (localEntries[sid].server_version < svers) {
               var cid = localEntries[sid].id;
-            
+              
               if (localEntries[sid].version == localEntries[sid].server_version)
-		pullOneCallback(cid, sid); // This too.
+		  pullOneCallback(cid, sid); // This too.
               else
-		mergeOneCallback(cid, sid); // XXX merge! uh oh!
-            }
-	}
+		  mergeOneCallback(cid, sid); // XXX merge! uh oh!
+          }
+      }
   }
 
   doRequest("GET", requestURL, null, parseIds, null);
 }
 
 function pullClients() {
-  pullIndex('client', 'allids.php', pullEntry, pullEntry);
+  pullIndex('client', 'allids.php', pullEntry, pullEntry, deleteEntry);
 }
 
 function pullGroups() {
-  pullIndex('payment_groups', 'allgids.php', pullGroup, pullGroup);
+  pullIndex('payment_groups', 'allgids.php', pullGroup, pullGroup, deleteGroup);
+}
+
+function deleteEntry(cid) {
+  db.execute('DELETE FROM `client` WHERE id=?', [cid]);
+  db.execute('DELETE FROM `grades` WHERE client_id=?', [cid]);
+  db.execute('DELETE FROM `services` WHERE client_id=?', [cid]);
+  db.execute('DELETE FROM `payment_group_members` WHERE client_id=?', [cid]);
+  db.execute('DELETE FROM `payment` WHERE client_id=?', [cid]);
+}
+
+function deleteGroup(cid) {
+  db.execute('DELETE FROM `payment_groups` WHERE id=?', [cid]);
+  db.execute('DELETE FROM `deleted_payment_groups` WHERE id=?', [cid]);
+  db.execute('DELETE FROM `payment_group_members` WHERE group_id=?', [cid]);
+  db.execute('DELETE FROM `payment` WHERE group_id=?', [cid]);
 }
 
 function pushClients() {
@@ -385,6 +415,25 @@ function pushClients() {
     if (gotRowSS) {
 	for (i in SERVICE_FIELDS) {
             var fn = SERVICE_FIELDS[i];
+	    body += fn + "=" + r[fn].substring(1, r[fn].length) +"&";
+	}
+    }
+
+    for (i in PAYMENT_FIELDS)
+	r[PAYMENT_FIELDS[i]] = '';
+    var ps = db.execute('SELECT * from `payment` WHERE client_id=?', [cid]);
+    var gotRowPS = ps.isValidRow();
+    while (ps.isValidRow()) {
+        for (i in PAYMENT_FIELDS) {
+            var fn = PAYMENT_FIELDS[i];
+	    r[fn] = r[fn] + ',' + ps.fieldByName(fn);
+	}
+	ps.next();
+    }
+    ps.close();
+    if (gotRowPS) {
+	for (i in PAYMENT_FIELDS) {
+            var fn = PAYMENT_FIELDS[i];
 	    body += fn + "=" + r[fn].substring(1, r[fn].length) +"&";
 	}
     }
@@ -464,6 +513,7 @@ DataStore.prototype.sync = function() {
   addStatus("un instant (lecture des clients)...");
 
   pullClients();
+  setTimeout(phase2, 100);
 
   function phase2() { 
       if (activeRequests == 0) {
@@ -474,7 +524,6 @@ DataStore.prototype.sync = function() {
       }
       else setTimeout(phase2, 100); 
   }
-  setTimeout(phase2, 1000);
 
   function phase3() { 
       if (activeRequests == 0) {
