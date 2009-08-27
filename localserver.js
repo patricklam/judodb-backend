@@ -6,6 +6,6 @@ function createManagedStore() {
     return;
   }
   var mstore = localServer.createManagedStore(STORE_NAME);
-  mstore.manifestURL = 'manifest.json';
+  mstore.manifestUrl = 'manifest.json';
   mstore.checkForUpdate();
 }
