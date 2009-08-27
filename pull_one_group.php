@@ -27,6 +27,18 @@ if (isset($rs)) {
  }
 }
 
+$rs = db_query_get("SELECT * from `payment` " .
+           "WHERE group_id=$id ORDER BY date ASC");
+if (isset($rs)) {
+ foreach ($rs as $r) {
+  print "<payment>";
+  foreach ($PAYMENT_FIELDS as $f) {
+   print "<$f>" . $r[$f] . "</$f>";
+  }
+  print "</payment>";
+ }
+}
+
 print "</group>";
 
 ?>

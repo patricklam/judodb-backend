@@ -158,12 +158,18 @@ function pullGroup(cid, sid) {
                        ' VALUES (?,?,?,?)', [cid, val, val, sid]);
 	    newCid = db.lastInsertRowId;
 	}
-        else
+        else if (key == 'client_id') {
 	    db.execute('INSERT INTO `payment_group_members`'+
                        ' SELECT ?, id FROM `client` WHERE server_id=?', 
 		       [newCid, val]);
+	    
+	} else if (key == 'payment') {
+	    var p = r[i].childNodes;
+	    db.execute('INSERT INTO `payment` VALUES (?, ?, ?, ?, ?, ?, ?)',
+		 [null, cid, null, p[0].textContent, p[1].textContent,
+		  p[2].textContent, p[3].textContent]);
+	}
     }
-
   }
 
   if (activeRequests >= MAX_REQUESTS)
@@ -328,6 +334,7 @@ function pullGroups() {
   pullIndex('payment_groups', 'allgids.php', pullGroup, pullGroup, deleteGroup);
 }
 
+// not really tested yet
 function deleteEntry(cid) {
   db.execute('DELETE FROM `client` WHERE id=?', [cid]);
   db.execute('DELETE FROM `grades` WHERE client_id=?', [cid]);
@@ -494,6 +501,26 @@ function pushGroups() {
     gs.close();
     if (gotRowGS)
         body += "&id="+ids;
+
+    var r = [];
+    for (i in PAYMENT_FIELDS)
+	r[PAYMENT_FIELDS[i]] = '';
+    var ps = db.execute('SELECT * from `payment` WHERE group_id=?', [cid]);
+    var gotRowPS = ps.isValidRow();
+    while (ps.isValidRow()) {
+        for (i in PAYMENT_FIELDS) {
+            var fn = PAYMENT_FIELDS[i];
+	    r[fn] = r[fn] + ',' + ps.fieldByName(fn);
+	}
+	ps.next();
+    }
+    ps.close();
+    if (gotRowPS) {
+	for (i in PAYMENT_FIELDS) {
+            var fn = PAYMENT_FIELDS[i];
+	    body += fn + "=" + r[fn].substring(1, r[fn].length) +"&";
+	}
+    }
 
     pushOne("group", makeHandler(rs.fieldByName('version'), cid, body, 3), body);
     rs.next();
