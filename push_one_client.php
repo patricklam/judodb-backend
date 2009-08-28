@@ -46,7 +46,9 @@ if ($_POST['deleted'] == 'true') {
   db_query_set("DELETE FROM `services` WHERE client_id=$sid");
   db_query_set("DELETE FROM `payment_group_members` WHERE client_id=$sid");
   db_query_set("DELETE FROM `payment` WHERE client_id=$sid");
-  db_query_set("INSERT INTO `deleted_client` VALUE ($sid)");
+  db_query_set("REPLACE INTO `deleted_client` VALUE ($sid)");
+  print($sid);
+  exit();
 }
 
 $updates = "";
