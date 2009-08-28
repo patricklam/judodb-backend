@@ -382,11 +382,11 @@ function pushClients() {
 
     // (unless they never existed on server side)
     if (ds.fieldByName('server_id') == '-1') {
-       deleteEntry(cid);
+	deleteEntry(cid);
     } else {
-       var body = "deleted=true";
-       body += "&server_id="+ds.fieldByName('server_id');
-       pushOne("client", makeHandler(ds.fieldByName('version'), cid, body, 3), body);
+	var body = "deleted=true";
+	body += "&server_id="+ds.fieldByName('server_id');
+	pushOne("client", makeHandler(ds.fieldByName('version'), cid, body, 3), body);
     }
     ds.next();
   }
@@ -499,6 +499,16 @@ function pushGroups() {
   	       [sidp, sv, id]);
           }
       }; return r; };
+
+  var ds = db.execute('SELECT * from `deleted_payment_groups`');
+  while (ds.isValidRow()) {
+    var cid = ds.fieldByName('id');
+    var body = "deleted=true";
+    body += "&server_id="+ds.fieldByName('server_group_id');
+    pushOne("group", makeHandler(-1, cid, body, 3), body);
+    ds.next();
+  }
+  ds.close();
 
   var rs = db.execute('SELECT * FROM `payment_groups` WHERE version > server_version');
   while (rs.isValidRow()) {

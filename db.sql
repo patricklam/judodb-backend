@@ -108,6 +108,11 @@ CREATE TABLE `payment_groups` (
   `version` int(5) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `deleted_payment_groups`;
+CREATE TABLE `deleted_payment_groups` (
+  `id` int(11)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `payment_group_members`;
 CREATE TABLE `payment_group_members` (
   `group_id` INTEGER,
