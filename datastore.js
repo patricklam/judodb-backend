@@ -379,9 +379,15 @@ function pushClients() {
   var ds = db.execute('SELECT * FROM `client` WHERE deleted=\'true\' AND version > server_version');
   while (ds.isValidRow()) {
     var cid = ds.fieldByName('id');
-    var body = "deleted=true";
-    body += "&server_id="+ds.fieldByName('server_id');
-    pushOne("client", makeHandler(ds.fieldByName('version'), cid, body, 3), body);
+
+    // (unless they never existed on server side)
+    if (ds.fieldByName('server_id') == '-1') {
+       deleteEntry(cid);
+    } else {
+       var body = "deleted=true";
+       body += "&server_id="+ds.fieldByName('server_id');
+       pushOne("client", makeHandler(ds.fieldByName('version'), cid, body, 3), body);
+    }
     ds.next();
   }
   ds.close();
