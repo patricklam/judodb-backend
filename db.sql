@@ -65,6 +65,11 @@ CREATE TABLE `client` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `deleted_client`;
+CREATE TABLE `deleted_client` (
+  `id` int(11)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `grades`;
 CREATE TABLE `grades` (
   `client_id` INTEGER,
