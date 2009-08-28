@@ -1,4 +1,4 @@
-var VERSION = '090826-beta0';
+var VERSION = '090827-beta1';
 
 // See also constants.php for another definition of GLOBAL_FIELDS.
 var GLOBAL_FIELDS = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "code_postal", "tel", "affiliation", "carte_anjou", "nom_recu_impot", "nom_contact_urgence", "tel_contact_urgence", "RAMQ", "nom_stripped", "prenom_stripped"];
