@@ -1,6 +1,6 @@
 {
   "betaManifestVersion": 1,
-  "version": "090825",
+  "version": "090828",
   "entries": [
     { "url": "index.html" },
     { "url": ".", "redirect": "index.html" },
@@ -15,5 +15,7 @@
     { "url": "localserver.js" },
     { "url": "xhr.js" },
     { "url": "gears_init.js" }
+    { "url": "styles.css" }
+    { "url": "print.css" }
   ]
 }

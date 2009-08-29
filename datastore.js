@@ -184,14 +184,14 @@ function pullGroup(cid, sid) {
 // Adds rs information to client db, trampling old cid information.
 function storeOneClient(cid, rs) {
   db.execute('INSERT OR REPLACE INTO `client` ' +
-             'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ',
+             'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"false")',
               [cid, rs.nom, rs.prenom, rs.ddn, rs.courriel,
               rs.adresse, rs.ville, rs.code_postal,
               rs.tel, rs.affiliation, rs.carte_anjou,
               rs.nom_recu_impot, 
               rs.nom_contact_urgence, rs.tel_contact_urgence, rs.RAMQ,
 	      rs.nom_stripped, rs.prenom_stripped,
-              rs.version, rs.server_version, rs.server_id, false]);
+              rs.version, rs.server_version, rs.server_id]);
 
   var newCid = db.lastInsertRowId;
 
@@ -334,7 +334,6 @@ function pullGroups() {
   pullIndex('payment_groups', 'allgids.php', pullGroup, pullGroup, deleteGroup);
 }
 
-// not really tested yet
 function deleteEntry(cid) {
   db.execute('DELETE FROM `client` WHERE id=?', [cid]);
   db.execute('DELETE FROM `grades` WHERE client_id=?', [cid]);
@@ -374,8 +373,26 @@ function pushClients() {
   	       [sidp, sv, id]);
           }
       }; return r; };
-    
-  var rs = db.execute('SELECT * FROM `client` WHERE version > server_version');
+
+    // notify server about deleted clients, but wait to hear back about them
+    // on next sync to actually remove them from local db.
+  var ds = db.execute('SELECT * FROM `client` WHERE deleted=\'true\' AND version > server_version');
+  while (ds.isValidRow()) {
+    var cid = ds.fieldByName('id');
+
+    // (unless they never existed on server side)
+    if (ds.fieldByName('server_id') == '-1') {
+	deleteEntry(cid);
+    } else {
+	var body = "deleted=true";
+	body += "&server_id="+ds.fieldByName('server_id');
+	pushOne("client", makeHandler(ds.fieldByName('version'), cid, body, 3), body);
+    }
+    ds.next();
+  }
+  ds.close();
+
+  var rs = db.execute('SELECT * FROM `client` WHERE deleted <> \'true\' AND version > server_version');
   while (rs.isValidRow()) {
     var cid = rs.fieldByName('id');
     var body = "";
@@ -483,6 +500,16 @@ function pushGroups() {
           }
       }; return r; };
 
+  var ds = db.execute('SELECT * from `deleted_payment_groups`');
+  while (ds.isValidRow()) {
+    var cid = ds.fieldByName('id');
+    var body = "deleted=true";
+    body += "&server_id="+ds.fieldByName('server_group_id');
+    pushOne("group", makeHandler(-1, cid, body, 3), body);
+    ds.next();
+  }
+  ds.close();
+
   var rs = db.execute('SELECT * FROM `payment_groups` WHERE version > server_version');
   while (rs.isValidRow()) {
     var cid = rs.fieldByName('id');
@@ -530,7 +557,7 @@ function pushGroups() {
 
 function isValidClient(n) {
   var nt = stripAccent(n.trim());
-  var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE UPPER(prenom_stripped||" "||nom_stripped) = UPPER(?) OR UPPER(nom_stripped||" "||prenom_stripped) = UPPER(?)', [nt, nt]);
+  var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE deleted <> \'true\' AND (UPPER(prenom_stripped||" "||nom_stripped) = UPPER(?) OR UPPER(nom_stripped||" "||prenom_stripped) = UPPER(?))', [nt, nt]);
   var count = rs.field(0);
   rs.close();
   return count;

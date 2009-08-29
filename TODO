@@ -4,6 +4,7 @@
 
 * export to CSV, especially classes
 * nightly dumps of database
+* DirectoryIndex brokenness
 
 * more testing of roundtripping of all information to remote server
    + (it seems to work)

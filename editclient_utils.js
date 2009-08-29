@@ -3,7 +3,7 @@ var cid;
 // First try the cookie; then override with the GET parameter.
 // cid = readCookie("cid");
 
-var cc = gup("cid"); if (cc != null) cid = cc;
+var cc = gup("cid"); if (cc != null) cid = cc; else cid = null;
 
 var catId;
 var db;
@@ -26,7 +26,7 @@ function localInit() {
 }
 
 function populateClient() {
-  var rs = executeToObjects(db, 'select * from `client` where id = ?', [cid])[0];
+  var rs = executeToObjects(db, 'SELECT * from `client` where id = ?', [cid])[0];
   if (!rs) { addStatus('cid not found'); return; }
 
   for (var i = 0; i < ALL_FIELDS.length; i++) {
@@ -34,7 +34,7 @@ function populateClient() {
     getElementById(key).value = rs[key];
   }
 
-  var gs = executeToObjects(db, 'select id, grade, date_grade from `grades` where client_id = ?', [cid])[0];
+  var gs = executeToObjects(db, 'SELECT id, grade, date_grade from `grades` where client_id = ?', [cid])[0];
   if (gs) {
     getElementById('grade_id').value = gs['id'];
     getElementById('grade').value = gs['grade'];
@@ -43,7 +43,7 @@ function populateClient() {
 
   updateCategorie();
 
-  var ss = executeToObjects(db, 'select * from `services` where client_id = ?', [cid])[0];
+  var ss = executeToObjects(db, 'SELECT * from `services` where client_id = ?', [cid])[0];
   if (ss) {
     for (i = 0; i < SERVICE_FIELDS.length; i++) {
       var key = SERVICE_FIELDS[i];
@@ -64,7 +64,7 @@ function populateClient() {
     getElementById(cf).value = getElementById(cf).checked;
   }
 
-  var pgs = db.execute('select distinct c.prenom, c.nom from `payment_group_members` as o, `payment_group_members` as p, `client` as c where p.client_id = ? and o.group_id = p.group_id and o.client_id=c.id and c.id <> p.client_id', [cid]);
+  var pgs = db.execute('SELECT distinct c.prenom, c.nom from `payment_group_members` as o, `payment_group_members` as p, `client` as c where p.client_id = ? and o.group_id = p.group_id and o.client_id=c.id and c.id <> p.client_id', [cid]);
   if (pgs) {
     var p = '';
     while (pgs.isValidRow()) {
@@ -76,7 +76,7 @@ function populateClient() {
     getElementById('copay').value = p;
   }
 
-  var pm = db.execute('select distinct p.* from `payment` as p left outer join `payment_group_members` as pgm where p.client_id = ? or (pgm.client_id = ? and p.group_id=pgm.group_id)', [cid, cid]);
+  var pm = db.execute('SELECT distinct p.* from `payment` as p left outer join `payment_group_members` as pgm where p.client_id = ? or (pgm.client_id = ? and p.group_id=pgm.group_id)', [cid, cid]);
 
   if (pm) {
     var paiementNumber = 1;
@@ -355,7 +355,7 @@ function uFraisFamille() {
     if (nt == selfName1 || nt == selfName2) {
 	fraisTotal += parseFloat(getElementById("frais").value);
     } else {
-        var rs = db.execute('SELECT frais FROM `client` JOIN `services` WHERE (UPPER(prenom_stripped||" "||nom_stripped) = ? OR UPPER(nom_stripped||" "||prenom_stripped) = ?) AND services.client_id=client.id', [nt, nt]);
+        var rs = db.execute('SELECT frais FROM `client` JOIN `services` WHERE client.deleted <> \'true\' and ((UPPER(prenom_stripped||" "||nom_stripped) = ? OR UPPER(nom_stripped||" "||prenom_stripped) = ?) AND services.client_id=client.id)', [nt, nt]);
 	var f = rs.field(0);
 	rs.close();
         fraisTotal += parseFloat(f);
@@ -423,7 +423,7 @@ function handleSubmit() {
     if (nt == selfName1 || nt == selfName2) {
 	rs.pgm = rs.pgm.concat(cid);
     } else {
-        var cc = db.execute('SELECT id FROM `client` WHERE UPPER(prenom_stripped||" "||nom_stripped) = ? OR UPPER(nom_stripped||" "||prenom_stripped) = ?', [nt, nt]);
+        var cc = db.execute('SELECT id FROM `client` WHERE deleted <> \'true\' and (UPPER(prenom_stripped||" "||nom_stripped) = ? OR UPPER(nom_stripped||" "||prenom_stripped) = ?)', [nt, nt]);
 	var id = cc.field(0);
 	cc.close();
 	rs.pgm = rs.pgm.concat(id);
@@ -455,7 +455,7 @@ function handleDelete() {
                 getElementById("nom").value+"?"))
     return false;
 
-  deleteEntry(cid);
+  db.execute('UPDATE `client` SET deleted=\'true\',version=version+1 WHERE id=?', [cid]);
   return true;
 }
 
