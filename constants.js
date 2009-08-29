@@ -38,18 +38,19 @@ var CATEGORY_NAMES = ["Mini-Poussin (U-7)", "Poussin (U-9)", "Benjamin (U-11)",
 var CATEGORY_YEARS = [SAISON-5, SAISON-7, SAISON-9, SAISON-11, SAISON-13,
                       SAISON-15, SAISON-18, 0];
 
-var COURS = ["Adultes (LM2015-2145, V1930-2130)", 
-             "Équipe compétition (LM1830-2015, V1930-2130)",
-             "Intérmediares 7-12 ans (LM1730-1830, V1800-1930)",
-             "Débutants 7-12 ans (MJ1730-1845)",
+var COURS = ["Adultes (LM2015-2145, V2000-2145)", 
+             "Équipe compétition (LM1830-2015, V2000-2145)",
+             "Intérmediares 7-12 ans (L1730-1830, V1830-2000)",
+             "Débutants 7-12 ans (MaJ1730-1830)",
              "Débutants de 5 à 6 ans (S900-1000)",
-             "Anciens de 6 à 7 ans (S1000-1130)",
-             "Anciens de 7 à 9 ans (S1130-1300)",
-             "Débutants de 7 à 12 ans (S1300-1430)",
-             "Anciens de 7 à 12 ans (S1430-1600)",
-             "Anciens de 5 à 6 ans (D930-1030)",
-             "Anciens de 7 à 9 ans (D1030-1230)",
-             "Filles 7-11",
+             "Anciens de 5 à 6 ans (S1000-1100)",
+             "Anciens de 7 à 8 ans (S1100-1230)",
+             "Anciens de 7 à 9 ans (S1230-1400)",
+             "Débutants de 7 à 9 ans (S1400-1530)",
+             "Débutants de 7 à 8 ans (S1530-1700)",
+             "Débutants de 5 à 6 ans (D900-1000)",
+             "Débutants de 7 à 10 ans (D1030-1230)",
+             "Débutants de 7 à 11 ans (MV1730-1830)",
              "Autre"];
 
 var SUGGESTED_PAIEMENTS = ["", "2009-11-13", "2010-02-05", "", "", ""];
@@ -74,8 +75,8 @@ function categoryName(i) { return CATEGORY_NAMES[i]; }
 var FRAIS_PASSEPORT_JUDO_QUEBEC = 5;
 var FRAIS_PAS_ANJOU = 5;
 
-var CATEGORY_PRIX_1_SESSION = [100, 100, 115, 150, 185, 185, 185, 210, 135, 135];
-var CATEGORY_PRIX_2_SESSION = [175, 175, 196, 225, 290, 290, 300, 345, 135, 135];
+var CATEGORY_PRIX_1_SESSION = [100, 100, 115, 150, 185, 185, 185, 210, 140, 140];
+var CATEGORY_PRIX_2_SESSION = [175, 175, 195, 225, 290, 290, 300, 345, 140, 140];
 var CATEGORY_JUDO_QC = [10, 15, 25, 35, 45, 50, 60, 65, 90, 100];
 
 var ESCOMPTE_NAMES = ["Aucun", "2e membre", "3e membre", "4e membre", "Nouvel(le) ami(e)", "Membre du CA"];

@@ -167,8 +167,7 @@ function calcFrais() {
   if (getElementById("non_anjou").checked)
     ppaPrice += FRAIS_PAS_ANJOU;
 
-  var jv = getElementById("judogi").value;
-  jv = jv.substring(0, jv.length-1);
+  var jv = stripDollars(getElementById("judogi").value);
   if (parseFloat(jv) > 0)
     ppaPrice += parseFloat(jv);
 
