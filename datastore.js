@@ -146,9 +146,12 @@ function pullGroup(cid, sid) {
 
     var r = responseXML.childNodes[0].childNodes; // group
 
-    if (cid != null)
+    if (cid != null) {
 	db.execute('DELETE FROM `payment_group_members` WHERE `group_id`=?',
 		   [cid]);
+	db.execute('DELETE FROM `payment` WHERE `group_id`=?',
+		   [cid]);	
+    }
 
     db.execute('INSERT OR REPLACE INTO `payment_groups`'+ 
                ' VALUES (?,-1,-1,?)', [cid, sid]);
