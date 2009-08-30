@@ -102,6 +102,14 @@ function doLogin(arg, successContinuation) {
 }
 
 function updateLastSync() {
+  var is = db.execute('SELECT COUNT(*) FROM `services` WHERE date_inscription > ?', [FIRST_2009_INSCRIPTION]);
+  var inscr = is.field(0); is.close();
+  var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE version > server_version');
+  var toSync = rs.field(0); rs.close();
+
+  getElementById('toSync').innerHTML = toSync;
+  getElementById('totalCount').innerHTML = inscr;
+
   var bail = doRequest
     ("POST", "update_last_sync.php", null, printLastSync_, null);
   setTimeout(bail, 1000);

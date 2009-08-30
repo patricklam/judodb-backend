@@ -26,8 +26,6 @@
 <div id="sync" onclick="loginAndSync()">synchroniser</div>
 <div id="version"></div>
 
-<script type="text/javascript" src="index_utils.js"></script>
-
 <form name="findclient" action="#">
 <div class="sectionBody" style="padding:7px 0 9px 7px;">
  <div>
@@ -56,6 +54,15 @@
   </div>
 </form>
 </div>
+
+<div id="stats">
+  <table>
+  <col width="80%" /><col width="19%" />
+  <tr><td>Inscriptions 2009-2010:</td><td> <span id="totalCount">--</span> </td></tr>
+  <tr><td>Inscriptions &agrave; syncroniser:</td><td> <span id="toSync">--</span></td></tr>
+</div>
+
+<script type="text/javascript" src="index_utils.js"></script>
 
 </body>
 
