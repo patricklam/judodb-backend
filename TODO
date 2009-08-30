@@ -9,6 +9,8 @@
 
 * nightly dumps of database to remote locations
 
+* DirectoryIndex brokenness
+
 --- later:
 
 * autosuggest for payment groups
