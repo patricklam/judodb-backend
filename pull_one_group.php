@@ -17,7 +17,6 @@ db_connect() || die;
 $rs = db_query_get("SELECT * FROM `payment_groups` WHERE id=$id");
 
 print "<group server_id='$id'>";
-print "<version>" . $rs[0]['version'] . "</version>";
 
 $rs = db_query_get("SELECT * FROM `payment_group_members` " .
                    "WHERE group_id=$id");
@@ -38,6 +37,7 @@ if (isset($rs)) {
   print "</payment>";
  }
 }
+print "<version>" . $rs[0]['version'] . "</version>";
 
 print "</group>";
 
