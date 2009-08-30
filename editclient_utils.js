@@ -505,3 +505,28 @@ function updateCategorie() {
   catId = computeCategoryId(y, grade);
   c.value = categoryName(catId);
 }
+
+function verificationView() {
+  var vw = window.open('', 'verif', 'modal=yes,alwaysRaised=yes');
+  vw.document.write('<title>Verification formulaire: '+getElementById('prenom').value+' '+getElementById('nom').value+'</title>');
+  vw.document.write('<body><table width=\'100%\'><col width=\'15%\'');
+  vw.document.write('<tr><td>Nom</td><td>' + getElementById('nom').value+'</td>');
+  vw.document.write('<tr><td>Prenom</td><td>' + getElementById('prenom').value+'</td>');
+  vw.document.write('<tr><td>Adresse</td><td>' + getElementById('adresse').value+'</td>');
+  vw.document.write('<tr><td>Ville</td><td>' + getElementById('ville').value+'</td>');
+  vw.document.write('<tr><td>Code Postal</td><td>' + getElementById('code_postal').value+'</td>');
+  vw.document.write('<tr><td>T&eacute;l&eacute;phone</td><td>' + getElementById('tel').value+'</td>');
+  vw.document.write('<tr><td>T&eacute;l&eacute;phone urgence</td><td>' + getElementById('tel_contact_urgence').value+'</td>');
+  vw.document.write('<tr><td>Date de naissance</td><td>' + getElementById('ddn').value+'</td>');
+  vw.document.write('<tr><td>No ass-maladie</td><td>' + getElementById('RAMQ').value+'</td>');
+  vw.document.write('<tr><td>No r&eacute;sident Anjou</td><td>' + getElementById('carte_anjou').value+'</td>');
+  vw.document.write('<tr><td>Courriel</td><td>' + getElementById('courriel').value+'</td>');
+
+  vw.document.write('<tr><td>Cours</td><td>' + COURS[getElementById('cours').value]+'</td>');
+  vw.document.write('<tr></tr><tr><td>Nom recu impot</td><td>' + getElementById('nom_recu_impot').value+'</td>');
+
+  vw.document.write('</table>');
+  vw.document.write('</body>');
+  vw.document.write('</html>');
+  vw.document.close();
+}

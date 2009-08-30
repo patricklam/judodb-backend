@@ -44,6 +44,15 @@ h1 {
   color: blue;
 }
 
+#verif {
+  position: absolute;
+  top: 1.5em;
+  right: 2em;
+  padding: 0.5em;
+  cursor: pointer;
+  color: blue;
+}
+
 #version {
   position: absolute;
   top: 1.5em;
