@@ -14,13 +14,8 @@
     { "url": "editclient_utils.js" },
     { "url": "localserver.js" },
     { "url": "xhr.js" },
-<<<<<<< HEAD:manifest.json
     { "url": "gears_init.js" }
     { "url": "styles.css" }
-=======
-    { "url": "gears_init.js" },
-    { "url": "styles.css" },
->>>>>>> cf9c6a3dedc5c5c1c7e8a38824a955dfc20760e3:manifest.json
     { "url": "print.css" }
   ]
 }
