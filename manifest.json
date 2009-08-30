@@ -14,6 +14,8 @@
     { "url": "editclient_utils.js" },
     { "url": "localserver.js" },
     { "url": "xhr.js" },
-    { "url": "gears_init.js" }
+    { "url": "gears_init.js" },
+    { "url": "styles.css" },
+    { "url": "print.css" }
   ]
 }
