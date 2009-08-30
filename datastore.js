@@ -165,8 +165,6 @@ function pullGroup(cid, sid) {
 	    db.execute('INSERT INTO `payment_group_members`'+
                        ' SELECT ?, id FROM `client` WHERE server_id=?', 
 		       [newCid, val]);
-	    alert('INSERT INTO `payment_group_members`'+
-                       ' SELECT '+newCid+', id FROM `client` WHERE server_id='+val);
 	} else if (key == 'payment') {
 	    var p = r[i].childNodes;
 	    db.execute('INSERT INTO `payment` VALUES (?, ?, ?, ?, ?, ?, ?)',
