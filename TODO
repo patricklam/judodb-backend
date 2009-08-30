@@ -2,6 +2,10 @@
 
 * push deleted clients and groups to server
 
+* verification mode
+
+* why did we want to copy judo quebec number down below again?
+
 * export to CSV, especially classes
 * nightly dumps of database
 * DirectoryIndex brokenness
