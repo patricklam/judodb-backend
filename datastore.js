@@ -270,7 +270,7 @@ function storeOneClient(cid, rs) {
 
   db.execute('DELETE FROM `payment` WHERE client_id = ?', [newCid]);
 
-  var effectiveCid = (gid == -1) ? newCid : -1;
+  var effectiveCid = (gid == -1 || gid == null) ? newCid : -1;
 
   for (v in rs.paiements) {
       var rsv = rs.paiements[v];
