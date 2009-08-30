@@ -388,7 +388,6 @@ function handleSubmit() {
 
   for (i = 0; i < f.length; i++) {
     var key = f[i];
-if (getElementById(key) == null) alert(key);
     rs[key] = getElementById(key).value;
   }
 
