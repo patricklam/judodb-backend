@@ -150,20 +150,23 @@ function pullGroup(cid, sid) {
 	db.execute('DELETE FROM `payment_group_members` WHERE `group_id`=?',
 		   [cid]);
 
-    var newCid = cid;
+    db.execute('INSERT OR REPLACE INTO `payment_groups`'+ 
+               ' VALUES (?,-1,-1,?)', [cid, sid]);
+    var newCid = db.lastInsertRowId;
     for (var i = 0; i < r.length; i++) {
         var key = r[i].nodeName;
 	var val = r[i].textContent;
-        if (key == 'version') {
-	    db.execute('INSERT OR REPLACE INTO `payment_groups`'+ 
-                       ' VALUES (?,?,?,?)', [cid, val, val, sid]);
-	    newCid = db.lastInsertRowId;
+        if (key == 'version') { // arrives last now
+	    db.execute('UPDATE `payment_groups` SET version=?, '+
+		       'server_version=? WHERE id=?', 
+                       [val, val, newCid]);
 	}
         else if (key == 'client_id') {
 	    db.execute('INSERT INTO `payment_group_members`'+
                        ' SELECT ?, id FROM `client` WHERE server_id=?', 
 		       [newCid, val]);
-	    
+	    alert('INSERT INTO `payment_group_members`'+
+                       ' SELECT '+newCid+', id FROM `client` WHERE server_id='+val);
 	} else if (key == 'payment') {
 	    var p = r[i].childNodes;
 	    db.execute('INSERT INTO `payment` VALUES (?, ?, ?, ?, ?, ?, ?)',
