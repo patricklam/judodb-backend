@@ -59,6 +59,7 @@ DataStore.prototype.init = function() {
              '`escompte` varchar(3), '+
 	     '`frais` varchar(10), '+
 	     '`cas_special_note` varchar(50), '+
+	     '`escompte_special` varchar(10), '+
 	     '`horaire_special` varchar(50) '+
              ')');
     db.execute('create table if not exists `payment_groups` (' +
@@ -205,12 +206,12 @@ function storeOneClient(cid, rs) {
   db.execute('DELETE FROM `services` WHERE client_id = ?', [newCid]);
   if (rs.date_inscription != null && rs.date_inscription.length > 0)
     db.execute('INSERT INTO `services` ' +
-               'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
+               'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
                [newCid, null, rs.date_inscription[0], 
                 rs.saisons[0], rs.sans_affiliation[0],
                 rs.cours[0], rs.sessions[0], rs.passeport[0], rs.non_anjou[0], 
     		rs.judogi[0], rs.escompte[0], rs.frais[0], 
-                rs.cas_special_note[0], rs.horaire_special[0]]);
+                rs.cas_special_note[0], rs.escompte_special[0], rs.horaire_special[0]]);
 
   var gidCountRS = db.execute('SELECT COUNT(DISTINCT `group_id`) FROM `payment_group_members` WHERE client_id = ?', [newCid]);
   var count = gidCountRS.field(0);
@@ -256,7 +257,7 @@ function storeOneClient(cid, rs) {
 
       for (mi in rs.pgm) {
 	  var m = rs.pgm[mi];
-	  if (m == -1) m = newCid;
+	  if (m == null) m = newCid;
 	  db.execute('INSERT INTO `payment_group_members` VALUES (?, ?)',
 		     [gid, m]);
       }
@@ -264,9 +265,13 @@ function storeOneClient(cid, rs) {
   }
 
   // payments
-  db.execute('DELETE FROM `payment` WHERE client_id = ? OR group_id = ?', 
-	     [newCid, gid]);
+  if (gid != -1)
+      db.execute('DELETE FROM `payment` WHERE group_id = ?', [gid]);
+
+  db.execute('DELETE FROM `payment` WHERE client_id = ?', [newCid]);
+
   var effectiveCid = (gid == -1) ? newCid : -1;
+
   for (v in rs.paiements) {
       var rsv = rs.paiements[v];
       db.execute('INSERT INTO `payment` VALUES (?, ?, ?, ?, ?, ?, ?)',

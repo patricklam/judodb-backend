@@ -20,7 +20,6 @@ function localInit() {
   updateBlurb();
   uFrais();
   addOrRemoveVersements();
-  enableCustomFrais();
   updateNom();
   clearStatus();
 }
@@ -122,7 +121,7 @@ function addDollarsById(id) {
   if (v == '') return;
 
   stripDollarsById(id);
-  getElementById(id).value += ' $';
+  getElementById(id).value = asCurrency(getElementById(id).value) + ' $';
 }
 
 function stripDollars(v) {
@@ -151,10 +150,30 @@ function calcFrais() {
   var price = basePrice;
   getElementById("categorieFrais").value = asCurrency(basePrice) + ' $';
 
-  var escompte = parseFloat(getElementById("escompte").value);
-  var escomptePrice = -(price * escompte/100);
+  var escomptePct = parseFloat(getElementById("escompte").value);
+  getElementById("escompte_special").readOnly = 
+    (getElementById("cas_special_note").value == "");
+  getElementById("saisons").readOnly = 
+    (getElementById("cas_special_note").value == "");
+
+  if (getElementById("cas_special_note").value == "")
+    getElementById("escompte_special").value = "";
+
+  var escomptePrice;
+
+  if (escomptePct != -1) {
+    getElementById("cas_special_note").parentNode.style.display="none";
+    escomptePrice = -(price * escomptePct/100);
+    getElementById("escompte_special").value = asCurrency(escomptePrice) + ' $';
+  } else {
+    getElementById("cas_special_note").parentNode.style.display="block";
+    var e = stripDollars(getElementById("escompte_special").value);
+    if (e != '')
+	escomptePrice = parseFloat(e);
+    else escomptePrice = 0;
+    addDollarsById("escompte_special");
+  }
   price += escomptePrice;
-  getElementById("escompteFrais").value = asCurrency(escomptePrice) + ' $';
 
   var judoQCPrice = categoryPrixJQ(catId);
   if (getElementById("sans_affiliation").checked) judoQCPrice = 0;
@@ -173,9 +192,6 @@ function calcFrais() {
 
   price += ppaPrice;
   getElementById("ppaFrais").value = asCurrency(ppaPrice) + ' $';
-
-  if (getElementById("cas_special_note").value != "")
-    return getElementById("frais").value;
 
   return asCurrency(price)+" $";
 }
@@ -201,24 +217,7 @@ function uFrais() {
   getElementById("frais").value = calcFrais();
   uFraisFamille();
   uSolde();
-}
-
-function enableCustomFrais() {
-  if (getElementById("cas_special_note").value == "" && 
-      getElementById("frais").value != calcFrais())
-    if (!confirm("Est-ce que vous voulez effacer le frais special?")) {
-      getElementById("cas_special_note").value = 
-        getElementById("old_cas_special_note").value;
-      return false;
-    }
-
-  uFrais();
-  getElementById("frais").disabled = 
-    (getElementById("cas_special_note").value == "");
-  getElementById("saisons").disabled = 
-    (getElementById("cas_special_note").value == "");
-  getElementById("old_cas_special_note").value = 
-    getElementById("cas_special_note").value;
+  addOrRemoveVersements();
 }
 
 function updateModePaiement(i) {
@@ -389,6 +388,7 @@ function handleSubmit() {
 
   for (i = 0; i < f.length; i++) {
     var key = f[i];
+if (getElementById(key) == null) alert(key);
     rs[key] = getElementById(key).value;
   }
 
@@ -473,6 +473,7 @@ function ddnChange() {
   var newDDN = getElementById("ddn").value;
   oldDDN = newDDN;
   updateBlurb();
+  uFrais();
 }
 
 function updateBlurb() {

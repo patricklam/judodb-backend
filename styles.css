@@ -174,3 +174,7 @@ input.text, input.button, textarea, select {
 #blurb {
   display: none;
 }
+
+disabled { /* XXX */
+ color: black;
+}

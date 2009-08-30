@@ -1,4 +1,4 @@
-var VERSION = '090827-beta1';
+var VERSION = '090829-beta2';
 
 // See also constants.php for another definition of GLOBAL_FIELDS.
 var GLOBAL_FIELDS = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "code_postal", "tel", "affiliation", "carte_anjou", "nom_recu_impot", "nom_contact_urgence", "tel_contact_urgence", "RAMQ", "nom_stripped", "prenom_stripped"];
@@ -9,7 +9,7 @@ var SERVICE_FIELDS = ["date_inscription", "saisons", "sans_affiliation",
 		      "cours", "sessions",
                       "passeport", "non_anjou", "judogi",
                       "escompte", "frais", "cas_special_note",
-                      "horaire_special"];
+                      "escompte_special" , "horaire_special"];
 
 var CHECKBOX_FIELDS = ['non_anjou', 'passeport', 'sans_affiliation'];
 var SELECT_FIELDS = ['cours', 'sessions', 'escompte'];
@@ -79,8 +79,8 @@ var CATEGORY_PRIX_1_SESSION = [100, 100, 115, 150, 185, 185, 185, 210, 140, 140]
 var CATEGORY_PRIX_2_SESSION = [175, 175, 195, 225, 290, 290, 300, 345, 140, 140];
 var CATEGORY_JUDO_QC = [10, 15, 25, 35, 45, 50, 60, 65, 90, 100];
 
-var ESCOMPTE_NAMES = ["Aucun", "2e membre", "3e membre", "4e membre", "Nouvel(le) ami(e)", "Membre du CA"];
-var ESCOMPTE_AMOUNTS = [0, 10, 15, 20, 10, 50];
+var ESCOMPTE_NAMES = ["Aucun", "2e membre", "3e membre", "4e membre", "Nouvel(le) ami(e)", "Membre du CA", "Cas spécial"];
+var ESCOMPTE_AMOUNTS = [0, 10, 15, 20, 10, 50, -1];
 
 function categoryPrix1(i) { return CATEGORY_PRIX_1_SESSION[i]; }
 function categoryPrix2(i) { return CATEGORY_PRIX_2_SESSION[i]; }

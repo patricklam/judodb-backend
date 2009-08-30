@@ -77,7 +77,7 @@ function executeToObjects(db, sql, args) {
   }
 }
 
-var dateRegexp = /^(\d\d\d\d)-(\d\d)-(\d\d)$/;
+var dateRegexp = /^(\d\d\d\d)-(\d?\d)-(\d?\d)$/;
 
 // yyyy/mm/dd
 function validateDate(d) {
