@@ -1,16 +1,13 @@
---- version beta1:
+--- version beta3:
 
 * push deleted clients and groups to server
 
-* verification mode
+* mass update of grades
 
-* why did we want to copy judo quebec number down below again?
+* export PDF of classes
+* export to CSV, especially per class
 
-* export to CSV, especially classes
-* nightly dumps of database
-
-* more testing of roundtripping of all information to remote server
-   + (it seems to work)
+* nightly dumps of database to remote locations
 
 --- later:
 
@@ -18,8 +15,7 @@
 
 * implement merges/conflicts
 * view/edit grade history 
-   + (I think the current UI for both grades & services is OK,
-      but we need to add 'view history' pop-up link.)
+   + (Implement 'view history' pop-up link.)
 
 * implement table for tournament results
 
@@ -27,8 +23,7 @@
 * implement system config tables:
    - saison
    - groupes
+   - escomptes
    - frais
    - suggested dates for cheques
 
-old cookies document:
-// http://www.quirksmode.org/js/cookies.html
