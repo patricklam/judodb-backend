@@ -167,7 +167,7 @@ function pullGroup(cid, sid) {
 	} else if (key == 'payment') {
 	    var p = r[i].childNodes;
 	    db.execute('INSERT INTO `payment` VALUES (?, ?, ?, ?, ?, ?, ?)',
-		 [null, cid, null, p[0].textContent, p[1].textContent,
+		 [null, newCid, null, p[0].textContent, p[1].textContent,
 		  p[2].textContent, p[3].textContent]);
 	}
     }
@@ -237,7 +237,7 @@ function storeOneClient(cid, rs) {
       gids.close();
   }
 
-  var gid;
+  var gid = -1;
   if (count > 1 || count == 0) {
       if (rs.pgm.length > 1) {
 	  db.execute('INSERT INTO `payment_groups` VALUES (?, ?, ?, ?)', [null, -1, -1, -1]);

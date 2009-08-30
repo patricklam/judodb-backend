@@ -76,8 +76,8 @@ function loginAndSync() {
     getElementById('login').style.display="inline";
     getElementById('login').onSubmit = function() { 
         getElementById('login').style.display="none";
-        store.sync();
 	setTimeout(updateLastSync, 2000);
+        store.sync();
     }
     return;
   }
