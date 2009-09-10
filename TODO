@@ -1,5 +1,7 @@
 --- version beta3:
 
+* reduce number of requests
+
 * push deleted clients and groups to server
 
 * mass update of grades
