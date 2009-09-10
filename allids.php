@@ -10,15 +10,23 @@ echo "<?xml version=\"1.0\"?>";
 
 db_connect() || die;
 
-$rs = db_query_get("SELECT id, version FROM `client`");
-
 print "<table>";
+$rs = db_query_get("SELECT id, version FROM `client`");
 if (isset($rs)) {
  foreach ($rs as $r) {
   $id = $r['id']; $ver = $r['version'];
   print "<tr><id>$id</id><version>$ver</version></tr>\n";
  }
 }
+
+$rs = db_query_get("SELECT id FROM `deleted_client`");
+if (isset($rs)) {
+ foreach ($rs as $r) {
+  $id = $r['id'];
+  print "<del>$id</del>";
+ }
+}
+
 print "</table>";
 
 ?>
