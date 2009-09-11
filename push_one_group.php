@@ -26,6 +26,15 @@ if (isset($_POST['server_id']) && $_POST['server_id'] != '-1') {
       "INSERT INTO `payment_groups` VALUES (null, $version)");
 }
 
+if ($_POST['deleted'] == 'true') {
+  db_query_set("DELETE FROM `payment_groups` WHERE id=$sid");
+  db_query_set("DELETE FROM `payment_group_members` WHERE group_id=$sid");
+  db_query_set("DELETE FROM `payment` WHERE group_id=$sid");
+  db_query_set("REPLACE INTO `deleted_payment_groups` VALUE ($sid)");
+  exit();
+}
+
+
 $ids=explode(',', $_POST['id']); 
 db_query_set("DELETE FROM `payment_group_members` WHERE group_id='$sid'");
 foreach ($ids as $i) {
