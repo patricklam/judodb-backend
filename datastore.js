@@ -504,7 +504,7 @@ function pushGroups() {
   while (ds.isValidRow()) {
     var cid = ds.fieldByName('id');
     var body = "deleted=true";
-    body += "&server_id="+ds.fieldByName('server_group_id');
+    body += "&server_id="+ds.fieldByName('server_id');
     pushOne("group", makeHandler(-1, cid, body, 3), body);
     ds.next();
   }
