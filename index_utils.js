@@ -19,7 +19,9 @@ function refreshResults() {
   var resultBox = getElementById('results');
   resultBox.innerHTML = '';
   for (var i = firstToDisplay; i < min(firstToDisplay+10, clients.length); ++i) {
-    resultBox.innerHTML += '<a href="editclient.html?cid='+clients[i].id+'">'+clients[i].prenom+' '+clients[i].nom+'</a><br />';
+    resultBox.innerHTML += '<a href="editclient.html?cid='+clients[i].id+'">'+clients[i].nom+', '+clients[i].prenom+'</a> ';
+    if (clients[i].date_inscription != null) resultBox.innerHTML += '&nbsp;&nbsp;&nbsp;('+clients[i].date_inscription+')';
+    resultBox.innerHTML += '<br />';
   }
 
   if (firstToDisplay > 0 || firstToDisplay + 10 < clients.length) 
@@ -33,7 +35,11 @@ function refreshResults() {
 
 function doSearch() {
   var f = '%'+stripAccent(getElementById('query').value)+'%';
-  var rs = db.execute('SELECT id, nom, prenom FROM `client` WHERE deleted <> \'true\' and (prenom_stripped||" "||nom_stripped LIKE ? OR nom_stripped||" "||prenom_stripped LIKE ?) ORDER BY nom COLLATE NOCASE', [f, f]);
+  var rs = db.execute('SELECT id,nom_stripped,prenom_stripped,date_inscription from '+
+		        '(SELECT client.id,nom_stripped,prenom_stripped,date_inscription,deleted '+
+		              'FROM `client` LEFT OUTER JOIN `services` ON client.id=services.client_id) ' +
+                      'WHERE deleted <> \'true\' AND (prenom_stripped||" "||nom_stripped LIKE ? OR nom_stripped||" "||prenom_stripped LIKE ?) ' +
+		      'ORDER BY nom_stripped COLLATE NOCASE', [f, f]);
   var index = 0;
   clients = [];
   while (rs.isValidRow()) {
@@ -41,6 +47,7 @@ function doSearch() {
     clients[index].id = rs.field(0);
     clients[index].nom = rs.field(1);
     clients[index].prenom = rs.field(2);
+    clients[index].date_inscription = rs.field(3);
     ++index;
     rs.next();
   }
@@ -69,6 +76,7 @@ function loginAndSync() {
     getElementById('login').style.display="inline";
     getElementById('login').onSubmit = function() { 
         getElementById('login').style.display="none";
+	setTimeout(updateLastSync, 2000);
         store.sync();
     }
     return;
@@ -95,11 +103,19 @@ function doLogin(arg, successContinuation) {
 }
 
 function updateLastSync() {
+  var is = db.execute('SELECT COUNT(*) FROM `services` WHERE date_inscription > ?', [FIRST_2009_INSCRIPTION]);
+  var inscr = is.field(0); is.close();
+  var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE version > server_version');
+  var toSync = rs.field(0); rs.close();
+
+  getElementById('toSync').innerHTML = toSync;
+  getElementById('totalCount').innerHTML = inscr;
+
   var bail = doRequest
     ("POST", "update_last_sync.php", null, printLastSync_, null);
   setTimeout(bail, 1000);
   function printLastSync_(status, statusText, responseText, responseXML) {
-    if (status == '200') {
+    if (status == '200' && responseXML != null) {
       var ls = responseXML.childNodes[0].childNodes;
       getElementById("lastSync").innerHTML = 
 	    "dernier sync par " + 

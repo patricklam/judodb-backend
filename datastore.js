@@ -59,6 +59,7 @@ DataStore.prototype.init = function() {
              '`escompte` varchar(3), '+
 	     '`frais` varchar(10), '+
 	     '`cas_special_note` varchar(50), '+
+	     '`escompte_special` varchar(10), '+
 	     '`horaire_special` varchar(50) '+
              ')');
     db.execute('create table if not exists `payment_groups` (' +
@@ -145,28 +146,32 @@ function pullGroup(cid, sid) {
 
     var r = responseXML.childNodes[0].childNodes; // group
 
-    if (cid != null)
+    if (cid != null) {
 	db.execute('DELETE FROM `payment_group_members` WHERE `group_id`=?',
 		   [cid]);
+	db.execute('DELETE FROM `payment` WHERE `group_id`=?',
+		   [cid]);	
+    }
 
-    var newCid = cid;
+    db.execute('INSERT OR REPLACE INTO `payment_groups`'+ 
+               ' VALUES (?,-1,-1,?)', [cid, sid]);
+    var newCid = db.lastInsertRowId;
     for (var i = 0; i < r.length; i++) {
         var key = r[i].nodeName;
 	var val = r[i].textContent;
-        if (key == 'version') {
-	    db.execute('INSERT OR REPLACE INTO `payment_groups`'+ 
-                       ' VALUES (?,?,?,?)', [cid, val, val, sid]);
-	    newCid = db.lastInsertRowId;
+        if (key == 'version') { // arrives last now
+	    db.execute('UPDATE `payment_groups` SET version=?, '+
+		       'server_version=? WHERE id=?', 
+                       [val, val, newCid]);
 	}
         else if (key == 'client_id') {
 	    db.execute('INSERT INTO `payment_group_members`'+
                        ' SELECT ?, id FROM `client` WHERE server_id=?', 
 		       [newCid, val]);
-	    
 	} else if (key == 'payment') {
 	    var p = r[i].childNodes;
 	    db.execute('INSERT INTO `payment` VALUES (?, ?, ?, ?, ?, ?, ?)',
-		 [null, cid, null, p[0].textContent, p[1].textContent,
+		 [null, newCid, null, p[0].textContent, p[1].textContent,
 		  p[2].textContent, p[3].textContent]);
 	}
     }
@@ -205,12 +210,12 @@ function storeOneClient(cid, rs) {
   db.execute('DELETE FROM `services` WHERE client_id = ?', [newCid]);
   if (rs.date_inscription != null && rs.date_inscription.length > 0)
     db.execute('INSERT INTO `services` ' +
-               'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
+               'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ',
                [newCid, null, rs.date_inscription[0], 
                 rs.saisons[0], rs.sans_affiliation[0],
                 rs.cours[0], rs.sessions[0], rs.passeport[0], rs.non_anjou[0], 
     		rs.judogi[0], rs.escompte[0], rs.frais[0], 
-                rs.cas_special_note[0], rs.horaire_special[0]]);
+                rs.cas_special_note[0], rs.escompte_special[0], rs.horaire_special[0]]);
 
   var gidCountRS = db.execute('SELECT COUNT(DISTINCT `group_id`) FROM `payment_group_members` WHERE client_id = ?', [newCid]);
   var count = gidCountRS.field(0);
@@ -236,7 +241,7 @@ function storeOneClient(cid, rs) {
       gids.close();
   }
 
-  var gid;
+  var gid = -1;
   if (count > 1 || count == 0) {
       if (rs.pgm.length > 1) {
 	  db.execute('INSERT INTO `payment_groups` VALUES (?, ?, ?, ?)', [null, -1, -1, -1]);
@@ -256,7 +261,7 @@ function storeOneClient(cid, rs) {
 
       for (mi in rs.pgm) {
 	  var m = rs.pgm[mi];
-	  if (m == -1) m = newCid;
+	  if (m == null) m = newCid;
 	  db.execute('INSERT INTO `payment_group_members` VALUES (?, ?)',
 		     [gid, m]);
       }
@@ -264,9 +269,13 @@ function storeOneClient(cid, rs) {
   }
 
   // payments
-  db.execute('DELETE FROM `payment` WHERE client_id = ? OR group_id = ?', 
-	     [newCid, gid]);
-  var effectiveCid = (gid == -1) ? newCid : -1;
+  if (gid != -1)
+      db.execute('DELETE FROM `payment` WHERE group_id = ?', [gid]);
+
+  db.execute('DELETE FROM `payment` WHERE client_id = ?', [newCid]);
+
+  var effectiveCid = (gid == -1 || gid == null) ? newCid : -1;
+
   for (v in rs.paiements) {
       var rsv = rs.paiements[v];
       db.execute('INSERT INTO `payment` VALUES (?, ?, ?, ?, ?, ?, ?)',

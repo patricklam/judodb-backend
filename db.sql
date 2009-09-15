@@ -93,6 +93,7 @@ CREATE TABLE `services` (
   `escompte` char(3),
   `frais` char(10),
   `cas_special_note` varchar(50),
+  `escompte_special` varchar(10),
   `horaire_special` varchar(50)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 

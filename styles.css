@@ -44,6 +44,15 @@ h1 {
   color: blue;
 }
 
+#verif {
+  position: absolute;
+  top: 1.5em;
+  right: 2em;
+  padding: 0.5em;
+  cursor: pointer;
+  color: blue;
+}
+
 #version {
   position: absolute;
   top: 1.5em;
@@ -173,4 +182,12 @@ input.text, input.button, textarea, select {
 
 #blurb {
   display: none;
+}
+
+#stats {
+  position: absolute;
+  top: 20%;
+  right: 5em;
+  background-color: #ddd;
+  padding: 2em;
 }

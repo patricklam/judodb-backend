@@ -187,3 +187,7 @@ input.text, input.button, textarea, select {
 #blurb {
   display: block;
 }
+
+.dark { 
+  border:1px solid;
+}

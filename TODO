@@ -1,9 +1,15 @@
---- version beta1:
+--- version beta3:
 
-* export to CSV, especially classes
+* reduce number of requests
 
-* more testing of roundtripping of all information to remote server
-   + (it seems to work)
+* mass update of grades
+
+* export PDF of classes
+* export to CSV, especially per class
+
+* nightly dumps of database to remote locations
+
+* DirectoryIndex brokenness
 
 --- later:
 
@@ -11,8 +17,7 @@
 
 * implement merges/conflicts
 * view/edit grade history 
-   + (I think the current UI for both grades & services is OK,
-      but we need to add 'view history' pop-up link.)
+   + (Implement 'view history' pop-up link.)
 
 * implement table for tournament results
 
@@ -20,8 +25,7 @@
 * implement system config tables:
    - saison
    - groupes
+   - escomptes
    - frais
    - suggested dates for cheques
 
-old cookies document:
-// http://www.quirksmode.org/js/cookies.html

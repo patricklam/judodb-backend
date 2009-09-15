@@ -32,6 +32,8 @@ plus approfondie.</p>
 <p>Initiales ______</p>
 </div>
 
+<div id="verif" class="noprint" onclick="verificationView()">visionner ancien formulaire</div>
+
 <form name="client" class="compactform" onsubmit="handleSubmit(); return false;" action="#">
 
 <input type="hidden" id="cid" value="" />
@@ -42,7 +44,6 @@ plus approfondie.</p>
 
 <input id="grade_id" type="hidden" value="-1" />
 <input id="service_id" type="hidden" value="-1" />
-<input id="old_cas_special_note" type="hidden" value="" />
 <input id="nom_stripped" type="hidden" value="" />
 <input id="prenom_stripped" type="hidden" value="" />
 
@@ -66,7 +67,7 @@ plus approfondie.</p>
   <label for="ville"><span class="noprint">Ville</span>
     <input id="ville" type="text" size="16" value="" maxlength="50" />
   </label>
-  <label for="tel"><span class="noprint">Code postal</span>
+  <label for="code_postal"><span class="noprint">Code postal</span>
     <input id="code_postal" type="text" size="10" value="" maxlength="20"
 	   onchange="this.value = this.value.toUpperCase()" />
   </label>
@@ -116,10 +117,10 @@ plus approfondie.</p>
  <fieldset> <legend>Inscription (<a href="#" onclick="alert('Pas encore disponible.'); return false;">histoire</a>)</legend>
   <div class="twoper">
    <label for="categorie">Date d'inscription
-    <input id="date_inscription" type="text" value="" disabled="disabled" />
+    <input id="date_inscription" type="text" value="" readonly="readonly" /> <span class="noprint"><a href="#" onclick="ud(); uFrais(); return false;">aujourd'hui</a></spam>
    </label>
    <label for="saisons">Saisons
-    <input id="saisons" type="text" value="" disabled="disabled" />
+    <input id="saisons" type="text" value="" readonly="readonly" />
    </label>
   </div>
   <div class="fourper">
@@ -134,16 +135,16 @@ plus approfondie.</p>
    <label for="sessions" style="float:right">Sessions
     <select id="sessions" onchange="ud(); uFrais()">
      <option value="1">1</option>
-     <option value="2">2</option>
+     <option value="2" selected="selected">2</option>
     </select>
    </label>
   </div>
   <div class="fourper">
    <label for="categorie">Cat&eacute;gorie d'&acirc;ge
-    <input id="categorie" type="text" value="" onchange="uFrais()" disabled="disabled" />
+    <input id="categorie" type="text" value="" onchange="uFrais()" readonly="readonly" />
    </label>
    <label for="categorieFrais" style="float:right">Frais cours
-    <input id="categorieFrais" type="text" value="" disabled="disabled" />
+    <input id="categorieFrais" class="dark" type="text" value="" readonly="readonly" />
    </label>
   </div>
   <div class="fourper">
@@ -152,37 +153,37 @@ plus approfondie.</p>
      <option />
     </select>
    </label>
-   <label for="escompteFrais" style="float:right"> - escompte
-    <input id="escompteFrais" type="text" value="" disabled="disabled" />
+   <label for="cas_special_note">Raison reduction cas sp&eacute;cial
+    <input id="cas_special_note" type="text" value="" onchange="ud(); uFrais()" /></label>
+   <label for="escompte_special" style="float:right"> - escompte
+    <input id="escompte_special" class="dark" type="text" value="" onchange="ud(); uFrais()" readonly="readonly" />
    </label>
   </div>
   <div class="fourper">
-   <label for="sans_affiliation">Déjà affili&eacute; Judo Qu&eacute;bec
-    <input id="sans_affiliation" type="checkbox" onchange="ud(); uFrais()" />
+   <label for="sans_affiliation">Déjà affili&eacute; Judo Qu&eacute;bec 2009-10
+    <input id="sans_affiliation" class="dark" type="checkbox" onchange="ud(); uFrais()" />
    </label>
    <label for="affiliationFrais" style="float:right">Affiliation Judo Qu&eacute;bec
-    <input id="affiliationFrais" type="text" value="" disabled="disabled" />
+    <input id="affiliationFrais" class="dark" type="text" value="" readonly="readonly" />
    </label>
   </div>
   <div class="fourper">
     <label for="judogi">Co&ucirc;t judogi
-     <input id="judogi" type="text" size="5" value="" onchange="ud(); if (this.value != '') addDollars('judogi'); uFrais()" />
+     <input id="judogi" type="text" size="5" value="" onchange="ud(); if (this.value != '') addDollarsById('judogi'); uFrais()" />
     </label>
-    <label for="passeport">Passeport Judo Qu&eacute;bec
+    <label for="passeport">Passeport Judo Qu&eacute;bec (5 $)
      <input id="passeport" type="checkbox" onchange="ud(); uFrais()" />
     </label>
-    <label for="non_anjou">Pas de carte Anjou
+    <label for="non_anjou">Pas de carte Anjou (5 $)
      <input id="non_anjou" type="checkbox" onchange="ud(); uFrais()" />
     </label>
     <label for="ppaFrais" style="float:right">Autres frais
-     <input id="ppaFrais" type="text" value="" disabled="disabled" />
+     <input id="ppaFrais" class="dark" type="text" value="" readonly="readonly" />
     </label>
   </div>
   <div class="fourper">
-   <label for="cas_special_note">Cas sp&eacute;cial
-    <input id="cas_special_note" type="text" value="" onchange="ud(); enableCustomFrais()" /></label>
    <label for="frais" style="float:right">Frais total
-   <input id="frais" type="text" value="" onchange="ud(); uFrais(); addDollars('frais');" disabled="disabled" />
+   <input id="frais" type="text" class="dark" value="" onchange="ud(); uFrais(); addDollarsById('frais');" readonly="readonly" />
    </label>
   </div>
  </fieldset>
@@ -193,7 +194,7 @@ plus approfondie.</p>
     <input id="copay" type="text" size="40" value="" onchange="uFraisFamille()" />
    </label>
    <label for="frais_famille" style="float:right" >Frais famille
-    <input id="frais_famille" type="text" value="" disabled="disabled" />
+    <input id="frais_famille" type="text" class="dark" value="" readonly="readonly" />
    </label>
   </div>
   <fieldset id="versement1" class="versement"><legend>1er versement</legend>
@@ -211,7 +212,7 @@ plus approfondie.</p>
     <input id="versement1_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement1_montant" style="float:right">Montant
-    <input id="versement1_montant" type="text" value="" size="5" onchange="uSolde(); addOrRemoveVersements();" />
+    <input id="versement1_montant" type="text" class="dark" value="" size="15" onchange="uSolde(); addOrRemoveVersements();" />
    </label>
   </div>
   </fieldset>
@@ -230,7 +231,7 @@ plus approfondie.</p>
     <input id="versement2_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement2_montant" style="float:right">Montant
-    <input id="versement2_montant" type="text" value="" size="5" onchange="uSolde(); addOrRemoveVersements();" />
+    <input id="versement2_montant" type="text" class="dark" value="" size="15" onchange="uSolde(); addOrRemoveVersements();" />
    </label>
   </div>
   </fieldset>
@@ -249,7 +250,7 @@ plus approfondie.</p>
     <input id="versement3_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement3_montant" style="float:right">Montant
-    <input id="versement3_montant" type="text" value="" size="5" onchange="uSolde(); addOrRemoveVersements();" />
+    <input id="versement3_montant" type="text" class="dark" value="" size="15" onchange="uSolde(); addOrRemoveVersements();" />
    </label>
   </div>
   </fieldset>
@@ -268,7 +269,7 @@ plus approfondie.</p>
     <input id="versement4_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement4_montant" style="float:right">Montant
-    <input id="versement4_montant" type="text" value="" size="5" onchange="uSolde(); addOrRemoveVersements();" />
+    <input id="versement4_montant" type="text" class="dark" value="" size="15" onchange="uSolde(); addOrRemoveVersements();" />
    </label>
   </div>
   </fieldset>
@@ -287,7 +288,7 @@ plus approfondie.</p>
     <input id="versement5_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement5_montant" style="float:right">Montant
-    <input id="versement5_montant" type="text" value="" size="5" onchange="uSolde(); addOrRemoveVersements();" />
+    <input id="versement5_montant" type="text" class="dark" value="" size="15" onchange="uSolde(); addOrRemoveVersements();" />
    </label>
   </div>
   </fieldset>
@@ -306,13 +307,13 @@ plus approfondie.</p>
     <input id="versement6_date" type="text" value="" size="10" onchange="addOrRemoveVersements()" />
    </label>
    <label for="versement6_montant" style="float:right">Montant
-    <input id="versement6_montant" type="text" value="" size="5" onchange="uSolde(); addOrRemoveVersements();" />
+    <input id="versement6_montant" type="text" class="dark" value="" size="15" onchange="uSolde(); addOrRemoveVersements();" />
    </label>
   </div>
   </fieldset>
   <div class="fourper">
    <label for="solde" style="float:right">Solde au compte
-    <input id="solde" type="text" value="" disabled="disabled" />
+    <input id="solde" type="text" class="dark" value="" readonly="readonly" />
    </label>
   </div>
  </fieldset>
