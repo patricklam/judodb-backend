@@ -59,13 +59,19 @@ function doSearch() {
 
 var challenge;
 
+function actuallySync() {
+    store.sync();
+    doRequest("POST", "update_last_sync.php", {didSync:1}, function (s,st,r,rx) {}, null);
+    updateLastSync();
+    addStatus("Syncronisé avec succès.");    
+}
+
 function loginAndSync() {
   doRequest("GET", "authenticate.php", null, lsCheckLogin_, null);
 
   function lsCheckLogin_(status, statusText, responseText, responseXML) {
     if (status == '200') {
-      store.sync();
-      doRequest("POST", "update_last_sync.php", {didSync:1}, function (s,st,r,rx) {}, null);
+      actuallySync();
       return;
     }
     doRequest("GET", "request_challenge.php", null, lsGotChallenge_, null);
@@ -76,16 +82,14 @@ function loginAndSync() {
     getElementById('login').style.display="inline";
     getElementById('login').onSubmit = function() { 
         getElementById('login').style.display="none";
-        store.sync();
-        updateLastSync();
-	addStatus("Syncronisé avec succès.");
+        actuallySync();
     }
     return;
   }
 }
 
 function computeResponse() {
-  postReq = "username="+getElementById('loginid').value+"&";
+  var postReq = "username="+getElementById('loginid').value+"&";
   postReq += "response="+
     hex_md5(challenge+getElementById('password').value);
   return postReq;
@@ -113,7 +117,7 @@ function updateLastSync() {
   getElementById('totalCount').innerHTML = inscr;
 
   var bail = doRequest
-    ("POST", "update_last_sync.php", null, printLastSync_, null);
+    ("GET", "update_last_sync.php", null, printLastSync_, null);
   setTimeout(bail, 1000);
   function printLastSync_(status, statusText, responseText, responseXML) {
     if (status == '200' && responseXML != null) {
