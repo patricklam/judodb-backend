@@ -603,6 +603,7 @@ DataStore.prototype.sync = function() {
       if (activeRequests == 0) {
         clearStatus(); 
 	addStatus("Syncronisé avec succès.");    
+        doRequest("POST", "update_last_sync.php", {didSync:1}, function (s,st,r,rx) {}, null);
         setTimeout(clearStatus, 1000);
       }
       else setTimeout(clearWhenDone, 100); 

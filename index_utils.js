@@ -61,8 +61,7 @@ var challenge;
 
 function actuallySync() {
     store.sync();
-    doRequest("POST", "update_last_sync.php", {didSync:1}, function (s,st,r,rx) {}, null);
-    updateLastSync();
+    setTimeout(updateLastSync, 5000);
 }
 
 function loginAndSync() {
