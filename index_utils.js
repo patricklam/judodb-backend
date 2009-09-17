@@ -63,7 +63,6 @@ function actuallySync() {
     store.sync();
     doRequest("POST", "update_last_sync.php", {didSync:1}, function (s,st,r,rx) {}, null);
     updateLastSync();
-    addStatus("Syncronisé avec succès.");    
 }
 
 function loginAndSync() {

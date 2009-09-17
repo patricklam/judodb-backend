@@ -600,7 +600,11 @@ DataStore.prototype.sync = function() {
   }
 
   function clearWhenDone() { 
-      if (activeRequests == 0) clearStatus(); 
+      if (activeRequests == 0) {
+        clearStatus(); 
+	addStatus("Syncronisé avec succès.");    
+        setTimeout(clearStatus, 1000);
+      }
       else setTimeout(clearWhenDone, 100); 
   }
 }
