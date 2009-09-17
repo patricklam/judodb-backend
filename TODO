@@ -2,7 +2,13 @@
 
 * reduce number of requests
 
+* cas special: par pourcentage option
+* refresh last sync time on sync
 * mass update of grades
+
+2- extraction des listes de judoka selon leur cours, ou grade, ou age etc
+3- automatisation du formulaire FT-303 lors d'inscription de competition (nom, age, grade, lieu de competition etc - il ne manquerait que la signature du directeur) (J'ai fait cela l'an passé mais ca ne sortait pas directement d'une base de donnée mais il fallait entrer les noms etc - au moins cela a aider Rejean a ne pas a avoir à remplir toutes ces données)
+4- information par envoi de courriel automatisé.
 
 * export PDF of classes
 * export to CSV, especially per class
