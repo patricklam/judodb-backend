@@ -15,6 +15,7 @@ require ('_database.php');
 db_connect() || die;
 
 $rs = db_query_get("SELECT * FROM `payment_groups` WHERE id=$id");
+$version = $rs[0]['version'];
 
 print "<group server_id='$id'>";
 
@@ -37,7 +38,7 @@ if (isset($rs)) {
   print "</payment>";
  }
 }
-print "<version>" . $rs[0]['version'] . "</version>";
+print "<version>" . $version . "</version>";
 
 print "</group>";
 
