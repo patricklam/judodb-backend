@@ -17,7 +17,7 @@ db_connect() || die;
 //$fh = fopen("/tmp/push", "a");
 
 $version = $_POST['version'];
-if (isset($_POST['server_id']) && $_POST['server_id'] != '-1') {
+if (isset($_POST['server_id']) && $_POST['server_id'] != '-1' && isset($_POST['version'])) {
   $sid = $_POST['server_id'];
 //fwrite($fh, "UPDATE `payment_groups` SET version=$version WHERE id=$sid\n");
   db_query_set("UPDATE `payment_groups` SET version=$version WHERE id=$sid");
