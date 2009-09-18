@@ -324,7 +324,7 @@ function computePaymentGroup() {
   var group = gs.split(",");
   var foundSelf = false;
 
-  // validate, then sum
+  // validate
   for (g in group) {
     var gn = stripAccent(group[g]);
     if (!isValidClient(gn)) {
@@ -363,6 +363,7 @@ function uFraisFamille() {
   getElementById("frais_famille").parentNode.style.display = "block";
   getElementById("frais_famille").value = fraisTotal;
   addDollarsById("frais_famille");
+  uSolde();
 }
 
 function paiementEmpty(p) {
