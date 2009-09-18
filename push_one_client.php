@@ -107,7 +107,8 @@ $payment_namelist .= ')';
 
 $i = 0;
 db_query_set("DELETE FROM `payment` WHERE client_id='$sid'");
-foreach ($sfs['mode'] as $s) {
+if ($_POST['have_payment'] == 'true') {
+ foreach ($sfs['mode'] as $s) {
   $payment_tuple = "VALUES ($sid";
   foreach ($PAYMENT_FIELDS as $s) {
     $payment_tuple .= ", '".$sfs[$s][$i] . "'";
@@ -116,6 +117,7 @@ foreach ($sfs['mode'] as $s) {
 
   db_query_set("INSERT INTO `payment` $payment_namelist $payment_tuple");
   $i++; 
+ }
 }
 
 print($sid);

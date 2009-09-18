@@ -465,11 +465,12 @@ function pushClients() {
     }
     ps.close();
     if (gotRowPS) {
+        body += "have_payment=true&";
 	for (i in PAYMENT_FIELDS) {
             var fn = PAYMENT_FIELDS[i];
-	    body += fn + "=" + r[fn].substring(1, r[fn].length) +"&";
+	    body += fn + "=" + r[fn].substring(1, r[fn].length) + "&";
 	}
-    }
+    } else body += "have_payment=false&";
 
     pushOne("client", makeHandler(rs.fieldByName('version'), cid, body, 3), body);
     rs.next();
@@ -536,7 +537,7 @@ function pushGroups() {
     }
     gs.close();
     if (gotRowGS)
-        body += "&id="+ids;
+        body += "&id="+ids+"&";
 
     var r = [];
     for (i in PAYMENT_FIELDS)
