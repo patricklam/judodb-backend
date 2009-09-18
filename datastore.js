@@ -160,9 +160,13 @@ function pullGroup(cid, sid) {
         var key = r[i].nodeName;
 	var val = r[i].textContent;
         if (key == 'version') { // arrives last now
-	    db.execute('UPDATE `payment_groups` SET version=?, '+
+	    // always update server version; update version if < than server_version
+	    db.execute('UPDATE `payment_groups` SET '+
 		       'server_version=? WHERE id=?', 
-                       [val, val, newCid]);
+                       [val, newCid]);
+	    db.execute('UPDATE `payment_groups` SET '+
+		       'version=? WHERE id=? AND version < server_version', 
+                       [val, newCid, val]);
 	}
         else if (key == 'client_id') {
 	    db.execute('INSERT INTO `payment_group_members`'+
