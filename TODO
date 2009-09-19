@@ -2,7 +2,6 @@
 
 * reduce number of requests
 
-* cas special: par pourcentage option
 * mass update of grades
 
 2- extraction des listes de judoka selon leur cours, ou grade, ou age etc

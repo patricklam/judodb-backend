@@ -19,6 +19,7 @@ function localInit() {
     populateClient(cid);
   updateBlurb();
   uFrais();
+  upct();
   addOrRemoveVersements();
   updateNom();
   clearStatus();
@@ -149,6 +150,7 @@ function calcFrais() {
     basePrice = categoryPrix2(catId);
   var price = basePrice;
   getElementById("categorieFrais").value = asCurrency(basePrice) + ' $';
+  upval();
 
   var escomptePct = parseFloat(getElementById("escompte").value);
   getElementById("escompte_special").readOnly = 
@@ -212,11 +214,17 @@ function calcSaison() {
   return s;
 }
 
-// autoupdate for date_inscription field
-function up() {
+function upval() {
   getElementById("escompte_special").value = 
-	getElementById("frais").value * 
-        (100-getElementById("cas_special_pct").value) / 100;
+	stripDollars(getElementById("categorieFrais").value) * 
+        getElementById("cas_special_pct").value / 100;
+}
+
+function upct() {
+  getElementById("cas_special_pct").value = 
+	getElementById("escompte_special").value / 
+        stripDollars(getElementById("categorieFrais").value)
+        * 100;
 }
 
 // autoupdate for date_inscription field
@@ -486,7 +494,6 @@ function ddnChange() {
   var newDDN = getElementById("ddn").value;
   oldDDN = newDDN;
   updateBlurb();
-  uFrais();
 }
 
 function updateBlurb() {
@@ -518,6 +525,7 @@ function updateCategorie() {
   var grade = getElementById("grade").value;
   catId = computeCategoryId(y, grade);
   c.value = categoryName(catId);
+  uFrais();
 }
 
 function verificationView() {
