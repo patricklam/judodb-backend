@@ -1,8 +1,19 @@
 --- version beta3:
 
+* fix -1 bug for saving groups
+
 * reduce number of requests
 
-* mass update of grades
+* mass update of grades (edit view of class list)
+* implement system config tables:
+   - saison
+   - groupes
+   - escomptes
+   - frais -> table for keeping old frais around
+   - suggested dates for cheques
+
+* view/edit grade history 
+   + (Implement 'view history' pop-up link.)
 
 2- extraction des listes de judoka selon leur cours, ou grade, ou age etc
 3- automatisation du formulaire FT-303 lors d'inscription de competition (nom, age, grade, lieu de competition etc - il ne manquerait que la signature du directeur) (J'ai fait cela l'an passé mais ca ne sortait pas directement d'une base de donnée mais il fallait entrer les noms etc - au moins cela a aider Rejean a ne pas a avoir à remplir toutes ces données)
@@ -20,16 +31,8 @@
 * autosuggest for payment groups
 
 * implement merges/conflicts
-* view/edit grade history 
-   + (Implement 'view history' pop-up link.)
 
 * implement table for tournament results
 
 * use database for user login authentication, not stuff in textfiles!
-* implement system config tables:
-   - saison
-   - groupes
-   - escomptes
-   - frais
-   - suggested dates for cheques
 
