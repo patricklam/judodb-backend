@@ -5,6 +5,7 @@
     { "url": "index.html" },
     { "url": ".", "redirect": "index.html" },
     { "url": "editclient.html", "ignoreQuery": true },
+    { "url": "cours.html" },
     { "url": "base.js" },
     { "url": "constants.js" },
     { "url": "datastore.js" },
