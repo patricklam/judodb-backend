@@ -166,9 +166,9 @@ function pullGroup(cid, sid) {
                        [val, newCid]);
 	    db.execute('UPDATE `payment_groups` SET '+
 		       'version=? WHERE id=? AND version < server_version', 
-                       [val, newCid, val]);
+                       [val, newCid]);
 	}
-        else if (key == 'client_id') {
+        else if (key == 'member_id') {
 	    db.execute('INSERT INTO `payment_group_members`'+
                        ' SELECT ?, id FROM `client` WHERE server_id=?', 
 		       [newCid, val]);
@@ -509,8 +509,8 @@ function pushGroups() {
   		  setTimeout(retry, 100);
 	  } else {
   	      db.execute
-              ('UPDATE `payment_groups` SET server_id=?, server_version=? WHERE id=?',
-  	       [sidp, sv, id]);
+              ('UPDATE `payment_groups` SET server_id=?, version=?, server_version=? WHERE id=?',
+  	       [sidp, sv, sv, id]);
           }
       }; return rv; };
 
@@ -535,7 +535,7 @@ function pushGroups() {
     var gotRowGS = gs.isValidRow();
     var ids = '';
     while (gs.isValidRow()) {
-        ids = gs.field(0);
+        ids += gs.field(0);
 	gs.next();
         if (gs.isValidRow()) ids += ',';
     }

@@ -23,7 +23,7 @@ $rs = db_query_get("SELECT * FROM `payment_group_members` " .
                    "WHERE group_id=$id");
 if (isset($rs)) {
  foreach ($rs as $r) {
-  print "<client_id>" . $r['client_id'] . "</client_id>";
+  print "<member_id>" . $r['client_id'] . "</member_id>";
  }
 }
 
