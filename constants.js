@@ -53,6 +53,21 @@ var COURS = ["Adultes (LM2015-2145, V2000-2145)",
              "Débutants de 7 à 11 ans (MV1730-1830)",
              "Autre"];
 
+var COURS_SHORT = ["LM2015 V2000", 
+             "LM1830 V2000",
+             "L1730 V1830",
+             "MaJ1730",
+             "S900",
+             "S1000",
+             "S1100",
+             "S1230",
+             "S1400",
+             "S1530",
+             "D900",
+             "D1030",
+             "MV1730",
+             "?"];
+
 var SUGGESTED_PAIEMENTS = ["", "2009-11-13", "2010-02-05", "", "", ""];
 
 function computeCategoryId(yr, grade) {

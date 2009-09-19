@@ -20,19 +20,29 @@ function refreshResults() {
 
   var rh = document.createElement("tr");
   var heads = ["Nom", "Prenom", "Grade", "Tel"];
-  for (h in heads) {
+
+  function appendTH(t) {
       var c = document.createElement("th");
-      var ct = document.createTextNode(heads[h]);
+      var ct = document.createTextNode(t);
+      c.style.textAlign = "left";
       c.appendChild(ct);
-      rh.appendChild(c);
+      rh.appendChild(c);      
   }
 
-  if (all) {
-      var c = document.createElement("th");
-      var ct = document.createTextNode("Cours");
+  function appendTD(row, t) {
+      var c = document.createElement("td");
+      var ct = document.createTextNode(t);
+      c.style.paddingRight = "1em";
       c.appendChild(ct);
-      rh.appendChild(c);
+      row.appendChild(c);
   }
+
+  for (h in heads)
+      appendTH(heads[h]);
+
+  if (all) 
+      appendTH("Cours");
+
   resultTab.appendChild(rh);
 
   for (c in clients) {
@@ -40,10 +50,7 @@ function refreshResults() {
       var row = document.createElement("tr");
 
       for (var r = 1; r < cc.length; r++) {
-	  var c = document.createElement("td");
-	  var ct = document.createTextNode(cc[r]);
-	  c.appendChild(ct);
-	  row.appendChild(c);
+	  appendTD(row, cc[r]);
       }
       resultTab.appendChild(row);
   }
@@ -69,7 +76,7 @@ function doSearch(c, all) {
     clients[index][3] = rs.field(3);
     clients[index][4] = rs.field(4);
     if (all) {
-      clients[index][5] = COURS[rs.field(5)];
+      clients[index][5] = COURS_SHORT[rs.field(5)];
     }
     ++index;
     rs.next();
