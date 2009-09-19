@@ -85,7 +85,7 @@ DataStore.prototype.init = function() {
       setError('Could not create database: ' + ex.message);
     }
   }
-}
+};
 
 // overwrites client's current entry for cid with server info
 function pullEntry(cid, sid) {
@@ -93,7 +93,7 @@ function pullEntry(cid, sid) {
     if (status != '200') {
 	setError('Problème de connexion: pullEntry ('+status+')');
         setTimeout(clearStatus, 1000);
-        return null;
+        return;
     }
 
     var r = responseXML.childNodes[0].childNodes; // entry
@@ -141,7 +141,7 @@ function pullGroup(cid, sid) {
     if (status != '200') {
 	setError('Problème de connexion: pullGroup ('+status+')');
         setTimeout(clearStatus, 1000);
-        return null;
+        return;
     }
 
     var r = responseXML.childNodes[0].childNodes; // group
@@ -308,7 +308,7 @@ function pullIndex(tableName, requestURL, pullOneCallback, mergeOneCallback, del
       if (status != '200') {
           setError('Problème de connexion: parseIds.');
           setTimeout(clearStatus, 1000);
-          return null;
+          return;
       }
 
       var t = responseXML.childNodes[0].childNodes; // table
@@ -366,18 +366,18 @@ function pushClients() {
     // pulling out my COMP302 skillz:
     // create a closure which binds sv+id.
   var makeHandler = function(sv, id, body, r) {
-      var r = function(status, statusText, responseText, responseXML) {
+      var rv = function(status, statusText, responseText, responseXML) {
           if (status != '200') {
               setError('Problème de connexion:pushToServer.');
               setTimeout(clearStatus, 1000);
-              return null;
+              return;
           }
 	  
           var sidp = responseText.trim();
           if (sidp == '' || sidp.length > 20) {
               var retry = function(r) {
 		  pushOneEntry(makeHandler(sv, id, body, r-1), body);
-	      }
+	      };
               if (r > 0)
   		  setTimeout(retry, 100);
 	  } else {
@@ -385,7 +385,7 @@ function pushClients() {
               ('UPDATE `client` SET server_id=?, server_version=? WHERE id=?',
   	       [sidp, sv, id]);
           }
-      }; return r; };
+      }; return rv; };
 
     // notify server about deleted clients, but wait to hear back about them
     // on next sync to actually remove them from local db.
@@ -493,18 +493,18 @@ function pushOne(what, handler, body) {
 
 function pushGroups() {
   var makeHandler = function(sv, id, body, r) {
-      var r = function(status, statusText, responseText, responseXML) {
+      var rv = function(status, statusText, responseText, responseXML) {
           if (status != '200') {
               setError('Problème de connexion: pushGroups.');
               setTimeout(clearStatus, 1000);
-              return null;
+              return;
           }
 	  
           var sidp = responseText.trim();
           if (sidp == '' || sidp.length > 20) {
               var retry = function(r) {
 		  pushOne("group", makeHandler(sv, id, body, r-1), body);
-	      }
+	      };
               if (r > 0)
   		  setTimeout(retry, 100);
 	  } else {
@@ -512,7 +512,7 @@ function pushGroups() {
               ('UPDATE `payment_groups` SET server_id=?, server_version=? WHERE id=?',
   	       [sidp, sv, id]);
           }
-      }; return r; };
+      }; return rv; };
 
   var ds = db.execute('SELECT * from `deleted_payment_groups`');
   while (ds.isValidRow()) {
@@ -613,4 +613,4 @@ DataStore.prototype.sync = function() {
       }
       else setTimeout(clearWhenDone, 100); 
   }
-}
+};
