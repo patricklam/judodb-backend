@@ -216,7 +216,7 @@ function calcSaison() {
 function up() {
   getElementById("escompte_special").value = 
 	getElementById("frais").value * 
-        (100-getElementById("cas_special_pct")) / 100;
+        (100-getElementById("cas_special_pct").value) / 100;
 }
 
 // autoupdate for date_inscription field
