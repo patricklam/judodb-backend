@@ -153,20 +153,26 @@ function calcFrais() {
   var escomptePct = parseFloat(getElementById("escompte").value);
   getElementById("escompte_special").readOnly = 
     (getElementById("cas_special_note").value == "");
+  getElementById("cas_special_pct").readOnly = 
+    (getElementById("cas_special_note").value == "");
   getElementById("saisons").readOnly = 
     (getElementById("cas_special_note").value == "");
 
-  if (getElementById("cas_special_note").value == "")
+  if (getElementById("cas_special_note").value == "") {
     getElementById("escompte_special").value = "";
+    getElementById("cas_special_pct").value = "";      
+  }
 
   var escomptePrice;
 
   if (escomptePct != -1) {
     getElementById("cas_special_note").parentNode.style.display="none";
+    getElementById("cas_special_pct").parentNode.style.display="none";
     escomptePrice = -(price * escomptePct/100);
     getElementById("escompte_special").value = asCurrency(escomptePrice) + ' $';
   } else {
     getElementById("cas_special_note").parentNode.style.display="block";
+    getElementById("cas_special_pct").parentNode.style.display="block";
     var e = stripDollars(getElementById("escompte_special").value);
     if (e != '')
 	escomptePrice = parseFloat(e);
@@ -204,6 +210,13 @@ function calcSaison() {
   if (getElementById("sessions").value == "2")
     s += " " + NEXT_SESSION;
   return s;
+}
+
+// autoupdate for date_inscription field
+function up() {
+  getElementById("escompte_special").value = 
+	getElementById("frais").value * 
+        (100-getElementById("cas_special_pct")) / 100;
 }
 
 // autoupdate for date_inscription field
