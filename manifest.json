@@ -12,6 +12,7 @@
     { "url": "utils.js" },
     { "url": "index_utils.js" },
     { "url": "editclient_utils.js" },
+    { "url": "editclient_signup_money.js" },
     { "url": "localserver.js" },
     { "url": "xhr.js" },
     { "url": "gears_init.js" },

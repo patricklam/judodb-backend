@@ -1,9 +1,5 @@
 --- version beta3:
 
-* fix -1 bug for saving groups
-
-* reduce number of requests
-
 * mass update of grades (edit view of class list)
 * implement system config tables:
    - saison
@@ -28,11 +24,13 @@
 
 --- later:
 
+* reduce number of requests
+
 * autosuggest for payment groups
 
 * implement merges/conflicts
 
-* implement table for tournament results
-
 * use database for user login authentication, not stuff in textfiles!
+
+* implement table for tournament results
 
