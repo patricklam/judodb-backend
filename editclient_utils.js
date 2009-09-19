@@ -9,7 +9,7 @@ var catId;
 var db;
 var origBlurb = getElementById("blurb").innerHTML;
 
-store = new DataStore();
+var store = new DataStore();
 store.init();
 localInit();
 
@@ -34,7 +34,7 @@ function populateClient() {
     getElementById(key).value = rs[key];
   }
 
-  var gs = executeToObjects(db, 'SELECT id, grade, date_grade from `grades` where client_id = ?', [cid])[0];
+  var gs = executeToObjects(db, 'SELECT id, grade, date_grade from `grades` WHERE client_id = ? ORDER BY date_grade DESC LIMIT 1', [cid])[0];
   if (gs) {
     getElementById('grade_id').value = gs['id'];
     getElementById('grade').value = gs['grade'];
@@ -101,7 +101,7 @@ function populateCoursEscomptes() {
   var cours = getElementById('cours');
   // get rid of dummy null option first
   cours.remove(0);
-  for (i = 0; i < COURS.length; i++) {
+  for (var i = 0; i < COURS.length; i++) {
     cours.add(new Option(COURS[i], i), null);
   }
 
