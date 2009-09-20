@@ -22,6 +22,7 @@ for (sf in SERVICE_FIELDS) {
 for (pf in PAYMENT_FIELDS) {
     MULTI_FIELDS[PAYMENT_FIELDS[pf]] = true;
 }
+MULTI_FIELDS['grade_id'] = true;
 MULTI_FIELDS['grade'] = true;
 MULTI_FIELDS['date_grade'] = true;
 

@@ -205,11 +205,10 @@ function storeOneClient(cid, rs) {
   var newCid = db.lastInsertRowId;
 
   db.execute('DELETE FROM `grades` WHERE client_id = ?', [newCid]);
-alert(rs.grade);
   for (gg in rs.grade) {
-    var gid = rs.grade_id == null ? null : rs.grade_id[gg];
+    var gid = "grade_id" in rs ? null : rs.grade_id[gg];
     db.execute('INSERT INTO `grades` VALUES (?, ?, ?, ?)',
-               [newCid, rs.grade_id[gg], rs.grade[gg], rs.date_grade[gg]]);
+               [newCid, gid, rs.grade[gg], rs.date_grade[gg]]);
   }
 
   db.execute('DELETE FROM `services` WHERE client_id = ?', [newCid]);
