@@ -27,6 +27,7 @@ MULTI_FIELDS['date_grade'] = true;
 
 var STORE_NAME = "anjoudb";
 var MAX_VERSEMENTS = 6;
+var MAX_GRADES = 20;
 
 /* All this stuff below should eventually end up in the database. */
 

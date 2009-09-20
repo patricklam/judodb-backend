@@ -92,7 +92,7 @@ function validateDate(d) {
 
 function compareDate(d1, d2) {
   if (!dateRegexp.test(d1) || !dateRegexp.test(d2))
-    return 0;
+    return 1;
   var rs1 = dateRegexp.exec(d1), rs2 = dateRegexp.exec(d2);
   var y1 = parseInt(rs1[1], 10), y2 = parseInt(rs2[1], 10);
   var m1 = parseInt(rs1[2], 10), m2 = parseInt(rs2[2], 10);

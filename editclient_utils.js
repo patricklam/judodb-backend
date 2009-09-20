@@ -131,16 +131,12 @@ function handleSubmit() {
   }
 
   var f = ALL_FIELDS.concat(SERVICE_FIELDS);
-  // XXX TODO special case grades (keep history) 
-  f = f.concat(['grade_id', 'grade', 'date_grade']);
 
   for (i = 0; i < f.length; i++) {
     var key = f[i];
     rs[key] = getElementById(key).value;
   }
 
-  // more grades stuff below; for now only one field for multi-fields
-  if (rs['grade_id'] == -1) rs['grade_id'] = null;
   if (rs['service_id'] == -1) rs['service_id'] = null;
 
   // TODO must List.map once we have a list of services over multiple terms.
@@ -157,7 +153,19 @@ function handleSubmit() {
   for (f in MULTI_FIELDS) {
     rs[f] = [rs[f]];
   }
-  rs['grade_id'] = [rs['grade_id']];
+
+  var mg = getElementById('previous_grades').value.split("#");
+  rs['grade_id'] = []; rs['grade'] = []; rs['date_grade'] = [];
+  for (i in mg) {
+    var m = mg[i];
+    if (m == '') break;
+    f = m.split("|");
+
+    var gid = f[0]; if (gid < 0) gid = null;
+    rs['grade_id'] = rs['grade_id'].concat(gid);
+    rs['grade'] = rs['grade'].concat(f[1]);
+    rs['date_grade'] = rs['date_grade'].concat(f[2]);
+  }
 
   rs.version++; getElementById("version").value = rs.version;
 
@@ -206,8 +214,6 @@ function handleDelete() {
 }
 
 function populateGrades() {
-    var mg = getElementById('previous_grades').value.split("#");
-
     var gh = getElementById('gradeHeader').textContent;
     var nom = getElementById("prenom").value + " "+getElementById("nom").value;
     gh = gh.replace("*nom*", nom);
@@ -215,7 +221,7 @@ function populateGrades() {
 
     var gt = getElementById('gradeTable').childNodes[1];
     if (gt.childNodes.length < 10) {
-	for (var i = 0; i < 20; i++) {
+	for (var i = 0; i < MAX_GRADES; i++) {
 	    var row = document.createElement("tr");
 	    row.id = "gh_r"+i;
             row.style.display="none";
@@ -245,6 +251,7 @@ function populateGrades() {
 	}
     }
 
+    var mg = getElementById('previous_grades').value.split("#");
     for (i in mg) {
 	getElementById("gh_r"+i).style.display="table-row";
 	var m = mg[i];
@@ -258,7 +265,7 @@ function populateGrades() {
 
 function ensureFreeGradeSpace() {
     var haveFree = false, firstInvis = -1;
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < MAX_GRADES; i++) {
 	var canSee = 
 	    getElementById("gh_r"+i).style.display=="table-row";
 	var empty = getElementById("grade"+i).value == "";
@@ -269,34 +276,42 @@ function ensureFreeGradeSpace() {
 }
 
 function saveGrades() {
-    var lg = "", lgd, lgid;
+    var gs = new Array();
+    var c = 0;
+    for (var i = 0; i < MAX_GRADES; i++) {
+	var gv = getElementById("grade"+i).value;
+	var gdv = getElementById("grade"+i+"_date").value;
+	var gidv = getElementById("grade"+i+"_id").value;
+
+	if (gv != "")
+	    gs[c++] = {g:gv, gd:gdv, gid:gidv};
+    }
+    gs.sort(function(a,b) { return -compareDate(a.gd, b.gd); });
+
+    // only gs[0] is allowed to have id=-1.
+    for (gg in gs) if (gg != 0 && gs[gg].gid == -2) gs[gg].gid = -1;
 
     var more_grades = '';
-    for (var i = 0; i < 20; i++) {
-	var g = getElementById("grade"+i).value;
-	var gd = getElementById("grade"+i+"_date").value;
-	var gid = getElementById("grade"+i+"_id").value;
-
-	if (g != "") {
-	    more_grades += gid + '|' + gd + '|' + gid + '#';
-	    if (lg == "" || validateDate(gd) && compareDate(gd, lgd) > 0) {
-		lg = g; lgd = gd; lgid = gid;
-	    }
-	}
+    for (gg in gs) {
+	more_grades += gs[gg].gid + '|' + gs[gg].g + '|' + gs[gg].gd + '#';
     }
     if (more_grades != '')
 	getElementById('previous_grades').value = more_grades;
 
-    getElementById('grade').value = lg;
-    getElementById('date_grade').value = lgd;
-    getElementById('grade_id').value = lgid;
-    updateCategorie();
-
     getElementById('gradehistory').style.display='none';
+
+    populateGrades();
+    if (gs[0].gv != '') {
+	getElementById('grade').value = gs[0].g;
+	getElementById('date_grade').value = gs[0].gd;
+	getElementById('grade_id').value = gs[0].gid;
+    }
+
+    updateCategorie();
 }
 
 function annulerGrades() {
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < MAX_GRADES; i++) {
 	getElementById("grade"+i).value = "";
 	getElementById("grade"+i+"_date").value = "";
 	getElementById("grade"+i+"_id").value = "-1";
@@ -305,6 +320,26 @@ function annulerGrades() {
 
     populateGrades();
     getElementById('gradehistory').style.display='none';
+}
+
+function updateMainPageGrade() {
+    if (getElementById("grade0_id").value != "-2") {
+	for (var i = MAX_GRADES-2; i >= 0; i--) {
+	    getElementById("grade"+(i+1)).value = 
+		getElementById("grade"+i).value;
+	    getElementById("grade"+(i+1)+"_date").value =
+		getElementById("grade"+i+"_date").value;
+	    getElementById("grade"+(i+1)+"_id").value = 
+		getElementById("grade"+i+"_id").value;
+	    getElementById("gh_r"+(i+1)).style.display =
+		getElementById("gh_r"+i).style.display;
+	}
+    }
+    getElementById("grade0_id").value = -2;
+    getElementById("grade0").value = getElementById("grade").value;
+    getElementById("grade0_date").value = getElementById("date_grade").value;
+    getElementById("gh_r0").style.display = 'table-row';
+    saveGrades();
 }
 
 function showGradeHistory() {

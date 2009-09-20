@@ -88,10 +88,10 @@ DataStore.prototype.init = function() {
 };
 
 // overwrites client's current entry for cid with server info
-function pullEntry(cid, sid) {
-  function integrateEntry(status, statusText, responseText, responseXML) {
+function pullClient(cid, sid) {
+  function integrateClient(status, statusText, responseText, responseXML) {
     if (status != '200') {
-	setError('Problème de connexion: pullEntry ('+status+')');
+	setError('Problème de connexion: pullClient ('+status+')');
         setTimeout(clearStatus, 1000);
         return;
     }
@@ -128,10 +128,10 @@ function pullEntry(cid, sid) {
   }
 
   if (activeRequests >= MAX_REQUESTS)
-    setTimer(function() { pullEntry(cid, sid); }, 100);
+    setTimer(function() { pullClient(cid, sid); }, 100);
 
   activeRequests++;
-  doRequest("GET", "pull_one_client.php", {id: sid}, integrateEntry, null);
+  doRequest("GET", "pull_one_client.php", {id: sid}, integrateClient, null);
   activeRequests--;
 }
 
@@ -204,11 +204,12 @@ function storeOneClient(cid, rs) {
 
   var newCid = db.lastInsertRowId;
 
-    // XXX eventually write out the whole array
   db.execute('DELETE FROM `grades` WHERE client_id = ?', [newCid]);
-  if (rs.grade != null && rs.grade.length > 0) {
+alert(rs.grade);
+  for (gg in rs.grade) {
+    var gid = rs.grade_id == null ? null : rs.grade_id[gg];
     db.execute('INSERT INTO `grades` VALUES (?, ?, ?, ?)',
-               [newCid, null, rs.grade[0], rs.date_grade[0]]);
+               [newCid, rs.grade_id[gg], rs.grade[gg], rs.date_grade[gg]]);
   }
 
   db.execute('DELETE FROM `services` WHERE client_id = ?', [newCid]);
@@ -340,14 +341,14 @@ function pullIndex(tableName, requestURL, pullOneCallback, mergeOneCallback, del
 }
 
 function pullClients() {
-  pullIndex('client', 'allids.php', pullEntry, pullEntry, deleteEntry);
+  pullIndex('client', 'allids.php', pullClient, pullClient, deleteClient);
 }
 
 function pullGroups() {
   pullIndex('payment_groups', 'allgids.php', pullGroup, pullGroup, deleteGroup);
 }
 
-function deleteEntry(cid) {
+function deleteClient(cid) {
   db.execute('DELETE FROM `client` WHERE id=?', [cid]);
   db.execute('DELETE FROM `grades` WHERE client_id=?', [cid]);
   db.execute('DELETE FROM `services` WHERE client_id=?', [cid]);
@@ -395,7 +396,7 @@ function pushClients() {
 
     // (unless they never existed on server side)
     if (ds.fieldByName('server_id') == '-1') {
-	deleteEntry(cid);
+	deleteClient(cid);
     } else {
 	var body = "deleted=true";
 	body += "&server_id="+ds.fieldByName('server_id');

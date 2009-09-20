@@ -87,9 +87,9 @@ plus approfondie.</p>
     <input id="affiliation" type="text" size="10" value="" maxlength="20" />
    </label>
    <label for="grade">Grade judo <span class="noprint">(<a href="#" onclick="showGradeHistory(); return false">histoire</a>)</span>
-    <input id="grade" type="text" size="10" value="" maxlength="20" onchange="updateCategorie()" /></label>
+    <input id="grade" type="text" size="10" value="" maxlength="20" onchange="updateMainPageGrade(); updateCategorie()" /></label>
    <label for="date_grade">Date du grade
-    <input id="date_grade" type="text" size="10" value="" maxlength="20" />
+    <input id="date_grade" type="text" size="10" value="" maxlength="20" onchange="updateMainPageGrade()" />
    </label>
    <label for="carte_anjou">N° arrondissement Anjou
     <input id="carte_anjou" type="text" size="19" value="" maxlength="20" onchange="updateCarteAnjou()" />
