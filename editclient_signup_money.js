@@ -25,6 +25,7 @@ function stripDollarsById(id) {
 
 // Does not modify the frais field, but does update all other subtotalling.
 function calcFrais() {
+  var catId = getCatId();
   var basePrice;
   if (getElementById("sessions").value == '1')
     basePrice = categoryPrix1(catId);

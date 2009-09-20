@@ -90,6 +90,19 @@ function validateDate(d) {
   return true;
 }
 
+function compareDate(d1, d2) {
+  if (!dateRegexp.test(d1) || !dateRegexp.test(d2))
+    return 0;
+  var rs1 = dateRegexp.exec(d1), rs2 = dateRegexp.exec(d2);
+  var y1 = parseInt(rs1[1], 10), y2 = parseInt(rs2[1], 10);
+  var m1 = parseInt(rs1[2], 10), m2 = parseInt(rs2[2], 10);
+  var d1 = parseInt(rs1[3], 10), d2 = parseInt(rs2[3], 10);
+  if (y1 != y2) return y1 - y2;
+  if (m1 != m2) return m1 - m2;
+  if (d1 != d2) return d1 - d2;
+  return 0;
+}
+
 function max(a,b) { return a > b ? a : b; }
 function min(a,b) { return a < b ? a : b; }
 

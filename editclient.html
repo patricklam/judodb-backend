@@ -32,7 +32,7 @@ plus approfondie.</p>
 <p>Initiales ______</p>
 </div>
 
-<div id="verif" class="noprint" onclick="verificationView()">visionner ancien formulaire</div>
+<div class="topright noprint" onclick="verificationView()">visionner ancien formulaire</div>
 
 <form name="client" class="compactform" onsubmit="handleSubmit(); return false;" action="#">
 
@@ -46,6 +46,7 @@ plus approfondie.</p>
 <input id="service_id" type="hidden" value="-1" />
 <input id="nom_stripped" type="hidden" value="" />
 <input id="prenom_stripped" type="hidden" value="" />
+<input id="previous_grades" type="hidden" value="" />
 
 <fieldset> <legend>Identit&eacute;</legend>
  <div class="threeper" id="identite">
@@ -85,7 +86,7 @@ plus approfondie.</p>
    <label for="affiliation">Num&eacute;ro Judo Qu&eacute;bec
     <input id="affiliation" type="text" size="10" value="" maxlength="20" />
    </label>
-   <label for="grade">Grade judo <span class="noprint">(<a href="#" onclick="alert('Pas encore disponible.'); return false;">histoire</a>)</span>
+   <label for="grade">Grade judo <span class="noprint">(<a href="#" onclick="showGradeHistory(); return false">histoire</a>)</span>
     <input id="grade" type="text" size="10" value="" maxlength="20" onchange="updateCategorie()" /></label>
    <label for="date_grade">Date du grade
     <input id="date_grade" type="text" size="10" value="" maxlength="20" />
@@ -352,8 +353,22 @@ Club, pour les frais de cours correspondant à la période restante.</p>
 <p>Signature résponsable du club:  <span style="float:right">Date: *today*</span></p>
 </div>
 
-<script type="text/javascript"  src="editclient_utils.js"></script>
+<div id="gradehistory" class="noprint" style="display:none">
+<h4 id="gradeHeader">Histoire grades : *nom*</h4>
+<table id="gradeTable">
+<tr><th class="lwp">Grade</th><th class="lwp">Date</th></tr>
+<!-- javascript adds 20 rows -->
+</table>
+<div class="actions" style="float:left; text-align:left">
+ <a onclick="saveGrades(); return false;" href="#">Sauvegarder</a>
+</div>
+<div class="actions" style="float:right; text-align:right">
+ <a onclick="annulerGrades()" href="#">Annuler</a>
+</div>
+</div>
+
 <script type="text/javascript"  src="editclient_signup_money.js"></script>
+<script type="text/javascript"  src="editclient_utils.js"></script>
 
 </body>
 
