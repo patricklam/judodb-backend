@@ -1,8 +1,7 @@
 --- version beta3:
 
-* DirectoryIndex brokenness
 * export PDF of classes
-* mass update of grades (edit view of class list)
+* edit view of class list
 * implement system config tables:
    - saison
    - groupes
