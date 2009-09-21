@@ -55,6 +55,11 @@ function refreshResults() {
       resultTab.appendChild(row);
   }
   re.appendChild(resultTab);
+
+  var compte = document.createElement("p");
+  var compteT = document.createTextNode("Nombre inscrit: "+clients.length);
+  compte.appendChild(compteT);
+  re.appendChild(compte);
 }
 
 function doSearch(c, all) {
@@ -65,7 +70,7 @@ function doSearch(c, all) {
                         'client.id = grades.client_id AND '+
                         'date_grade = (SELECT max(date_grade) FROM `grades` WHERE grades.client_id=client.id) AND '+
 		        'saisons LIKE ? AND ((cours=?) OR ?)'+
-		      'ORDER BY nom_stripped COLLATE NOCASE', [contains_current_session, c, all]);
+		      'ORDER BY nom_stripped COLLATE NOCASE, prenom_stripped COLLATE NOCASE', [contains_current_session, c, all]);
   var clients = [];
   var index = 0;
   while (rs.isValidRow()) {
