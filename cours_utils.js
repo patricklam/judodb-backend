@@ -6,8 +6,13 @@ for (var i = 0; i < COURS.length; i++) {
   cours.add(new Option(COURS[i], i), null);
 }
 refreshResults();
+var PDFlink = getElementById('pdf');
+PDFlink.href = PHP_LIST_CREATOR;
 
 function refreshResults() {
+  var PDFlink = getElementById('pdf');
+  PDFlink.href = PHP_LIST_CREATOR + '?cours=' + getElementById('cours').value;
+
   var re = getElementById('results');
   re.removeChild(re.getElementsByTagName('tbody')[0]);
 
@@ -56,10 +61,7 @@ function refreshResults() {
   }
   re.appendChild(resultTab);
 
-  var compte = document.createElement("p");
-  var compteT = document.createTextNode("Nombre inscrit: "+clients.length);
-  compte.appendChild(compteT);
-  re.appendChild(compte);
+  getElementById('nb').innerHTML = "Nombre inscrit: "+clients.length;
 }
 
 function doSearch(c, all) {

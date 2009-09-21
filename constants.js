@@ -104,3 +104,5 @@ function categoryPrix2(i) { return CATEGORY_PRIX_2_SESSION[i]; }
 function categoryPrixJQ(i) { return CATEGORY_JUDO_QC[i]; }
 
 var FIRST_2009_INSCRIPTION = '2009-08-28';
+
+var PHP_LIST_CREATOR='listespdf.php';

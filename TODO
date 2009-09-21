@@ -2,7 +2,7 @@
 
 * export PDF of classes
 * export to CSV, especially per class
-* lists print out wrong grade when multi grades are present
+* lists print out wrong grade when multi grades are present?
 
 * nightly dumps of database to remote locations
 
