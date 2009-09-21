@@ -1,10 +1,16 @@
 --- version beta3:
 
 * export PDF of classes
+* export to CSV, especially per class
+* lists print out wrong grade when multi grades are present
+
+* nightly dumps of database to remote locations
+
 * edit view of class list
+
 * implement system config tables:
    - saison
-   - groupes
+   - groupes (& instructor)
    - escomptes
    - frais -> table for keeping old frais around
    - suggested dates for cheques
@@ -12,10 +18,6 @@
 2- extraction des listes de judoka selon leur cours, ou grade, ou age etc
 3- automatisation du formulaire FT-303 lors d'inscription de competition (nom, age, grade, lieu de competition etc - il ne manquerait que la signature du directeur) (J'ai fait cela l'an passé mais ca ne sortait pas directement d'une base de donnée mais il fallait entrer les noms etc - au moins cela a aider Rejean a ne pas a avoir à remplir toutes ces données)
 4- information par envoi de courriel automatisé.
-
-* export to CSV, especially per class
-
-* nightly dumps of database to remote locations
 
 --- later:
 
