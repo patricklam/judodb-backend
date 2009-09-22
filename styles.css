@@ -211,3 +211,12 @@ input.text, input.button, textarea, select {
 #actions {
   padding: 2em;
 }
+
+/* http://tom.me.uk/scripting/submit.html */
+.submitLink {
+  color:blue;
+  background-color:transparent;
+  text-decoration:underline;
+  border:none;
+  cursor:pointer;
+}

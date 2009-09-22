@@ -24,14 +24,20 @@
 <h1>Listes des cours</h1>
 <p><span id="status">&nbsp;</span></p>
 
+<form id="form" action="listespdf.php" onsubmit="addMetaData(); return true" method="post">
 <p>Cours
  <select id="cours" onchange="refreshResults();">
   <option value="-1">Tous</option>
  </select>
- <a class="noprint" id="pdf" href="#">(PDF)</a>
- <a class="noprint" style="float:right; text-align:right" href="listespdf.php">(tous les cours, un par page, en PDF)</a>
+ <input type="hidden" name="multi" id="multi" />
+ <input type="hidden" name="title" id="title" />
+ <input type="hidden" name="subtitle" id="subtitle" />
+ <input type="hidden" name="data" id="data" />
+ <input type="submit" class="submitLink noprint" id="pdf" value="(PDF)" />
 </p>
+</form>
 
+<p id="ent"></p>
 <table id="results">
 <tbody></tbody>
 </table>

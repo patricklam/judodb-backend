@@ -70,6 +70,21 @@ var COURS_SHORT = ["LM2015 V2000",
              "MV1730",
              "?"];
 
+var COURS_ENTRAINEURS = ["Rejean Lavoie", 
+			 "Jean-François Marceau", 
+			 "Rejean Lavoie",
+			 "Pierre Chagnon",
+			 "Luc Phan",
+			 "Luc Phan",
+			 "Luc Phan",
+			 "Luc Phan",
+			 "Luc Phan",
+			 "Luc Phan",
+			 "Lan-Anh Phan",
+			 "Lan-Anh Phan",
+			 "Rejean Lavoie",
+ 			 ""];
+
 var SUGGESTED_PAIEMENTS = ["", "2009-11-13", "2010-02-05", "", "", ""];
 
 function computeCategoryId(yr, grade) {
@@ -105,4 +120,3 @@ function categoryPrixJQ(i) { return CATEGORY_JUDO_QC[i]; }
 
 var FIRST_2009_INSCRIPTION = '2009-08-28';
 
-var PHP_LIST_CREATOR='listespdf.php';

@@ -5,15 +5,38 @@ var cours = getElementById('cours');
 for (var i = 0; i < COURS.length; i++) {
   cours.add(new Option(COURS[i], i), null);
 }
+getElementById('form').target = '_';
 refreshResults();
-var PDFlink = getElementById('pdf');
-PDFlink.href = PHP_LIST_CREATOR;
+
+function addMetaData() {
+    var c = getElementById('cours'); var cs = c.selectedIndex;
+    if (cs > 0) {
+	// single class
+	getElementById('multi').value = '0';
+	getElementById('title').value = c[cs].text;
+	getElementById('subtitle').value = 
+	    ('Entraineur: ' + COURS_ENTRAINEURS[cs-1]);
+    }
+    else {
+	// all classes
+	getElementById('multi').value = '1';
+	getElementById('title').value = '';
+	getElementById('subtitle').value = '';
+	for (var i = 0; i < COURS.length; i++) {
+	    getElementById('title').value += c[i+1].text + '|';
+	    getElementById('subtitle').value += 
+		'Entraineur: ' + COURS_ENTRAINEURS[i] + '|';
+	}
+    }
+}
 
 function refreshResults() {
-  var PDFlink = getElementById('pdf');
-  PDFlink.href = PHP_LIST_CREATOR + '?cours=' + getElementById('cours').value;
-
   var re = getElementById('results');
+  var d = getElementById('data');
+  d.value = "";
+
+  var c = getElementById('cours'); var cs = c.selectedIndex;
+  getElementById('ent').innerHTML = cs > 0 ? ('Entraineur: ' + COURS_ENTRAINEURS[cs-1]) : '';
   re.removeChild(re.getElementsByTagName('tbody')[0]);
 
   var resultTab = document.createElement('tbody');
@@ -55,8 +78,11 @@ function refreshResults() {
       var row = document.createElement("tr");
 
       for (var r = 1; r < cc.length; r++) {
-	  appendTD(row, cc[r]);
+          if (r != 6) // skip cours field
+              appendTD(row, cc[r]);
+          d.value = d.value + cc[r] + '|';
       }
+      d.value = d.value + '*';
       resultTab.appendChild(row);
   }
   re.appendChild(resultTab);
@@ -83,7 +109,9 @@ function doSearch(c, all) {
     clients[index][3] = rs.field(3);
     clients[index][4] = rs.field(4);
     if (all) {
-      clients[index][5] = COURS_SHORT[rs.field(5)];
+      var cn = rs.field(5);
+      clients[index][5] = COURS_SHORT[cn];
+      clients[index][6] = cn;
     }
     ++index;
     rs.next();
