@@ -129,3 +129,42 @@ CREATE TABLE `payment` (
   `montant` char(10)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+/* Configuration data follows. */
+
+DROP TABLE IF EXISTS `session`;
+CREATE TABLE `session` (
+  `id` INTEGER PRIMARY KEY auto_increment,
+  `seqno` INTEGER, /* A09 = 0, advance from there; use for "next session". */
+  `name` char(10),
+  `year` char(4), /* for category calculations, so that H10 is 2009. */
+  `abbrev` char(4),
+  `first_class_date` DATE,
+  `first_signup_date` DATE,
+  `last_class_date` DATE,
+  `last_signup_date` DATE
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `cours`;
+CREATE TABLE `cours` (
+  `id` INTEGER PRIMARY KEY auto_increment,
+  `number` INTEGER,
+  `desc` varchar(60),
+  `short_desc` varchar(20),
+  `entraineur` varchar(30)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `cours_session`;
+CREATE TABLE `cours_session` (
+  `id` INTEGER PRIMARY KEY auto_increment,
+  `cours_id` INTEGER,
+  `session_id` INTEGER
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `category`;
+CREATE TABLE `category` (
+  `id` INTEGER PRIMARY KEY auto_increment,
+  `desc` varchar(25),
+  `short_desc` char(6),
+  `years_ago` INTEGER,
+  `noire` boolean
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
