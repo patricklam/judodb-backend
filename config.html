@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>Facturation Club Judo Anjou: Modifier configuration</title>
+  <title>Facturation Club Judo Anjou: Modifier configuration systeme</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link rel="shortcut icon" href="/files/favicon.ico" type="image/x-icon" />
   <style type="text/css" media="all">@import "styles.css";</style>
@@ -20,12 +20,91 @@
 <script type="text/javascript" src="cookie.js"></script>
 
 
-<h1>Modifier configuration</h1>
+<h1>Modifier configuration syst&egrave;me</h1>
 <p><span id="status">&nbsp;</span></p>
 
 <p>&nbsp;</p>
 
-<p>&Agrave; venir.</p>
+<div id="tabHeader">
+ <ul>
+  <li id="selected"><a href="#">Sessions</a></li>
+  <li><a href="#">Cours</a></li>
+  <li><a href="#">Cat&eacute;gories</a></li>
+  <li><a href="#">Usagers</a></li>
+ </ul>
+</div>
+
+<div id="sessions" class="tabContent">
+ <form id="currentSession" class="compactform" style="padding-left:1em">
+  <div class="threeper">
+   <label for="sessionName">
+    <select id="sessionName" onchange="newSession();">
+     <option />
+    </select></label>
+   <label for="newSession" style="text-align:center"><a id="newSession" href="#">Nouvelle session</a>
+   </label>
+   <label for="rmSession" style="text-align:right"><a id="rmSession" href="#">Supprimer session</a>
+   </label>
+  </div>
+
+  <input type="hidden" id="session_id" />
+
+  <div class="fourper">
+   <label for="session_nom">Nom du session
+   <input type="text" id="session_nom" />
+   </label>
+
+   <label for="session_abbrev">Abbr&eacute;viation
+   <input type="text" id="session_abbrev" />
+   </label>
+
+   <label for="session_seqno">Num&eacute;ro sequence
+   <input type="text" id="session_seqno" />
+   </label>
+  </div>
+
+  <div class="fourper">
+   <label for="session_first_signup">Début des inscriptions
+   <input type="text" id="session_first_signup" />
+   </label>
+   <label for="session_first_cours">Début des cours
+   <input type="text" id="session_first_cours" />
+   </label>
+   <label for="session_last_signup">Fin des inscriptions
+   <input type="text" id="session_last_signup" />
+   </label>
+   <label for="session_last_cours">Fin des cours
+   <input type="text" id="session_last_cours" />
+   </label>
+  </div>
+
+  <div class="twoper">
+   <label for="save"><a id="save" href="#">Sauvegarder</a>
+   </label>
+   <label for="cancel" style="text-align:right"><a id="cancel" href="#">Annuler</a>
+   </label>
+  </div>
+
+ </form>
+
+</div>
+
+<div id="cours" style="display:none">
+</div>
+
+<div id="categories" style="display:none">
+</div>
+
+<div id="users" style="display:none">
+</div>
+
+<div class="topright noprint">
+<div style="float:right; text-align:right;">
+  <a href="index.html">R&eacute;tourner</a>
+</div>
+</div>
+
+<script type="text/javascript" src="config_utils.js"></script>
 
 </body>
 
