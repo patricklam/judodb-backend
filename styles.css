@@ -220,3 +220,34 @@ input.text, input.button, textarea, select {
   border:none;
   cursor:pointer;
 }
+
+/* tabs */
+/* http://htmldog.com/examples/tabs1.html */
+
+#tabHeader ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+#tabHeader li {
+	display: inline;
+	border: 1px solid;
+	border-bottom-width: 0;
+	margin: 0 0.5em 0 0;
+}
+
+#tabHeader li a {
+	padding: 0 1em;
+}
+
+#tabHeader #selected {
+	padding-bottom: 1px;
+	background: white;
+}
+
+.tabContent {
+	border: 1px solid;
+	padding-top: 0.5em;
+}
+
