@@ -57,11 +57,14 @@ function refreshResults() {
       rh.appendChild(c);      
   }
 
+  function tn(t) {
+      return document.createTextNode(t);
+  }
+
   function appendTD(row, t) {
       var c = document.createElement("td");
-      var ct = document.createTextNode(t);
       c.style.paddingRight = "1em";
-      c.appendChild(ct);
+      c.appendChild(t);
       row.appendChild(c);
   }
 
@@ -78,8 +81,16 @@ function refreshResults() {
       var row = document.createElement("tr");
 
       for (var r = 1; r < cc.length; r++) {
+	  var v = tn(cc[r]);
+	  if (r == 1 || r == 2) {
+	      var vv = document.createElement("a");
+	      vv.href = "editclient.html?cid="+cc[0];
+	      vv.target = "_";
+	      vv.appendChild(v);
+	      v = vv;
+	  }
           if (r != 6) // skip cours field
-              appendTD(row, cc[r]);
+              appendTD(row, v);
           d.value = d.value + cc[r] + '|';
       }
       d.value = d.value + '*';
