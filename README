@@ -1,1 +1,11 @@
 Requires PHP, some SQL database, FPDF for PDF generation.
+
+Backup strategy: here's what I do.
+
+1. Dump the database to /xtra/judoanjou-backups on the server.
+
+58 04 * * * /usr/bin/mysqldump --user=anjoudb --password=y9km3jd#m judoanjou > /xtra/judoanjou-backups/db-`/bin/date +\%Y\%m\%d`
+
+2. rsync from the server to a backup slave.
+
+57 05 * * * /usr/bin/rsync -a "plam@anjou.uwaterloo.ca:/xtra/judoanjou-backups/" /xtra/judoanjou-backups
