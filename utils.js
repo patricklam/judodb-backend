@@ -1,3 +1,18 @@
+function computeCategoryId(yr, grade) {
+    var rv;
+    for (var i = 0; i < CATEGORY_YEARS.length; i++) {
+	if (yr >= CATEGORY_YEARS[i])
+	    { rv = i; break; }
+    }
+
+    var ndRegexp = /^\dD/;
+    // if yudansha, increase rv (could be cadet or junior)
+    if (grade.toUpperCase().indexOf('DAN') != -1 ||
+        ndRegexp.test(grade))
+        rv += 2;
+    return rv;
+}
+
 function isDefined(type) {
   return (type != 'undefined' && type != 'unknown');
 }

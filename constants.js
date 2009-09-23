@@ -87,23 +87,6 @@ var COURS_ENTRAINEURS = ["Rejean Lavoie",
 
 var SUGGESTED_PAIEMENTS = ["", "2009-11-13", "2010-02-05", "", "", ""];
 
-function computeCategoryId(yr, grade) {
-    var rv;
-    for (var i = 0; i < CATEGORY_YEARS.length; i++) {
-	if (yr >= CATEGORY_YEARS[i])
-	    { rv = i; break; }
-    }
-
-    var ndRegexp = /^\dD/;
-    // if yudansha, increase rv (could be cadet or junior)
-    if (grade.toUpperCase().indexOf('DAN') != -1 ||
-        ndRegexp.test(grade))
-        rv += 2;
-    return rv;
-}
-
-function categoryName(i) { return CATEGORY_NAMES[i]; }
-
 var FRAIS_PASSEPORT_JUDO_QUEBEC = 5;
 var FRAIS_PAS_ANJOU = 5;
 
@@ -114,6 +97,7 @@ var CATEGORY_JUDO_QC = [10, 15, 25, 35, 45, 50, 60, 65, 90, 100];
 var ESCOMPTE_NAMES = ["Aucun", "2e membre", "3e membre", "4e membre", "Nouvel(le) ami(e)", "Membre du CA", "Cas spécial"];
 var ESCOMPTE_AMOUNTS = [0, 10, 15, 20, 10, 50, -1];
 
+function categoryName(i) { return CATEGORY_NAMES[i]; }
 function categoryPrix1(i) { return CATEGORY_PRIX_1_SESSION[i]; }
 function categoryPrix2(i) { return CATEGORY_PRIX_2_SESSION[i]; }
 function categoryPrixJQ(i) { return CATEGORY_JUDO_QC[i]; }
