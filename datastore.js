@@ -81,6 +81,16 @@ DataStore.prototype.init = function() {
 	     '`chqno` INTEGER, '+
 	     '`date` DATE, '+
 	     '`montant` char(10))');
+    db.execute('create table if not exists `session` (' +
+	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
+             '`seqno` INTEGER,' + 
+             '`name` char(10),' +
+             '`year` char(4),' + /* calculated */
+             '`abbrev` char(4),' +
+	     '`first_class_date` DATE,' +
+	     '`first_signup_date` DATE,' +
+	     '`last_class_date` DATE,' +
+	     '`last_signup_date` DATE)');
     } catch (ex) {
       setError('Could not create database: ' + ex.message);
     }
