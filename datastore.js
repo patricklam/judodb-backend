@@ -84,7 +84,7 @@ DataStore.prototype.init = function() {
     db.execute('create table if not exists `session` (' +
 	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
              '`seqno` INTEGER,' + 
-             '`name` char(10),' +
+             '`name` char(15),' +
              '`year` char(4),' + /* calculated */
              '`abbrev` char(4),' +
 	     '`first_class_date` DATE,' +

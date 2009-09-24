@@ -37,17 +37,17 @@
 <div id="sessions" class="tabContent">
  <form id="currentSession" class="compactform" style="padding-left:1em">
   <div class="threeper">
-   <label for="sessionName">
-    <select id="sessionName" onchange="newSession();">
+   <label for="sessionSelect">
+    <select id="sessionSelect" onchange="loadSessionID(); loadSession();">
      <option />
     </select></label>
-   <label for="newSession" style="text-align:center"><a id="newSession" href="#">Nouvelle session</a>
+   <label for="newSession" style="text-align:center"><a id="newSession" href="#" onclick="newSession(); return false">Nouvelle session</a>
    </label>
-   <label for="rmSession" style="text-align:right"><a id="rmSession" href="#">Supprimer session</a>
+   <label for="rmSession" style="text-align:right"><a id="rmSession" href="#" onclick="rmSession(); return false">Supprimer session</a>
    </label>
   </div>
 
-  <input type="hidden" id="session_id" />
+  <input type="hidden" id="session_id" value="-1"/>
   <input type="hidden" id="session_year" />
 
   <div class="fourper">
@@ -65,24 +65,24 @@
   </div>
 
   <div class="fourper">
-   <label for="session_first_signup">Début des inscriptions
-   <input type="text" id="session_first_signup" />
+   <label for="session_first_signup_date">Début des inscriptions
+   <input type="text" id="session_first_signup_date" />
    </label>
-   <label for="session_first_cours">Début des cours
-   <input type="text" id="session_first_cours" />
+   <label for="session_first_class_date">Début des cours
+   <input type="text" id="session_first_class_date" />
    </label>
-   <label for="session_last_signup">Fin des inscriptions
-   <input type="text" id="session_last_signup" />
+   <label for="session_last_signup_date">Fin des inscriptions
+   <input type="text" id="session_last_signup_date" />
    </label>
-   <label for="session_last_cours">Fin des cours
-   <input type="text" id="session_last_cours" />
+   <label for="session_last_class_date">Fin des cours
+   <input type="text" id="session_last_class_date" />
    </label>
   </div>
 
-  <div class="twoper">
-   <label for="save"><a id="save" href="#">Sauvegarder</a>
+  <div class="threeper">
+   <label for="save"><a id="save" href="#" onclick="saveSession()">Sauvegarder</a>
    </label>
-   <label for="cancel" style="text-align:right"><a id="cancel" href="#">Annuler</a>
+   <label for="cancel" style="text-align:right"><a id="cancel" href="#" onclick="loadSession()">Annuler</a>
    </label>
   </div>
 

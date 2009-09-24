@@ -135,7 +135,7 @@ DROP TABLE IF EXISTS `session`;
 CREATE TABLE `session` (
   `id` INTEGER PRIMARY KEY auto_increment,
   `seqno` INTEGER, /* A09 = 0, advance from there; use for "next session". */
-  `name` char(10),
+  `name` char(15),
   `year` char(4), /* for category calculations, so that H10 is 2009. */
   `abbrev` char(4),
   `first_class_date` DATE,

@@ -26,6 +26,11 @@ MULTI_FIELDS['grade_id'] = true;
 MULTI_FIELDS['grade'] = true;
 MULTI_FIELDS['date_grade'] = true;
 
+// global config data
+var SESSION_FIELDS = ['id', 'seqno', 'name', 'year', 'abbrev',
+		     'first_class_date', 'first_signup_date',
+		     'last_class_date', 'last_signup_date'];
+
 var STORE_NAME = "anjoudb";
 var MAX_VERSEMENTS = 6;
 var MAX_GRADES = 20;
