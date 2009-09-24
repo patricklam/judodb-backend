@@ -18,5 +18,8 @@ function populateSessions() {
 }
 
 function loadSession(s) {
-    
+    var rs = db.execute('SELECT * from `session` where id=?', [s]);
+    getElementById('session_id').value = rs.fieldByName('id');
+    getElementById('session_name').value = rs.fieldByName('name');
+    rs.close();
 }
