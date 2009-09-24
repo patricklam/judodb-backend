@@ -5,8 +5,9 @@ var cours = getElementById('cours');
 for (var i = 0; i < COURS.length; i++) {
   cours.add(new Option(COURS[i], i), null);
 }
-getElementById('form').target = '_';
 refreshResults();
+
+var act='';
 
 function addMetaData() {
     var c = getElementById('cours'); var cs = c.selectedIndex;
@@ -16,18 +17,26 @@ function addMetaData() {
 	getElementById('title').value = c[cs].text;
 	getElementById('subtitle').value = 
 	    ('Entraineur: ' + COURS_ENTRAINEURS[cs-1]);
+	getElementById('short_title').value = COURS_SHORT[cs-1];
     }
     else {
 	// all classes
 	getElementById('multi').value = '1';
 	getElementById('title').value = '';
 	getElementById('subtitle').value = '';
+	getElementById('short_title').value = '';
 	for (var i = 0; i < COURS.length; i++) {
 	    getElementById('title').value += c[i+1].text + '|';
 	    getElementById('subtitle').value += 
 		'Entraineur: ' + COURS_ENTRAINEURS[i] + '|';
+	    getElementById('short_title').value += COURS_SHORT[i] + '|';
 	}
     }
+}
+
+function chooseAction() {
+    getElementById('form').action = 'listes'+act+'.php';
+    getElementById('form').target = '_';
 }
 
 function refreshResults() {
@@ -86,6 +95,7 @@ function refreshResults() {
 	      var vv = document.createElement("a");
 	      vv.href = "editclient.html?cid="+cc[0];
 	      vv.target = "_";
+	      vv.className += "notlink-in-print";
 	      vv.appendChild(v);
 	      v = vv;
 	  }

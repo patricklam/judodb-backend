@@ -191,3 +191,8 @@ input.text, input.button, textarea, select {
 .dark { 
   border:1px solid;
 }
+
+.notlink-in-print {
+  text-decoration: none;
+  color: black;
+}

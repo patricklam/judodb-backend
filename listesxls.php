@@ -1,30 +1,31 @@
 <? 
 
-require ('fpdf/fpdf.php');
+require ('PHPExcel/PHPExcel.php');
+require ('PHPExcel/PHPExcel/IOFactory.php');
 
 // no need for authentication on this PHP file.
 
-$pdf = new FPDF();
-$pdf->AddPage('P', 'Letter');
+$objPHPExcel = new PHPExcel();
 
 // to avoid the need for syncronisation before output, use POST params 
 // for the data in the list.
 
-$pdf->SetFont('Times', '', 14);
-
 if ($_POST["multi"] == "1") {
-    $ts = explode("|", iconv("UTF-8", "ISO-8859-1", $_POST["title"]));
-    $sts = explode("|", iconv("UTF-8", "ISO-8859-1", $_POST["subtitle"]));
+    $ts = explode("|", $_POST["title"]);
+    $sts = explode("|", $_POST["subtitle"]);
+    $shts = explode("|", $_POST["short_title"]);
     $c = count($ts);
 } else {
-    $ts = array(iconv("UTF-8", "ISO-8859-1", $_POST["title"]));
-    $sts = array(iconv("UTF-8", "ISO-8859-1", $_POST["subtitle"]));
+    $ts = array($_POST["title"]);
+    $sts = array($_POST["subtitle"]);
+    $shts = array($_POST["short_title"]);
     $c = 1;
 }
 
-$notFirst = FALSE;
+$sheetNum = 0;
+
 for ($p = 0; $p < $c; $p++) {
-    $data = iconv("UTF-8", "ISO-8859-1", $_POST['data']);
+    $data = $_POST['data'];
     $ds = explode("*", $data);
     $allCount = count($ds);
 
@@ -40,33 +41,55 @@ for ($p = 0; $p < $c; $p++) {
     
     if (!$live) continue;
 
-    if ($notFirst)
-        $pdf->AddPage();
-    $notFirst = TRUE;
+    $objPHPExcel->createSheet();
+    $objPHPExcel->setActiveSheetIndex(++$sheetNum);
+    $s = $objPHPExcel->getActiveSheet();
+    $s->getDefaultStyle()->getFont()->setName('Arial');
+    $s->setTitle($shts[$p]);
+    $s->getPageSetup()->setOrientation
+	(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT)
+	          ->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LETTER);
 
-    $pdf->Cell(0, 6, $ts[$p], 0, 1, 'C');
-    $pdf->Cell(0, 6, $sts[$p], 0, 1, 'C');
-    $pdf->Ln();
+    $s->setCellValue('A1', $ts[$p])
+      ->getStyle()->getAlignment()
+            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+    $s->getStyle('A1')->getFont()->setSize(14);
+    $s->getRowDimension('1')->setRowHeight(17);
+    $s->mergeCells('A1:D1');
+    $s->setCellValue('A2', $sts[$p]);
+    $s->getStyle('A2')->getFont()->setSize(14);
+    $s->getRowDimension('2')->setRowHeight(17);
+    $s->mergeCells('A2:D2');
 
-    $pdf->SetFillColor(224, 235, 255);
-    $fill = true;
-
-    $w = array(45, 45, 25, 0);
+    $r = 4;
     $actualCount = 0;
     for ($i = 0; $i < $allCount-1; $i++) {
         $d = explode("|", $ds[$i]);
         if ($d[5] == $p) {
-            for ($j = 0; $j < 4; $j++) 
-                $pdf->Cell($w[$j], 6, $d[$j], '', 0, 'L', $fill);
-            $fill = !$fill;
-            $pdf->Ln();
-            $actualCount++;
+            $s->setCellValue("A$r", $d[0]);
+            $s->setCellValue("B$r", $d[1]);
+            $s->setCellValue("C$r", $d[2]);
+            $s->getCell("D$r")->setValueExplicit($d[3], 
+	      	  PHPExcel_Cell_DataType::TYPE_STRING);
+            $actualCount++; $r++;
 	}
     }
+    $s->getColumnDimension('A')->setWidth(20);
+    $s->getColumnDimension('B')->setWidth(20);
+    $s->getColumnDimension('C')->setWidth(5);
+    $s->getColumnDimension('D')->setWidth(18);
 
-    $pdf->Ln();
-    $pdf->Cell(0, 6, "Nombre inscrit: $actualCount");
+    $r++;
+    $s->setCellValue("A$r", "Nombre inscrit: $actualCount");
 }
+$objPHPExcel->removeSheetByIndex(0);
+$objPHPExcel->setActiveSheetIndex(0);
 
-$pdf->Output();
+// redirect output to client browser
+header('Content-Type: application/vnd.ms-excel');
+header('Content-Disposition: attachment;filename="cours.xls"');
+header('Cache-Control: max-age=0');
+
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+$objWriter->save('php://output');
 ?>
