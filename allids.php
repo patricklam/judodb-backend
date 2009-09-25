@@ -11,7 +11,7 @@ echo "<?xml version=\"1.0\"?>";
 db_connect() || die;
 
 print "<table>";
-$rs = db_query_get("SELECT id, version FROM `client`");
+$rs = db_query_get("SELECT id, version FROM `client` WHERE (SELECT count(*) FROM deleted_client AS d WHERE d.id = client.id) = 0");
 if (isset($rs)) {
  foreach ($rs as $r) {
   $id = $r['id']; $ver = $r['version'];

@@ -12,7 +12,8 @@ db_connect() || die;
 
 print "<table>";
 
-$rs = db_query_get("SELECT id, version FROM `payment_groups`");
+$rs = db_query_get("SELECT id, version FROM `payment_groups` AS pg WHERE (SELECT COUNT(*) FROM `deleted_payment_groups` AS d WHERE d.id = pg.id) = 0");
+
 if (isset($rs)) {
  foreach ($rs as $r) {
   $id = $r['id']; $ver = $r['version'];
