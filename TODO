@@ -8,11 +8,16 @@
    - suggested dates for cheques
 * global server configuration version number
 
-* export to CSV or XLS: export all, export classlists
-* lists print out wrong grade when multi grades are present?
-* edit-view of class list
+* count size of server db; only report success
+   if have the same size locally.
 
-* nightly dumps of database to remote locations - check.
+* nightly dumps of database to remote locations
+
+* export to XLS: file with all information
+
+--- version beta4
+
+* edit-view of class list
 
 * searches by class, grade, age
    - FT-303 mode, FPDI, http://www.setasign.de/products/pdf-php-solutions/fpdi/downloads/
@@ -23,7 +28,7 @@
 
 * reduce number of requests
 
-* autosuggest for payment groups
+* autosuggest for payment groups (search button)
 
 * implement merges/conflicts
 

@@ -60,6 +60,8 @@ function saveSession() {
               [r.id, r.seqno, r.name, r.year, r.abbrev,
                r.first_class_date, r.first_signup_date,
                r.last_class_date, r.last_signup_date]);
+    db.execute('UPDATE `global_configuration` SET version=version+1');
+
     getElementById('session_id').value = db.lastInsertRowId;
     populateSessions();
 

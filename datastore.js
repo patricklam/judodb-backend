@@ -81,6 +81,9 @@ DataStore.prototype.init = function() {
 	     '`chqno` INTEGER, '+
 	     '`date` DATE, '+
 	     '`montant` char(10))');
+    db.execute('create table if not exists `global_configuration` (' +
+      	     '`version` int(5), ' +
+      	     '`server_version` int(5))');
     db.execute('create table if not exists `session` (' +
 	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
              '`seqno` INTEGER,' + 
@@ -357,6 +360,10 @@ function pullGroups() {
   pullIndex('payment_groups', 'allgids.php', pullGroup, pullGroup, deleteGroup);
 }
 
+function pullServerConfig() {
+  // no need for index here, just pull the config itself.
+}
+
 function deleteClient(cid) {
   db.execute('DELETE FROM `client` WHERE id=?', [cid]);
   db.execute('DELETE FROM `grades` WHERE client_id=?', [cid]);
@@ -372,30 +379,38 @@ function deleteGroup(cid) {
   db.execute('DELETE FROM `payment` WHERE group_id=?', [cid]);
 }
 
+function makeHandler(what, successCallback) {
+    var q = function(sv, id, body, r) {
+	return function(status, statusText, responseText, responseXML) {
+            if (status != '200') {
+		setError('Problème de connexion: push'+what+'.');
+		setTimeout(clearStatus, 1000);
+		return;
+            }
+	  
+            var sidp = responseText.trim();
+            if (sidp == '' || sidp.length > 20) {
+		var retry = function(r) {
+		    pushOne(what, q(sv, id, body, r-1), body);
+		};
+		if (r > 0)
+  		    setTimeout(retry, 100);
+	    } else {
+		successCallback(sidp, sv, id);
+            }
+	};
+    };
+}
+
 function pushClients() {
     // pulling out my COMP302 skillz:
-    // create a closure which binds sv+id.
-  var makeHandler = function(sv, id, body, r) {
-      var rv = function(status, statusText, responseText, responseXML) {
-          if (status != '200') {
-              setError('Problème de connexion:pushToServer.');
-              setTimeout(clearStatus, 1000);
-              return;
-          }
-	  
-          var sidp = responseText.trim();
-          if (sidp == '' || sidp.length > 20) {
-              var retry = function(r) {
-		  pushOneEntry(makeHandler(sv, id, body, r-1), body);
-	      };
-              if (r > 0)
-  		  setTimeout(retry, 100);
-	  } else {
-  	      db.execute
-              ('UPDATE `client` SET server_id=?, server_version=? WHERE id=?',
-  	       [sidp, sv, id]);
-          }
-      }; return rv; };
+    // create a closure which binds sidp, sv, and id.
+  var h = makeHandler('client', 
+		     function(sidp, sv, id) {
+  			 db.execute
+			 ('UPDATE `client` SET server_id=?, server_version=? WHERE id=?',
+  			  [sidp, sv, id]);
+			 });
 
     // notify server about deleted clients, but wait to hear back about them
     // on next sync to actually remove them from local db.
@@ -409,7 +424,7 @@ function pushClients() {
     } else {
 	var body = "deleted=true";
 	body += "&server_id="+ds.fieldByName('server_id');
-	pushOne("client", makeHandler(ds.fieldByName('version'), cid, body, 3), body);
+	pushOne("client", h(ds.fieldByName('version'), cid, body, 3), body);
     }
     ds.next();
   }
@@ -486,7 +501,7 @@ function pushClients() {
 	}
     } else body += "have_payment=false&";
 
-    pushOne("client", makeHandler(rs.fieldByName('version'), cid, body, 3), body);
+    pushOne("client", h(rs.fieldByName('version'), cid, body, 3), body);
     rs.next();
   }
   rs.close();
@@ -502,34 +517,18 @@ function pushOne(what, handler, body) {
 }
 
 function pushGroups() {
-  var makeHandler = function(sv, id, body, r) {
-      var rv = function(status, statusText, responseText, responseXML) {
-          if (status != '200') {
-              setError('Problème de connexion: pushGroups.');
-              setTimeout(clearStatus, 1000);
-              return;
-          }
-	  
-          var sidp = responseText.trim();
-          if (sidp == '' || sidp.length > 20) {
-              var retry = function(r) {
-		  pushOne("group", makeHandler(sv, id, body, r-1), body);
-	      };
-              if (r > 0)
-  		  setTimeout(retry, 100);
-	  } else {
-  	      db.execute
-              ('UPDATE `payment_groups` SET server_id=?, version=?, server_version=? WHERE id=?',
-  	       [sidp, sv, sv, id]);
-          }
-      }; return rv; };
+  var h = makeHandler('group', function() {
+  			  db.execute
+			  ('UPDATE `payment_groups` SET server_id=?, version=?, server_version=? WHERE id=?',
+  			   [sidp, sv, sv, id]);
+		      });
 
   var ds = db.execute('SELECT * from `deleted_payment_groups`');
   while (ds.isValidRow()) {
     var cid = ds.fieldByName('id');
     var body = "deleted=true";
     body += "&server_id="+ds.fieldByName('server_id');
-    pushOne("group", makeHandler(-1, cid, body, 3), body);
+    pushOne("group", h(-1, cid, body, 3), body);
     ds.next();
   }
   ds.close();
@@ -573,8 +572,45 @@ function pushGroups() {
 	}
     }
 
-    pushOne("group", makeHandler(rs.fieldByName('version'), cid, body, 3), body);
+    pushOne("group", h(rs.fieldByName('version'), cid, body, 3), body);
     rs.next();
+  }
+  rs.close();
+}
+
+function pushServerConfig() {
+  var h = makeHandler('server_config',
+		     function(sidp, sv, id) { 
+  			 db.execute
+			 ('UPDATE `server_config` SET version=?, server_version=?',
+  			  [sv, sv]);
+		     });
+
+  var rs = db.execute('SELECT * FROM `global_configuration` '+
+		        'WHERE version > server_version');
+  if (rs.isValidRow()) {
+    var sv = rs.fieldByName('version');
+    var r = [];
+    for (i in SESSION_FIELDS)
+	r[SESSION_FIELDS[i]] = '';
+
+    var ss = db.execute('SELECT * from `session`');
+    while (ss.hasValidRow()) {
+	for (i in SESSION_FIELDS) {
+            var fn = SESSION_FIELDS[i];
+	    r[fn] = r[fn] + ',' + ps.fieldByName(fn);
+	}
+	ss.next();
+    }
+    ss.close();
+
+    var body = '';
+    for (i in SESSION_FIELDS) {
+        var fn = SESSION_FIELDS[i];
+	body += fn + "=" + r[fn].substring(1, r[fn].length) +"&";
+    }
+
+    pushOne("server_config", h(sv, null, body, 3), body);
   }
   rs.close();
 }
@@ -609,9 +645,20 @@ DataStore.prototype.sync = function() {
 	  addStatus("un instant (syncronisation des groupes)...");
 	  pullGroups();
 	  pushGroups();
-	  setTimeout(clearWhenDone, 1000);
+	  setTimeout(phase4, 1000);
       }
       else setTimeout(phase3, 100); 
+  }
+
+  function phase4() { 
+      if (activeRequests == 0) {
+	  clearStatus();
+	  addStatus("un instant (syncronisation de la configuration)...");
+	  pullServerConfig();
+	  pushServerConfig();
+	  setTimeout(clearWhenDone, 1000);
+      }
+      else setTimeout(phase4, 100); 
   }
 
   function clearWhenDone() { 

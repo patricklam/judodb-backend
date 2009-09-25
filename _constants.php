@@ -6,4 +6,6 @@ array_push($ALL_FIELDS, "version");
 $GRADES_FIELDS = array("date_grade", "grade");
 $SERVICE_FIELDS = array("date_inscription", "saisons", "sans_affiliation", "cours", "sessions", "passeport", "non_anjou", "judogi", "escompte", "frais", "cas_special_note", "escompte_special", "horaire_special");
 $PAYMENT_FIELDS = array("mode", "chqno", "date", "montant");
+
+$SESSION_FIELDS = array("seqno", "name", "year", "abbrev", "first_class_date", "first_signup_date", "last_class_date", "last_signup_date");
 ?>

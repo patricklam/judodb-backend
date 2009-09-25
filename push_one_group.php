@@ -1,7 +1,6 @@
 <?
 // Unconditionally tramples the input on the server-side DB.
 // If server_id is not -1, uses it. 
-//  Otherwise uses nom/prenom/ddn as key, if that matches db.
 //  Otherwise creates new row on server.
 // Returns server_id.
 // Guarantees that server_version == c.version on exit.
@@ -43,7 +42,7 @@ foreach ($ids as $i) {
                  "VALUES ('$sid','$i')");
 }
 
-// update single-payer info; create lists
+// create lists of fields and field values
 $payment_namelist = '(group_id';
 foreach ($PAYMENT_FIELDS as $s) {
   $sfs[$s] = explode(',', $_POST[$s]);
