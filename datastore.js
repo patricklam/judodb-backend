@@ -330,6 +330,7 @@ function pullIndex(tableName, requestURL, pullOneCallback, mergeOneCallback, del
 	      var sid = t[i].textContent;
 	      if (sid in localEntries)
 		  deleteCallback(localEntries[sid].id);
+	      continue;
 	  }
           if (t[i].nodeName != "tr") continue;
 
@@ -400,6 +401,7 @@ function makeHandler(what, successCallback) {
             }
 	};
     };
+    return q;
 }
 
 function pushClients() {
@@ -582,29 +584,35 @@ function pushServerConfig() {
   var h = makeHandler('server_config',
 		     function(sidp, sv, id) { 
   			 db.execute
-			 ('UPDATE `server_config` SET version=?, server_version=?',
+			 ('UPDATE `global_configuration` SET version=?, server_version=?',
   			  [sv, sv]);
 		     });
 
   var rs = db.execute('SELECT * FROM `global_configuration` '+
 		        'WHERE version > server_version');
-  if (rs.isValidRow()) {
-    var sv = rs.fieldByName('version');
+  var mustUpdateConfig = rs.isValidRow();
+
+  var sv = -1;
+  if (mustUpdateConfig)  
+    sv = rs.fieldByName('version');
+
+  rs.close();
+  if (mustUpdateConfig) {
     var r = [];
     for (i in SESSION_FIELDS)
 	r[SESSION_FIELDS[i]] = '';
 
     var ss = db.execute('SELECT * from `session`');
-    while (ss.hasValidRow()) {
+    while (ss.isValidRow()) {
 	for (i in SESSION_FIELDS) {
             var fn = SESSION_FIELDS[i];
-	    r[fn] = r[fn] + ',' + ps.fieldByName(fn);
+	    r[fn] = r[fn] + ',' + ss.fieldByName(fn);
 	}
 	ss.next();
     }
     ss.close();
 
-    var body = '';
+    var body = 'version='+sv+'&';
     for (i in SESSION_FIELDS) {
         var fn = SESSION_FIELDS[i];
 	body += fn + "=" + r[fn].substring(1, r[fn].length) +"&";
@@ -612,7 +620,6 @@ function pushServerConfig() {
 
     pushOne("server_config", h(sv, null, body, 3), body);
   }
-  rs.close();
 }
 
 function isValidClient(n) {

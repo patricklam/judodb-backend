@@ -60,7 +60,10 @@ function saveSession() {
               [r.id, r.seqno, r.name, r.year, r.abbrev,
                r.first_class_date, r.first_signup_date,
                r.last_class_date, r.last_signup_date]);
+
     db.execute('UPDATE `global_configuration` SET version=version+1');
+    db.execute('INSERT INTO `global_configuration` VALUES (1,0)');
+    db.execute('DELETE FROM `global_configuration` WHERE version < (SELECT MAX(version) FROM `global_configuration`)');
 
     getElementById('session_id').value = db.lastInsertRowId;
     populateSessions();

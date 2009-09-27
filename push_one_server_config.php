@@ -11,7 +11,7 @@ require_authentication();
 db_connect() || die;
 
 $version = $_POST['version'];
-db_query_set("UPDATE `global_configuration` SET version=$version");
+db_query_set("INSERT INTO `global_configuration` VALUES ($version) ON DUPLICATE KEY UPDATE version=$version");
 
 // create lists of fields and field values
 $session_namelist = '(';
@@ -26,19 +26,23 @@ foreach ($SESSION_FIELDS as $s) {
 }
 $session_namelist .= ')';
 
-foreach ($sfs['id'] as $s) {
+$i = 0;
+for ($i = 0; $i < count($sfs['id']); $i++) {
   $session_tuple = "VALUES (";
-  foreach ($SESSION_FIELDS as $s) {
+  $first = TRUE;
+  foreach ($SESSION_FIELDS as $sf) {
     if (!$first) 
       $session_tuple .= ", ";
     else
       $first = FALSE;
-    $session_tuple .= ", '".$sfs[$s][$i] . "'";
+    $v = $sfs[$sf][$i];
+    $session_tuple .= "'$v'";
   }
   $session_tuple .= ")";
 
-  db_query_set("DELETE FROM `sessions` WHERE seqno='$sfs['seqno'][$s]'");
-  db_query_set("INSERT INTO `sessions` $session_namelist $session_tuple");
+  $seqno = $sfs['seqno'][$i];
+  db_query_set("DELETE FROM `session` WHERE seqno='$seqno'");
+  db_query_set("INSERT INTO `session` $session_namelist $session_tuple");
 }
 
 print($version);
