@@ -303,6 +303,20 @@ function storeOneClient(cid, rs) {
   return newCid;
 }
 
+function storeOneSession(r) {
+    if (r.id != -1 || r.seqno != -1)
+        db.execute('DELETE FROM `session` WHERE id=? OR seqno=?', [r.id,r.seqno]);
+
+    if (r.id == -1 || !('id' in r)) r.id = null;
+    r.year = '20' + r.abbrev.substr(1,2);
+    if (r.abbrev.substr(0,1) == 'H') r.year--;
+    db.execute('INSERT INTO `session` '+
+                   'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+              [r.id, r.seqno, r.name, r.year, r.abbrev,
+               r.first_class_date, r.first_signup_date,
+               r.last_class_date, r.last_signup_date]);
+}
+
 function pullIndex(tableName, requestURL, pullOneCallback, mergeOneCallback, deleteCallback) {
   var rs = db.execute('SELECT id, version, server_id, server_version FROM `'+tableName+'`');
   // create array indexed by server_id
@@ -361,8 +375,60 @@ function pullGroups() {
   pullIndex('payment_groups', 'allgids.php', pullGroup, pullGroup, deleteGroup);
 }
 
-function pullServerConfig() {
-  // no need for index here, just pull the config itself.
+function pullGlobalConfig() {
+  var rs = db.execute('SELECT version, server_version FROM `global_configuration`');
+  var localv = rs.field(0), localsv = rs.field(1);
+  rs.close();
+
+  function updateGlobalConfig(status, statusText, responseText, responseXML) {
+    var svers = parseInt(responseText);
+    if (localsv < svers) {
+      if (localv == localsv)
+	actuallyPullGlobalConfig();
+      else
+	actuallyPullGlobalConfig(); // XXX merge
+    }
+  }
+
+  doRequest("GET", 'global_config_version.php', null, updateGlobalConfig, null);
+}
+
+function actuallyPullGlobalConfig() {
+    // overwrites client's global config with server info
+  function integrateGlobalConfig(status, statusText, responseText, responseXML) {
+    if (status != '200') {
+	setError('Problème de connexion: pullGlobalConfig ('+status+')');
+        setTimeout(clearStatus, 1000);
+        return;
+    }
+
+    var r = responseXML.childNodes[0].childNodes; 
+
+    // now we have sessions.
+    // we can therefore storeOneSession once we parse it.
+    for (var i = 0; i < r.length; i++) {
+        var key = r[i].nodeName;
+        if (key == 'session') { 
+	    var s = r[i].childNodes;
+	    var sessionObject = [];
+
+	    for (var j = 0; j < s.length; j++) {
+		sessionObject[s[j].nodeName] = s[j].textContent;
+	    }
+	    // assign new ID
+	    s['id'] = -1;
+	    storeOneSession(sessionObject);
+	}
+    }
+  }
+
+  if (activeRequests >= MAX_REQUESTS)
+    setTimer(actuallyPullGlobalConfig, 100);
+
+  activeRequests++;
+  doRequest("GET", "pull_one_global_config.php", {}, 
+	    integrateGlobalConfig, null);
+  activeRequests--;
 }
 
 function deleteClient(cid) {
@@ -580,8 +646,8 @@ function pushGroups() {
   rs.close();
 }
 
-function pushServerConfig() {
-  var h = makeHandler('server_config',
+function pushGlobalConfig() {
+  var h = makeHandler('global_config',
 		     function(sidp, sv, id) { 
   			 db.execute
 			 ('UPDATE `global_configuration` SET version=?, server_version=?',
@@ -618,7 +684,7 @@ function pushServerConfig() {
 	body += fn + "=" + r[fn].substring(1, r[fn].length) +"&";
     }
 
-    pushOne("server_config", h(sv, null, body, 3), body);
+    pushOne("global_config", h(sv, null, body, 3), body);
   }
 }
 
@@ -661,8 +727,8 @@ DataStore.prototype.sync = function() {
       if (activeRequests == 0) {
 	  clearStatus();
 	  addStatus("un instant (syncronisation de la configuration)...");
-	  pullServerConfig();
-	  pushServerConfig();
+	  pullGlobalConfig();
+	  pushGlobalConfig();
 	  setTimeout(clearWhenDone, 1000);
       }
       else setTimeout(phase4, 100); 

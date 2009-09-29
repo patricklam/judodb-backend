@@ -1,12 +1,10 @@
 --- version beta3:
 
 * implement system config tables:
-   - saison
    - groupes (& instructor)
    - escomptes
    - frais -> table for keeping old frais around
    - suggested dates for cheques
-* global server configuration version number
 
 * count size of server db; only report success
    if have the same size locally.

@@ -11,7 +11,7 @@ require_authentication();
 db_connect() || die;
 
 $version = $_POST['version'];
-db_query_set("INSERT INTO `global_configuration` VALUES ($version) ON DUPLICATE KEY UPDATE version=$version");
+db_query_set("INSERT INTO `global_configuration` VALUES ($version)");
 
 // create lists of fields and field values
 $session_namelist = '(';
@@ -27,7 +27,7 @@ foreach ($SESSION_FIELDS as $s) {
 $session_namelist .= ')';
 
 $i = 0;
-for ($i = 0; $i < count($sfs['id']); $i++) {
+for ($i = 0; $i < count($sfs['seqno']); $i++) {
   $session_tuple = "VALUES (";
   $first = TRUE;
   foreach ($SESSION_FIELDS as $sf) {

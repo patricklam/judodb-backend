@@ -138,8 +138,7 @@ CREATE TABLE `global_configuration` (
 
 DROP TABLE IF EXISTS `session`;
 CREATE TABLE `session` (
-  `id` INTEGER PRIMARY KEY auto_increment,
-  `seqno` INTEGER, /* A09 = 0, advance from there; use as real primary key. */
+  `seqno` INTEGER PRIMARY KEY, /* A09 = 0, advance from there; use as real primary key. */
   `name` char(15),
   `year` char(4), /* for category calculations, so that H10 is 2009. */
   `abbrev` char(4),
