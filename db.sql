@@ -150,9 +150,8 @@ CREATE TABLE `session` (
 
 DROP TABLE IF EXISTS `cours`;
 CREATE TABLE `cours` (
-  `id` INTEGER PRIMARY KEY auto_increment,
-  `number` INTEGER,
-  `desc` varchar(60),
+  `seqno` INTEGER PRIMARY KEY,
+  `name` varchar(60),
   `short_desc` varchar(20),
   `entraineur` varchar(30)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -160,8 +159,8 @@ CREATE TABLE `cours` (
 DROP TABLE IF EXISTS `cours_session`;
 CREATE TABLE `cours_session` (
   `id` INTEGER PRIMARY KEY auto_increment,
-  `cours_id` INTEGER,
-  `session_id` INTEGER
+  `cours_seqno` INTEGER,
+  `session_seqno` INTEGER
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `category`;
