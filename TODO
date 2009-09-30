@@ -1,8 +1,6 @@
 --- version beta3:
 
-* update server table layout for sessions, cours
 * implement button 'copy all current-session cours to session being edited'
-* don't keep on adding to global version table (DELETE WHERE in MySQL?)
 
 * implement system config tables:
    - groupes (& instructor)

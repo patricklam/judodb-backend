@@ -11,6 +11,7 @@ require_authentication();
 db_connect() || die;
 
 $version = $_POST['version'];
+db_query_set("DELETE FROM `global_configuration`");
 db_query_set("INSERT INTO `global_configuration` VALUES ($version)");
 
 /* reads the matching FIELDS $f from the POST args and stores them into db */
