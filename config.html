@@ -12,6 +12,7 @@
 <script type="text/javascript" src="gears_init.js"></script>
 <script type="text/javascript" src="localserver.js"></script>
 <script type="text/javascript" src="constants.js"></script>
+<script type="text/javascript" src="db.js"></script>
 <script type="text/javascript" src="datastore.js"></script>
 <script type="text/javascript" src="xhr.js"></script>
 <script type="text/javascript" src="base.js"></script>
@@ -27,23 +28,23 @@
 
 <div id="tabHeader">
  <ul>
-  <li id="selected"><a href="#">Sessions</a></li>
-  <li><a href="#">Cours</a></li>
-  <li><a href="#">Cat&eacute;gories</a></li>
-  <li><a href="#">Usagers</a></li>
+  <li id="tab_sessions" class="selected"><a href="#" onclick="selectTab('sessions')">Sessions</a></li>
+  <li id="tab_cours"><a href="#" onclick="selectTab('cours')">Cours</a></li>
+  <li id="tab_categories"><a href="#" onclick="selectTab('categories')">Cat&eacute;gories</a></li>
+  <li id="tab_usagers"><a href="#" onclick="selectTab('usagers')">Usagers</a></li>
  </ul>
 </div>
 
-<div id="sessions" class="tabContent">
+<div id="sessions" class="tabContent" style="display:block">
  <form id="currentSession" class="compactform" style="padding-left:1em">
   <div class="threeper">
    <label for="sessionSelect">
-    <select id="sessionSelect" onchange="loadSessionID(); loadSession();">
+    <select id="sessionSelect" onchange="loadIDFromSelect('session'); loadSession();">
      <option />
     </select></label>
-   <label for="newSession" style="text-align:center"><a id="newSession" href="#" onclick="newSession(); return false">Nouvelle session</a>
+   <label for="newSession" style="text-align:center"><a id="newSession" href="#" onclick="newThing('session'); loadSession(); return false">Nouvelle session</a>
    </label>
-   <label for="rmSession" style="text-align:right"><a id="rmSession" href="#" onclick="rmSession(); return false">Supprimer session</a>
+   <label for="rmSession" style="text-align:right"><a id="rmSession" href="#" onclick="rmThing('session'); loadSession(); return false">Supprimer session</a>
    </label>
   </div>
 
@@ -90,13 +91,53 @@
 
 </div>
 
-<div id="cours" style="display:none">
+<div id="cours" class="tabContent" style="display:none">
+ <form id="currentCours" class="compactform" style="padding-left:1em">
+
+  <div class="threeper">
+   <label for="coursSelect" style="width:46%">
+    <select id="coursSelect" onchange="loadIDFromSelect('cours'); loadCours();">
+     <option />
+    </select></label>
+   <label for="newCours" style="width:20%"><a id="newCours" href="#" onclick="newThing('cours'); loadCours(); return false">Nouveau cours</a>
+   </label>
+   <label for="rmCours" style="text-align:right"><a id="rmCours" href="#" onclick="rmThing('cours'); loadCours(); return false">Supprimer cours</a>
+   </label>
+  </div>
+
+  <input type="hidden" id="cours_id" value="-1"/>
+
+  <div class="oneper">
+   <label for="cours_name">Nom du cours
+   <input type="text" id="cours_name" size="55" />
+  </div>
+
+  <div class="threeper">
+   <label for="cours_entraineur">Entraineur
+   <input type="text" id="cours_entraineur" />
+   </label>
+   <label for="cours_short_desc">Horaire du cours
+   <input type="text" id="cours_short_desc" />
+   </label>
+   <label for="cours_seqno">Num&eacute;ro sequence
+   <input type="text" id="cours_seqno" />
+   </label>
+  </div>
+
+  <div class="threeper">
+   <label for="save"><a id="save" href="#" onclick="saveCours()">Sauvegarder</a>
+   </label>
+   <label for="cancel" style="text-align:right"><a id="cancel" href="#" onclick="loadCours()">Annuler</a>
+   </label>
+  </div>
+
+ </form>
 </div>
 
 <div id="categories" style="display:none">
 </div>
 
-<div id="users" style="display:none">
+<div id="usagers" style="display:none">
 </div>
 
 <div class="topright noprint">

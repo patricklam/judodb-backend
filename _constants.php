@@ -8,4 +8,5 @@ $SERVICE_FIELDS = array("date_inscription", "saisons", "sans_affiliation", "cour
 $PAYMENT_FIELDS = array("mode", "chqno", "date", "montant");
 
 $SESSION_FIELDS = array("seqno", "name", "year", "abbrev", "first_class_date", "first_signup_date", "last_class_date", "last_signup_date");
+$COURS_FIELDS = array("seqno", "name", "short_desc", "entraineur");
 ?>

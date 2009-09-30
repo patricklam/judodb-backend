@@ -13,36 +13,42 @@ db_connect() || die;
 $version = $_POST['version'];
 db_query_set("INSERT INTO `global_configuration` VALUES ($version)");
 
-// create lists of fields and field values
-$session_namelist = '(';
-$first = TRUE;
-foreach ($SESSION_FIELDS as $s) {
-  $sfs[$s] = explode(',', $_POST[$s]);
-  if (!$first) 
-    $session_namelist .= ", ";
-  else
-    $first = FALSE;
-  $session_namelist .= "$s";
-}
-$session_namelist .= ')';
-
-$i = 0;
-for ($i = 0; $i < count($sfs['seqno']); $i++) {
-  $session_tuple = "VALUES (";
+/* reads the matching FIELDS $f from the POST args and stores them into db */
+function stash_thing($t, $f) {
+  // create lists of fields and field values
+  $namelist = '(';
   $first = TRUE;
-  foreach ($SESSION_FIELDS as $sf) {
+  foreach ($f as $s) {
+    $sfs[$s] = explode('|', $_POST[$t . '_' . $s]);
     if (!$first) 
-      $session_tuple .= ", ";
+      $namelist .= ", ";
     else
       $first = FALSE;
-    $v = $sfs[$sf][$i];
-    $session_tuple .= "'$v'";
+    $namelist .= "$s";
   }
-  $session_tuple .= ")";
+  $namelist .= ')';
 
-  $seqno = $sfs['seqno'][$i];
-  db_query_set("DELETE FROM `session` WHERE seqno='$seqno'");
-  db_query_set("INSERT INTO `session` $session_namelist $session_tuple");
+  $i = 0;
+  for ($i = 0; $i < count($sfs['seqno']); $i++) {
+    $tuple = "VALUES (";
+    $first = TRUE;
+    foreach ($f as $sf) {
+      if (!$first) 
+        $tuple .= ", ";
+      else
+        $first = FALSE;
+      $v = $sfs[$sf][$i];
+      $tuple .= "'$v'";
+    }
+    $tuple .= ")";
+
+    $seqno = $sfs['seqno'][$i];
+    db_query_set("DELETE FROM `$t` WHERE seqno='$seqno'");
+    db_query_set("INSERT INTO `$t` $namelist $tuple");
+  }
 }
+
+stash_thing('session', $SESSION_FIELDS);
+stash_thing('cours', $COURS_FIELDS);
 
 print($version);
