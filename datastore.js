@@ -352,6 +352,17 @@ function actuallyPullGlobalConfig() {
 	    s['id'] = -1;
 	    storeOneSession(sessionObject);
 	}
+        if (key == 'cours') { 
+	    var s = r[i].childNodes;
+	    var coursObject = [];
+
+	    for (var j = 0; j < s.length; j++) {
+		coursObject[s[j].nodeName] = s[j].textContent;
+	    }
+	    // assign new ID
+	    s['id'] = -1;
+	    storeOneCours(coursObject);
+	}
     }
   }
 
