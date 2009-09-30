@@ -135,6 +135,7 @@ DROP TABLE IF EXISTS `global_configuration`;
 CREATE TABLE `global_configuration` (
   `version` INTEGER
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+INSERT INTO `global_configuration` VALUES (0);
 
 DROP TABLE IF EXISTS `session`;
 CREATE TABLE `session` (
