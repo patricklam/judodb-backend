@@ -10,6 +10,7 @@
     { "url": "base.js" },
     { "url": "constants.js" },
     { "url": "datastore.js" },
+    { "url": "db.js" },
     { "url": "md5.js" },
     { "url": "utils.js" },
     { "url": "index_utils.js" },
