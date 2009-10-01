@@ -7,6 +7,9 @@ function bumpConfigurationVersion() {
     db.execute('DELETE FROM `global_configuration` WHERE version < (SELECT MAX(version) FROM `global_configuration`)');
 }
 
+if (location.hash)
+    selectTab(location.hash.substring(1, location.hash.length));
+
 /**** nav stuff ****/
 
 function selectTab(t) {
