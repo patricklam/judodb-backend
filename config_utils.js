@@ -59,12 +59,12 @@ function haveUniqueSeqNo(t) {
     var seqno = getElementById(t+'_seqno').value;
     var id = getElementById(t+'_id').value;
     var rs = db.execute('SELECT COUNT(seqno) FROM `'+t+'` WHERE seqno=? AND id <> ?', [seqno, id]);
-    var rv = !(seqno == '' || rs.isValidRow() && rs.field(0) > 0);
+    var rv = !(seqno == '' || seqno == '-1' || rs.isValidRow() && rs.field(0) > 0);
     rs.close();
     return rv;
 }
 
-function populateThing(t) {
+function populateSelect(t) {
     var things = getElementById(t+'Select');
     // clear existing things
     while (things.length > 0)
@@ -89,12 +89,12 @@ function rmThing(t) {
     var id = getElementById(t+'_id').value;
     if (id != -1)
         db.execute('DELETE FROM `'+t+'` WHERE id=?', [id]);
-    populateThing(t);
+    populateSelect(t);
     loadIDFromSelect('session');
 }
 
 /**** sessions stuff ****/
-populateThing('session');
+populateSelect('session');
 loadIDFromSelect('session');
 loadSession();
 
@@ -134,14 +134,12 @@ function saveSession() {
     bumpConfigurationVersion();
 
     loadIDFromSeqNo('session');
-    populateThing('session');
+    populateSelect('session');
     adjustSelectorToID('session');
 }
 
 /**** cours stuff ****/
-// XXX cours_session
-
-populateThing('cours');
+populateSelect('cours');
 loadIDFromSelect('cours');
 loadCours();
 
@@ -153,14 +151,27 @@ function loadCours() {
             getElementById('cours_'+sf).value = '';
 	}
 	getElementById('cours_id').value = -1;
+	getElementById('cours_session').value = '';
 	return;
     }
-    var rs = db.execute('SELECT * from `cours` where id=?', [id]);
+    var rs = db.execute('SELECT * FROM `cours` WHERE id=?', [id]);
 
     for (s in COURS_FIELDS) {
         var sf = COURS_FIELDS[s];
         getElementById('cours_'+sf).value = rs.fieldByName(sf);
     }
+    rs.close();
+    var seqno = getElementById('cours_seqno').value;
+    var t = '';
+
+    rs = db.execute('SELECT abbrev FROM `session`, `cours_session` WHERE cours_seqno=? AND session.seqno = cours_session.session_seqno ORDER BY session.seqno',
+		   [seqno]);
+    while (rs.isValidRow()) {
+	t += rs.field(0);
+	rs.next();
+	if (rs.isValidRow()) t += ' ';
+    }
+    getElementById('cours_session').value = t;
     rs.close();
 }
 
@@ -176,11 +187,22 @@ function saveCours() {
         var sf = COURS_FIELDS[s];
         r[sf] = getElementById('cours_'+sf).value;
     }
+    // session is not part of COURS_FIELDS but storeOneCours also stores it.
+    var sessions = getElementById('cours_session').value.split(' ');
+    var ns = '';
+    for (s in sessions) {
+	var sn = sessions[s];
+	var rs = 
+	    db.execute('SELECT seqno FROM `session` WHERE abbrev=?', [sn]);
+	ns += ' ' + rs.field(0);
+	rs.close();
+    }
+    r['session'] = ns.substring(1, ns.length);
 
     storeOneCours(r);
     bumpConfigurationVersion();
 
     loadIDFromSeqNo('cours');
-    populateThing('cours');
+    populateSelect('cours');
     adjustSelectorToID('cours');
 }

@@ -240,14 +240,27 @@ function storeOneSession(r) {
                r.last_class_date, r.last_signup_date]);
 }
 
+/* precondition: seqno is not -1 and unique. */
 function storeOneCours(r) {
-    if (r.id != -1 || r.seqno != -1)
-        db.execute('DELETE FROM `cours` WHERE id=? OR seqno=?', [r.id,r.seqno]);
+    if (r.id != -1)
+        db.execute('DELETE FROM `cours` WHERE id=?', [r.id]);
+    db.execute('DELETE FROM `cours` WHERE seqno=?', [r.seqno]);
+    db.execute('DELETE FROM `cours_session` WHERE cours_seqno=?', [r.seqno]);
 
     if (r.id == -1 || !('id' in r)) r.id = null;
     db.execute('INSERT INTO `cours` '+
                    'VALUES (?, ?, ?, ?, ?)',
               [r.id, r.seqno, r.name, r.short_desc, r.entraineur]);
+
+    if (r.session.length > 0) {
+	var sessions = r.session.split(' ');
+	for (s in sessions) {
+	    var sn = sessions[s];
+	    db.execute('INSERT INTO `cours_session` '
+		       + '(cours_seqno, session_seqno) VALUES (?, ?)', 
+		       [r.seqno, sn]);
+	}
+    }
 }
 
 function pullIndex(tableName, requestURL, pullOneCallback, mergeOneCallback, deleteCallback) {
@@ -614,6 +627,18 @@ function collectThing(t, f) {
     return body;
 }
 
+function collectCoursSessions() {
+    var body = '';
+    var rs = 
+	db.execute('SELECT cours_seqno, session_seqno FROM `cours_session`');
+    while (rs.isValidRow()) {
+	body += '|' + rs.field(0) + ',' + rs.field(1);
+	rs.next();
+    }
+    rs.close();
+    return 'cours_session=' + body.substring(1, body.length);
+}
+
 function pushGlobalConfig() {
   var h = makeHandler('global_config',
 		     function(sidp, sv, id) { 
@@ -635,6 +660,7 @@ function pushGlobalConfig() {
     var body = 'version='+sv + '&'; 
     body += collectThing('session', SESSION_FIELDS);
     body += collectThing('cours', COURS_FIELDS);
+    body += collectCoursSessions();
     pushOne("global_config", h(sv, null, body, 3), body);
   }
 }

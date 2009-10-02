@@ -24,10 +24,20 @@ for ($i = 0; $i < count($rs); $i++) {
 
 $rs = db_query_get("SELECT * FROM `cours`");
 for ($i = 0; $i < count($rs); $i++) {
+    $seqno = $rs[$i]['seqno'];
     print "<cours>";
     foreach ($COURS_FIELDS as $f) {
         print "<$f>" . $rs[$i][$f] . "</$f>";
     }
+    $gs = db_query_get("SELECT session_seqno FROM `cours_session` WHERE cours_seqno=$seqno");
+    print "<session>";
+    $sss = "";
+    for ($j = 0; $j < count($gs); $j++) {
+        $s = $gs[$j]['session_seqno'];
+    	$sss .= "$s ";
+    }
+    print trim($sss);
+    print "</session>";
     print "</cours>";
 }
 

@@ -86,9 +86,18 @@ function createTablesIfNeeded (db) {
 	     '`name` varchar(60),'+
 	     '`short_desc` varchar(20),'+
 	     '`entraineur` varchar(30))');
+    // upgrade path:
+  var rs = db.execute("select * from sqlite_master where name='cours_session'");
+  if (rs.isValidRow()) {
+      var s = rs.field(4);
+      rs.close();
+      if (s.indexOf('server_id') != -1)
+	  db.execute('drop table `cours_session`');
+  }
+  else rs.close();
+    // end upgrade path
   db.execute('create table if not exists `cours_session` (' +
 	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
-	     '`server_id`,' +
              '`cours_seqno` INTEGER,' + 
              '`session_seqno` INTEGER)');
 }

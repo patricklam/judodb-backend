@@ -29,7 +29,6 @@ function stash_thing($t, $f) {
   }
   $namelist .= ')';
 
-  $i = 0;
   for ($i = 0; $i < count($sfs['seqno']); $i++) {
     $tuple = "VALUES (";
     $first = TRUE;
@@ -44,12 +43,21 @@ function stash_thing($t, $f) {
     $tuple .= ")";
 
     $seqno = $sfs['seqno'][$i];
-    db_query_set("DELETE FROM `$t` WHERE seqno='$seqno'");
     db_query_set("INSERT INTO `$t` $namelist $tuple");
   }
 }
 
+db_query_set("DELETE FROM `session`");
+db_query_set("DELETE FROM `cours`");
+db_query_set("DELETE FROM `cours_session`");
 stash_thing('session', $SESSION_FIELDS);
 stash_thing('cours', $COURS_FIELDS);
+
+$cs = explode('|', $_POST['cours_session']);
+for ($i = 0; $i < count($cs); $i++) {
+  $cc = explode(',', $cs[$i]);
+  $c = $cc[0]; $s = $cc[1];
+  db_query_set("INSERT INTO `cours_session` (cours_seqno, session_seqno) VALUES ($c, $s)");
+}
 
 print($version);
