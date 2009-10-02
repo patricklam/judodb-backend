@@ -14,8 +14,8 @@ function localInit() {
   if (cid)
     populateClient(cid);
   updateBlurb();
-  uFrais();
   upct();
+  uFrais();
   addOrRemoveVersements();
   updateNom();
   clearStatus();
