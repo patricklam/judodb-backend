@@ -28,9 +28,9 @@ function calcFrais() {
   var catId = getCatId();
   var basePrice;
   if (getElementById("sessions").value == '1')
-    basePrice = categoryPrix1(catId);
+    basePrice = CATEGORY_PRIX_1_SESSION[catId];
   else
-    basePrice = categoryPrix2(catId);
+    basePrice = CATEGORY_PRIX_2_SESSION[catId];
   var price = basePrice;
   getElementById("categorieFrais").value = asCurrency(basePrice) + ' $';
   upval();
@@ -66,7 +66,7 @@ function calcFrais() {
   }
   price += escomptePrice;
 
-  var judoQCPrice = categoryPrixJQ(catId);
+  var judoQCPrice = CATEGORY_PRIX_JUDO_QC[catId];
   if (getElementById("sans_affiliation").checked) judoQCPrice = 0;
   price += judoQCPrice;
   getElementById("affiliationFrais").value = asCurrency(judoQCPrice) + ' $';

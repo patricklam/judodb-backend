@@ -389,7 +389,7 @@ function getCatId() {
 
 function updateCategorie() {
   var c = getElementById("categorie");
-  c.value = categoryName(getCatId());
+  c.value = CATEGORY_NAMES[getCatId()];
   uFrais();
 }
 
