@@ -1,18 +1,18 @@
 --- version beta3:
 
-* implement button 'copy all current-session cours to session being edited'
-
-* implement system config tables:
-   - groupes (& instructor)
+* add frais below categories & global frais
+* other financial info:
    - escomptes
-   - frais -> table for keeping old frais around
    - suggested dates for cheques
 
-* count size of server db; only report success
+* use system config tables!
+
+* count size of server db (in get_last_sync); only report success
    if have the same size locally.
 
 * nightly dumps of database to remote locations
 
+* rejean requested changes
 * export to XLS: file with all information
 
 --- version beta4
@@ -25,6 +25,12 @@
 * extract mailing lists
 
 --- later:
+
+* add Cadet Noire, fix computeCategoryId to permit U17 Noire.
+
+* move to session seqno from strings in services
+
+* implement button 'copy all current-session cours to session being edited'
 
 * reduce number of requests
 
