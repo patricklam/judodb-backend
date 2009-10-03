@@ -29,7 +29,7 @@ function stash_thing($t, $f) {
   }
   $namelist .= ')';
 
-  for ($i = 0; $i < count($sfs['seqno']); $i++) {
+  for ($i = 0; $i < count($sfs['name']); $i++) {
     $tuple = "VALUES (";
     $first = TRUE;
     foreach ($f as $sf) {
@@ -38,11 +38,13 @@ function stash_thing($t, $f) {
       else
         $first = FALSE;
       $v = $sfs[$sf][$i];
-      $tuple .= "'$v'";
+      if ($v == 'true' || $v == 'false')
+        $tuple .= $v;
+      else
+        $tuple .= "'$v'";
     }
     $tuple .= ")";
 
-    $seqno = $sfs['seqno'][$i];
     db_query_set("INSERT INTO `$t` $namelist $tuple");
   }
 }
@@ -50,8 +52,10 @@ function stash_thing($t, $f) {
 db_query_set("DELETE FROM `session`");
 db_query_set("DELETE FROM `cours`");
 db_query_set("DELETE FROM `cours_session`");
+db_query_set("DELETE FROM `categorie`");
 stash_thing('session', $SESSION_FIELDS);
 stash_thing('cours', $COURS_FIELDS);
+stash_thing('categorie', $CATEGORIES_FIELDS);
 
 $cs = explode('|', $_POST['cours_session']);
 for ($i = 0; $i < count($cs); $i++) {

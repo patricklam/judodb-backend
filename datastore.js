@@ -361,32 +361,27 @@ function actuallyPullGlobalConfig() {
 
     var r = responseXML.childNodes[0].childNodes; 
 
+    function storeSubtree(s, f) {
+	var obj = [];
+
+	for (var j = 0; j < s.length; j++) {
+		obj[s[j].nodeName] = s[j].textContent;
+	}
+	// assign new ID
+	obj['id'] = -1;
+	f(obj);	
+    }
+
     // now we have sessions.
     // we can therefore storeOneSession once we parse it.
     for (var i = 0; i < r.length; i++) {
         var key = r[i].nodeName;
-        if (key == 'session') { 
-	    var s = r[i].childNodes;
-	    var sessionObject = [];
-
-	    for (var j = 0; j < s.length; j++) {
-		sessionObject[s[j].nodeName] = s[j].textContent;
-	    }
-	    // assign new ID
-	    s['id'] = -1;
-	    storeOneSession(sessionObject);
-	}
-        if (key == 'cours') { 
-	    var s = r[i].childNodes;
-	    var coursObject = [];
-
-	    for (var j = 0; j < s.length; j++) {
-		coursObject[s[j].nodeName] = s[j].textContent;
-	    }
-	    // assign new ID
-	    s['id'] = -1;
-	    storeOneCours(coursObject);
-	}
+        if (key == 'session')
+	    storeSubtree(r[i].childNodes, storeOneSession);
+        if (key == 'cours')
+	    storeSubtree(r[i].childNodes, storeOneCours);
+        if (key == 'categorie')
+	    storeSubtree(r[i].childNodes, storeOneCategorie);
     }
   }
 
@@ -671,6 +666,7 @@ function pushGlobalConfig() {
     var body = 'version='+sv + '&'; 
     body += collectThing('session', SESSION_FIELDS);
     body += collectThing('cours', COURS_FIELDS);
+    body += collectThing('categorie', CATEGORIES_FIELDS);
     body += collectCoursSessions();
     pushOne("global_config", h(sv, null, body, 3), body);
   }

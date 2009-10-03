@@ -41,5 +41,14 @@ for ($i = 0; $i < count($rs); $i++) {
     print "</cours>";
 }
 
+$rs = db_query_get("SELECT * FROM `categorie`");
+for ($i = 0; $i < count($rs); $i++) {
+    print "<categorie>";
+    foreach ($CATEGORIES_FIELDS as $f) {
+        print "<$f>" . $rs[$i][$f] . "</$f>";
+    }
+    print "</categorie>";
+}
+
 print "</config>";
 ?>
