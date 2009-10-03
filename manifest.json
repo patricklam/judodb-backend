@@ -9,6 +9,7 @@
     { "url": "config.html" },
     { "url": "base.js" },
     { "url": "constants.js" },
+    { "url": "configured_constants.js" },
     { "url": "datastore.js" },
     { "url": "db.js" },
     { "url": "md5.js" },

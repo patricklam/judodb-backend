@@ -100,4 +100,10 @@ function createTablesIfNeeded (db) {
 	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
              '`cours_seqno` INTEGER,' + 
              '`session_seqno` INTEGER)');
+  db.execute('create table if not exists `categorie` (' +
+	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
+	     '`name` varchar(25),' +
+	     '`abbrev` char(6),' +
+	     '`years_ago` INTEGER,' +
+	     '`noire` boolean)');
 }

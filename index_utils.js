@@ -106,7 +106,7 @@ function doLogin(arg, successContinuation) {
 }
 
 function updateLastSync() {
-  var is = db.execute('SELECT COUNT(*) FROM `services` WHERE date_inscription > ?', [FIRST_2009_INSCRIPTION]);
+  var is = db.execute('SELECT COUNT(*) FROM `services` WHERE date_inscription > ?', [CURRENT_SESSION_FIRST_SIGNUP]);
   var inscr = is.field(0); is.close();
   var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE version > server_version');
   var toSync = rs.field(0); rs.close();

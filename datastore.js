@@ -263,6 +263,17 @@ function storeOneCours(r) {
     }
 }
 
+function storeOneCategorie(r) {
+    if (r.id != -1)
+        db.execute('DELETE FROM `categorie` WHERE id=?', [r.id]);
+
+    if (r.id == -1 || !('id' in r)) r.id = null;
+    db.execute('INSERT INTO `categorie` '+
+                   'VALUES (?, ?, ?, ?, ?)',
+              [r.id, r.name, r.abbrev, r.years_ago, r.noire]);
+    return db.lastInsertRowId;
+}
+
 function pullIndex(tableName, requestURL, pullOneCallback, mergeOneCallback, deleteCallback) {
   var rs = db.execute('SELECT id, version, server_id, server_version FROM `'+tableName+'`');
   // create array indexed by server_id

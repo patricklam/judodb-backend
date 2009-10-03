@@ -14,6 +14,7 @@
 <script type="text/javascript" src="constants.js"></script>
 <script type="text/javascript" src="db.js"></script>
 <script type="text/javascript" src="datastore.js"></script>
+<script type="text/javascript" src="configured_constants.js"></script>
 <script type="text/javascript" src="xhr.js"></script>
 <script type="text/javascript" src="base.js"></script>
 <script type="text/javascript" src="utils.js"></script>
@@ -30,7 +31,7 @@
  <ul>
   <li id="tab_sessions" class="selected"><a href="#sessions" onclick="selectTab('sessions')">Sessions</a></li>
   <li id="tab_cours"><a href="#cours" onclick="selectTab('cours')">Cours</a></li>
-  <li id="tab_categories"><a href="#categories" onclick="selectTab('categories')">Cat&eacute;gories</a></li>
+  <li id="tab_categories"><a href="#categories" onclick="selectTab('categories')">Cat&eacute;gories et Frais</a></li>
   <li id="tab_usagers"><a href="#usagers" onclick="selectTab('usagers')">Usagers</a></li>
  </ul>
 </div>
@@ -136,7 +137,71 @@
  </form>
 </div>
 
-<div id="categories" style="display:none">
+<div id="categories" class="tabContent" style="display:none">
+ <form id="currentCategorie" class="compactform" style="padding-left:1em">
+
+  <div class="threeper">
+   <label for="categorieSelect" style="width:46%">
+    <select id="categorieSelect" onchange="loadIDFromSelect('categorie'); loadCategorie();">
+     <option />
+    </select></label>
+   <label for="newCategorie" style="width:20%"><a id="newCategorie" href="#categories" onclick="newThing('categorie'); loadCategorie(); return false">Nouvelle categorie</a>
+   </label>
+   <label for="rmCategorie" style="text-align:right"><a id="rmCategorie" href="#categories" onclick="rmThing('categorie'); loadCategorie(); return false">Supprimer categorie</a>
+   </label>
+  </div>
+
+  <input type="hidden" id="categorie_id" value="-1"/>
+
+  <fieldset>
+  <div class="twoper">
+   <label for="categorie_name">Nom de la cat&eacute;gorie
+   <input type="text" id="categorie_name" size="40" />
+   </label>
+   <label for="categorie_abbrev">Abbr&eacute;viation
+   <input type="text" id="categorie_abbrev" />
+   </label>
+  </div>
+
+  <div class="twoper">
+   <label for="categorie_years_ago">Age plafond
+   <input type="text" id="categorie_years_ago" size="5" onchange="adjustYALabel()" />
+   </label>
+   <label for="categorie_noire">Cat&eacute;gorie ceinture noire
+   <input type="checkbox" id="categorie_noire" />
+   </label>
+  </div>
+  </fieldset>
+
+  <fieldset><legend>Frais</legend>
+
+   <label for="fraisSessionSelect">
+    <select id="fraisSessionSelect" onchange="">
+     <option />
+    </select>
+   </label>
+
+   <div class="threeper">
+    <label for="categorie_frais_1_session">Frais 1 session
+    <input id="categorie_frais_1_session" type="text" size="10" value="" onchange="" />
+    </label>
+    <label for="categorie_frais_2_session">Frais 2 sessions
+    <input id="categorie_frais_2_session" type="text" size="10" value="" onchange="" />
+    </label>
+    <label for="categorie_frais_judo_qc">Frais Judo Qu&eacute;bec
+    <input id="categorie_frais_judo_qc" type="text" size="10" value="" onchange="" />
+    </label>
+   </div>
+  </fieldset>
+
+  <div class="threeper">
+   <label for="save"><a id="save" href="#categories" onclick="saveCategorie()">Sauvegarder</a>
+   </label>
+   <label for="cancel" style="text-align:right"><a id="cancel" href="#categories" onclick="loadCategorie()">Annuler</a>
+   </label>
+  </div>
+
+ </form>
 </div>
 
 <div id="usagers" style="display:none">

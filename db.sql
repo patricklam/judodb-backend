@@ -164,11 +164,11 @@ CREATE TABLE `cours_session` (
   `session_seqno` INTEGER
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `category`;
-CREATE TABLE `category` (
+DROP TABLE IF EXISTS `categorie`;
+CREATE TABLE `categorie` (
   `id` INTEGER PRIMARY KEY auto_increment,
-  `desc` varchar(25),
-  `short_desc` char(6),
+  `name` varchar(25),
+  `abbrev` char(6),
   `years_ago` INTEGER,
   `noire` boolean
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;

@@ -64,13 +64,15 @@ function haveUniqueSeqNo(t) {
     return rv;
 }
 
-function populateSelect(t) {
+function populateSelect(t, src, order) {
+    if (src === undefined) src = t;
+    if (order === undefined) order = 'seqno';
     var things = getElementById(t+'Select');
     // clear existing things
     while (things.length > 0)
         things.remove(0);
 
-    var rs = db.execute('SELECT name,id from `'+t+'` ORDER BY seqno');
+    var rs = db.execute('SELECT name,id from `'+src+'` ORDER BY ?', [order]);
     while (rs.isValidRow()) {
         things.add(new Option(rs.field(0), rs.field(1)), null);
         rs.next();
@@ -95,6 +97,7 @@ function rmThing(t) {
 
 /**** sessions stuff ****/
 populateSelect('session');
+populateSelect('fraisSession', 'session');
 loadIDFromSelect('session');
 loadSession();
 
@@ -135,7 +138,9 @@ function saveSession() {
 
     loadIDFromSeqNo('session');
     populateSelect('session');
+    populateSelect('fraisSession', 'session');
     adjustSelectorToID('session');
+    initConfig();
 }
 
 /**** cours stuff ****/
@@ -205,4 +210,66 @@ function saveCours() {
     loadIDFromSeqNo('cours');
     populateSelect('cours');
     adjustSelectorToID('cours');
+    initConfig();
+}
+
+/**** categorie stuff ****/
+populateSelect('categorie', 'categorie', 'years_ago');
+loadIDFromSelect('categorie');
+loadCategorie();
+
+function loadCategorie() {
+    var id = getElementById('categorie_id').value;
+    if (id == -1) {
+	for (c in CATEGORIES_FIELDS) {
+            var cf = CATEGORIES_FIELDS[c];
+            getElementById('categorie_'+cf).value = '';
+	}
+	getElementById('categorie_id').value = -1;
+        getElementById('categorie_noire').checked = false;
+	adjustYALabel();
+	return;
+    }
+    var rs = db.execute('SELECT * from `categorie` where id=?', [id]);
+
+    for (s in CATEGORIES_FIELDS) {
+        var sf = CATEGORIES_FIELDS[s];
+        getElementById('categorie_'+sf).value = rs.fieldByName(sf);
+    }
+    if (getElementById('categorie_noire').value == 1 || getElementById('categorie_noire').value == 'true') 
+      getElementById('categorie_noire').checked = true;
+    else
+      getElementById('categorie_noire').checked = false;
+
+    rs.close();
+    adjustYALabel();
+}
+
+function saveCategorie() {
+    var r = [];
+    for (s in CATEGORIES_FIELDS) {
+        var sf = CATEGORIES_FIELDS[s];
+        r[sf] = getElementById('categorie_'+sf).value;
+    }
+
+    r['noire'] = getElementById('categorie_noire').checked;
+
+    getElementById('categorie_id').value = storeOneCategorie(r);
+    bumpConfigurationVersion();
+
+    populateSelect('categorie');
+    adjustSelectorToID('categorie');
+    initConfig();
+}
+
+var origYALabel;
+function adjustYALabel() {
+    var ya = getElementById('categorie_years_ago');
+
+    if (origYALabel === undefined) 
+	origYALabel = ya.parentNode.firstChild.textContent;
+    var q = ya.parentNode.firstChild;
+    q.textContent = origYALabel;
+    if (ya.value != '')
+	q.textContent += ' (→ né en '+ (CURRENT_SESSION_YEAR+2-ya.value) +' et après)';
 }
