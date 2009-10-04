@@ -727,7 +727,9 @@ DataStore.prototype.sync = function(target) {
 	var rs = 
 	      db.execute('SELECT COUNT(*) FROM `services` WHERE date_inscription > ?', [CURRENT_SESSION_FIRST_SIGNUP]);
 	var inscr = rs.field(0); rs.close();
-	if (inscr == target) {
+
+	  // we might be adding new people, so use >=
+	if (inscr >= target) {
           addStatus("Syncronisé avec succès.");
           doRequest("POST", "update_last_sync.php", {didSync:1}, function (s,st,r,rx) {}, null);
 	  setTimeout(updateLastSync, 100);
