@@ -1,11 +1,6 @@
---- version beta3:
-
-* count size of server db (in get_last_sync); only report success
-   if have the same size locally.
+--- version beta4
 
 * nightly dumps of database to remote locations
-
---- version beta4
 
 * erasing first grade can lead to dup grades
 * disallow dup grades

@@ -680,7 +680,7 @@ function isValidClient(n) {
   return count;
 }
 
-DataStore.prototype.sync = function() {
+DataStore.prototype.sync = function(target) {
   addStatus("un instant (lecture des clients)...");
 
   pullClients();
@@ -721,8 +721,15 @@ DataStore.prototype.sync = function() {
   function clearWhenDone() { 
       if (activeRequests == 0) {
         clearStatus(); 
-	addStatus("Syncronisé avec succès.");    
-        doRequest("POST", "update_last_sync.php", {didSync:1}, function (s,st,r,rx) {}, null);
+	var rs = 
+	      db.execute('SELECT COUNT(*) FROM `services` WHERE date_inscription > ?', [CURRENT_SESSION_FIRST_SIGNUP]);
+	var inscr = rs.field(0); rs.close();
+	if (inscr == target) {
+          addStatus("Syncronisé avec succès.");
+          doRequest("POST", "update_last_sync.php", {didSync:1}, function (s,st,r,rx) {}, null);	    
+	}
+	else
+	  setError("Syncronisation incomplet: "+(target-inscr)+" inscriptions non syncronisés. Veuillez re-essayer.");
         setTimeout(clearStatus, 1000);
       }
       else setTimeout(clearWhenDone, 100); 

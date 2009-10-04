@@ -15,6 +15,13 @@ if (isset($rs)) {
   print '<username>' . $rs[0]['username'] . '</username>';
   print '<last_sync>' . $rs[0]['last_sync_time'] . '</last_sync>';
 }
+
+$first_date = $_GET['date_inscription'];
+if (isset($first_date)) {
+  $cs = db_query_get("SELECT COUNT(*) FROM `services` WHERE date_inscription >= '$first_date' AND NOT EXISTS (SELECT * FROM `deleted_client` AS dc WHERE client_id = dc.id)");
+  print '<inscriptions>' . $cs[0]['COUNT(*)'] . '</inscriptions>';
+}
+
 print '</sync_info>';
 
 if ($_GET['didSync'] == '1') {

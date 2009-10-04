@@ -13,6 +13,7 @@ updateLastSync();
 getElementById('version').innerHTML = 'version ' + VERSION;
 
 var clients = [];
+var serverJudokaCount = 0;
 var firstToDisplay = 0;
 
 function refreshResults() {
@@ -60,7 +61,7 @@ function doSearch() {
 var challenge;
 
 function actuallySync() {
-    store.sync();
+    store.sync(serverJudokaCount);
     setTimeout(updateLastSync, 5000);
 }
 
@@ -81,7 +82,7 @@ function loginAndSync() {
     getElementById('login').onSubmit = function() { 
         getElementById('login').style.display="none";
         actuallySync();
-    }
+    };
     return;
   }
 }
@@ -115,7 +116,7 @@ function updateLastSync() {
   getElementById('totalCount').innerHTML = inscr;
 
   var bail = doRequest
-    ("GET", "update_last_sync.php", null, printLastSync_, null);
+    ("GET", "update_last_sync.php", {date_inscription:CURRENT_SESSION_FIRST_SIGNUP}, printLastSync_, null);
   setTimeout(bail, 1000);
   function printLastSync_(status, statusText, responseText, responseXML) {
     if (status == '200' && responseXML != null) {
@@ -124,6 +125,7 @@ function updateLastSync() {
 	    "dernier sync par " + 
 	    ls[0].textContent + " à " + 
 	    ls[1].textContent;
+      serverJudokaCount = ls[2].textContent;
     }
   }
 }
