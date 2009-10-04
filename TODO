@@ -1,6 +1,5 @@
 --- version beta3:
 
-* rejean requested changes
 * count size of server db (in get_last_sync); only report success
    if have the same size locally.
 
@@ -10,6 +9,8 @@
 
 --- version beta4
 
+* erasing first grade can lead to dup grades
+* disallow dup grades
 * configure per-category frais & global frais (passport, pas_anjou)
 * configure suggested dates for cheques
 * configure escomptes

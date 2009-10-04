@@ -23,6 +23,7 @@ if ($_POST["multi"] == "1") {
 }
 
 $notFirst = FALSE;
+$COLS = 6;
 for ($p = 0; $p < $c; $p++) {
     $data = iconv("UTF-8", "ISO-8859-1", $_POST['data']);
     $ds = explode("*", $data);
@@ -32,7 +33,7 @@ for ($p = 0; $p < $c; $p++) {
     $live = FALSE;
     for ($i = 0; $i < $allCount-1; $i++) {
         $d = explode("|", $ds[$i]);
-        if ($d[5] == $p) {
+        if ($d[$COLS+2] == $p) {
 	    $live = TRUE;
 	    break;
         }
@@ -51,12 +52,12 @@ for ($p = 0; $p < $c; $p++) {
     $pdf->SetFillColor(224, 235, 255);
     $fill = true;
 
-    $w = array(45, 45, 25, 0);
+    $w = array(45, 45, 12, 30, 20, 0);
     $actualCount = 0;
     for ($i = 0; $i < $allCount-1; $i++) {
         $d = explode("|", $ds[$i]);
-        if ($d[5] == $p) {
-            for ($j = 0; $j < 4; $j++) 
+        if ($d[$COLS+2] == $p) {
+            for ($j = 0; $j < $COLS; $j++) 
                 $pdf->Cell($w[$j], 6, $d[$j], '', 0, 'L', $fill);
             $fill = !$fill;
             $pdf->Ln();

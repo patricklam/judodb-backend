@@ -56,8 +56,6 @@ function refreshResults() {
   var clients = doSearch(cv, all);
 
   var rh = document.createElement("tr");
-  var heads = ["Nom", "Prenom", "Grade", "Tel"];
-
   function appendTH(t) {
       var c = document.createElement("th");
       var ct = document.createTextNode(t);
@@ -76,6 +74,8 @@ function refreshResults() {
       c.appendChild(t);
       row.appendChild(c);
   }
+
+  var heads = ["Nom", "Prenom", "Grade", "Tel", "JudoQC", "DDN", "Cat"];
 
   for (h in heads)
       appendTH(heads[h]);
@@ -99,7 +99,7 @@ function refreshResults() {
 	      vv.appendChild(v);
 	      v = vv;
 	  }
-          if (r != 6) // skip cours field
+          if (r <= 8) // skip cours field
               appendTD(row, v);
           d.value = d.value + cc[r] + '|';
       }
@@ -113,7 +113,7 @@ function refreshResults() {
 
 function doSearch(c, all) {
   var contains_current_session = '%'+CURRENT_SESSION+'%';
-  var rs = db.execute('SELECT client.id,nom,prenom,grade,tel,cours from `client`,`services`,`grades` '+
+  var rs = db.execute('SELECT client.id,nom,prenom,grade,tel,affiliation,ddn,cours from `client`,`services`,`grades` '+
                       'WHERE deleted <> \'true\' AND '+
                         'client.id = services.client_id AND '+
                         'client.id = grades.client_id AND '+
@@ -127,12 +127,16 @@ function doSearch(c, all) {
     clients[index][0] = rs.field(0);
     clients[index][1] = rs.field(1);
     clients[index][2] = rs.field(2);
-    clients[index][3] = rs.field(3);
+    clients[index][3] = rs.field(3).substring(0,2);
     clients[index][4] = rs.field(4);
+    clients[index][5] = rs.field(5);
+    clients[index][6] = rs.field(6);
+    clients[index][7] = CATEGORY_ABBREVS[computeCategoryId
+      (clients[index][6].substring(0,4), clients[index][3])];
     if (all) {
-      var cn = rs.field(5);
-      clients[index][5] = COURS_SHORT[cn];
-      clients[index][6] = cn;
+      var cn = rs.field(7);
+      clients[index][8] = COURS_SHORT[cn];
+      clients[index][9] = cn;
     }
     ++index;
     rs.next();

@@ -23,6 +23,7 @@ if ($_POST["multi"] == "1") {
 }
 
 $sheetNum = 0;
+$COLS = 6;
 
 for ($p = 0; $p < $c; $p++) {
     $data = $_POST['data'];
@@ -33,7 +34,7 @@ for ($p = 0; $p < $c; $p++) {
     $live = FALSE;
     for ($i = 0; $i < $allCount-1; $i++) {
         $d = explode("|", $ds[$i]);
-        if ($d[5] == $p) {
+        if ($d[$COLS+2] == $p) {
 	    $live = TRUE;
 	    break;
         }
@@ -65,19 +66,27 @@ for ($p = 0; $p < $c; $p++) {
     $actualCount = 0;
     for ($i = 0; $i < $allCount-1; $i++) {
         $d = explode("|", $ds[$i]);
-        if ($d[5] == $p) {
+        if ($d[$COLS+2] == $p) {
             $s->setCellValue("A$r", $d[0]);
             $s->setCellValue("B$r", $d[1]);
             $s->setCellValue("C$r", $d[2]);
             $s->getCell("D$r")->setValueExplicit($d[3], 
 	      	  PHPExcel_Cell_DataType::TYPE_STRING);
+            $s->setCellValue("E$r", $d[4]);
+	    $dd = (int)(25569 + (strtotime("$d[5] 12:00:00") / 86400));
+            $s->setCellValue("F$r", $dd);
+	    $s->getStyle("F$r")->
+                getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD);
+            $s->setCellValue("G$r", $d[6]);
             $actualCount++; $r++;
 	}
     }
     $s->getColumnDimension('A')->setWidth(20);
     $s->getColumnDimension('B')->setWidth(20);
     $s->getColumnDimension('C')->setWidth(5);
-    $s->getColumnDimension('D')->setWidth(18);
+    $s->getColumnDimension('D')->setWidth(16);
+    $s->getColumnDimension('F')->setWidth(14);
+    $s->getColumnDimension('G')->setWidth(5);
 
     $r++;
     $s->setCellValue("A$r", "Nombre inscrit: $actualCount");
