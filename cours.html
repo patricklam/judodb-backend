@@ -36,8 +36,10 @@
  <input type="hidden" name="subtitle" id="subtitle" />
  <input type="hidden" name="short_title" id="short_title" />
  <input type="hidden" name="data" id="data" />
- <input type="submit" class="submitLink noprint" id="pdf" name="pdf" value="(PDF)" onclick="act='pdf';" />
- <input type="submit" class="submitLink noprint" id="xls" name="xls" value="(XLS)" onclick="act='xls';" />
+ <input type="hidden" name="data_full" id="data_full" />
+ <input type="submit" class="submitLink noprint" id="pdf" name="pdf" value="(PDF)" onclick="clearFull(); act='pdf';" />
+ <input type="submit" class="submitLink noprint" id="xls" name="xls" value="(XLS)" onclick="clearFull(); act='xls';" />
+ <input type="submit" class="submitLink noprint" id="xls" name="xls" value="(XLS complet)" onclick="computeFull(); act='xlsfull';" />
 </p>
 </form>
 

@@ -42,7 +42,7 @@ function chooseAction() {
 function refreshResults() {
   var re = getElementById('results');
   var d = getElementById('data');
-  d.value = "";
+  var dv = '';
 
   var c = getElementById('cours'); var cs = c.selectedIndex;
   getElementById('ent').innerHTML = cs > 0 ? ('Entraineur: ' + COURS_ENTRAINEURS[cs-1]) : '';
@@ -101,12 +101,13 @@ function refreshResults() {
 	  }
           if (r <= 8) // skip cours field
               appendTD(row, v);
-          d.value = d.value + cc[r] + '|';
+          dv += cc[r] + '|';
       }
-      d.value = d.value + '*';
+      dv += '*';
       resultTab.appendChild(row);
   }
   re.appendChild(resultTab);
+  d.value = dv;
 
   getElementById('nb').innerHTML = "Nombre inscrit: "+clients.length;
 }
@@ -118,7 +119,7 @@ function doSearch(c, all) {
                         'client.id = services.client_id AND '+
                         'client.id = grades.client_id AND '+
                         'date_grade = (SELECT max(date_grade) FROM `grades` WHERE grades.client_id=client.id) AND '+
-		        'saisons LIKE ? AND ((cours=?) OR ?)'+
+		        'saisons LIKE ? AND ((cours=?) OR ?) '+
 		      'ORDER BY nom_stripped COLLATE NOCASE, prenom_stripped COLLATE NOCASE', [contains_current_session, c, all]);
   var clients = [];
   var index = 0;
@@ -144,4 +145,38 @@ function doSearch(c, all) {
   rs.close();
 
   return clients;
+}
+
+function clearFull() {
+  getElementById('data_full').value = '';
+}
+
+function computeFull() {
+  getElementById('data').value = '';
+
+  var contains_current_session = '%'+CURRENT_SESSION+'%';
+  var rs = db.execute('SELECT nom,prenom,affiliation,ddn,courriel,adresse,ville,code_postal,tel,carte_anjou,nom_contact_urgence,tel_contact_urgence,RAMQ,grade,date_grade,c.short_desc from `client`,`services`,`grades`,`cours` AS c '+
+                      'WHERE deleted <> \'true\' AND ' +
+		        'c.seqno = services.cours AND ' +
+                        'client.id = services.client_id AND '+
+                        'client.id = grades.client_id AND '+
+                        'date_grade = (SELECT max(date_grade) FROM `grades` WHERE grades.client_id=client.id) AND '+
+		        'saisons LIKE ? '+
+		      'ORDER BY nom_stripped COLLATE NOCASE, prenom_stripped COLLATE NOCASE', [contains_current_session]);
+  var dv = '';
+  while (rs.isValidRow()) {
+      for (var i = 0; i < rs.fieldCount(); i++) {
+	  if (i == 3) // splice in category
+	      dv += CATEGORY_ABBREVS[computeCategoryId
+				     (rs.fieldByName('ddn').substring(0,4), 
+				      rs.fieldByName('grade'))]+'|';
+
+          dv += rs.field(i) + '|';
+      }
+
+      dv += '*';
+      rs.next();
+  }
+  rs.close();
+  getElementById('data_full').value = dv;
 }

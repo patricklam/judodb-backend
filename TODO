@@ -3,8 +3,6 @@
 * count size of server db (in get_last_sync); only report success
    if have the same size locally.
 
-* export to XLS: file with all information
-
 * nightly dumps of database to remote locations
 
 --- version beta4
