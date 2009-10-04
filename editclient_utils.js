@@ -323,9 +323,10 @@ function annulerGrades() {
 }
 
 function updateMainPageGrade() {
-    // push everything down, unless just a date change.
+    // push everything down, unless just a date change, or unless date=0
     if (getElementById("grade0_id").value != "-2" && 
-	getElementById("grade0").value != getElementById("grade").value) {
+        getElementById("grade0").value != getElementById("grade").value &&
+        getElementById("grade0_date").value != '0000-00-00') {
 	for (var i = MAX_GRADES-2; i >= 0; i--) {
 	    getElementById("grade"+(i+1)).value = 
 		getElementById("grade"+i).value;
