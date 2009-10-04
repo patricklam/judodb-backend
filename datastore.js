@@ -372,8 +372,8 @@ function actuallyPullGlobalConfig() {
 	f(obj);	
     }
 
-    // now we have sessions.
-    // we can therefore storeOneSession once we parse it.
+      // categorie has no seqno, so we must explicitly delete.
+    db.execute('DELETE FROM `categorie`');
     for (var i = 0; i < r.length; i++) {
         var key = r[i].nodeName;
         if (key == 'session')
@@ -382,6 +382,8 @@ function actuallyPullGlobalConfig() {
 	    storeSubtree(r[i].childNodes, storeOneCours);
         if (key == 'categorie')
 	    storeSubtree(r[i].childNodes, storeOneCategorie);
+	if (key == 'version')
+	    db.execute('UPDATE global_configuration SET version=?, server_version=?', [r[i].textContent, r[i].textContent]);
     }
   }
 
@@ -720,17 +722,19 @@ DataStore.prototype.sync = function(target) {
 
   function clearWhenDone() { 
       if (activeRequests == 0) {
+        initConfig();
         clearStatus(); 
 	var rs = 
 	      db.execute('SELECT COUNT(*) FROM `services` WHERE date_inscription > ?', [CURRENT_SESSION_FIRST_SIGNUP]);
 	var inscr = rs.field(0); rs.close();
 	if (inscr == target) {
           addStatus("Syncronisé avec succès.");
-          doRequest("POST", "update_last_sync.php", {didSync:1}, function (s,st,r,rx) {}, null);	    
+          doRequest("POST", "update_last_sync.php", {didSync:1}, function (s,st,r,rx) {}, null);
+	  setTimeout(updateLastSync, 100);
 	}
 	else
-	  setError("Syncronisation incomplet: "+(target-inscr)+" inscriptions non syncronisés. Veuillez re-essayer.");
-        setTimeout(clearStatus, 1000);
+	  setError("Syncronisation incomplet: "+(inscr-target)+" inscriptions non syncronisés. Veuillez re-essayer.");
+        setTimeout(clearStatus, 5000);
       }
       else setTimeout(clearWhenDone, 100); 
   }

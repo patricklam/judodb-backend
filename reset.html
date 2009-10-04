@@ -15,6 +15,7 @@
 <script type="text/javascript" src="datastore.js"></script>
 <script type="text/javascript" src="xhr.js"></script>
 <script type="text/javascript" src="base.js"></script>
+<script type="text/javascript" src="configured_constants.js"></script>
 <script type="text/javascript" src="utils.js"></script>
 <script type="text/javascript" src="md5.js"></script>
 <script type="text/javascript" src="cookie.js"></script>
@@ -34,6 +35,11 @@ function zapLocal() {
   db.execute("drop table payment_group_members");
   db.execute("drop table payment");
   db.execute("drop table client");
+  db.execute("drop table global_configuration");
+  db.execute("drop table session");
+  db.execute("drop table cours");
+  db.execute("drop table cours_session");
+  db.execute("drop table categorie");
 }
 </script>
 

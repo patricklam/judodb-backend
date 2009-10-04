@@ -68,7 +68,7 @@ function createTablesIfNeeded (db) {
       	     '`version` int(5), ' +
       	     '`server_version` int(5))');
   db.execute('insert into `global_configuration` (version, server_version) '+
-  	       'SELECT 1,0 WHERE NOT EXISTS '+
+  	       'SELECT 0,0 WHERE NOT EXISTS '+
 	         '(SELECT * FROM `global_configuration`)');
   db.execute('create table if not exists `session` (' +
 	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +

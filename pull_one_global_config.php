@@ -50,5 +50,8 @@ for ($i = 0; $i < count($rs); $i++) {
     print "</categorie>";
 }
 
+$rs = db_query_get("SELECT version FROM `global_configuration` ORDER BY version");
+print "<version>" . $rs[0]['version'] . "</version>";
+
 print "</config>";
 ?>

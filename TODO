@@ -2,6 +2,7 @@
 
 * nightly dumps of database to remote locations
 
+* check about deleted groups (17, 28)...
 * erasing first grade can lead to dup grades
 * disallow dup grades
 * configure per-category frais & global frais (passport, pas_anjou)
