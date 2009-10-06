@@ -272,20 +272,29 @@ function ensureFreeGradeSpace() {
 	if (canSee && empty) haveFree = true;
 	if (!canSee && firstInvis == -1) firstInvis = i;
     }
-    getElementById("gh_r"+firstInvis).style.display="table-row";
+    if (!haveFree)
+	getElementById("gh_r"+firstInvis).style.display="table-row";
 }
 
 function saveGrades() {
     var gs = new Array();
     var c = 0;
+    var emptyDates = 0;
     for (var i = 0; i < MAX_GRADES; i++) {
 	var gv = getElementById("grade"+i).value;
 	var gdv = getElementById("grade"+i+"_date").value;
+	if (gdv == '0000-00-00' || (gv != '' && gdv == '')) emptyDates++;
 	var gidv = getElementById("grade"+i+"_id").value;
 
 	if (gv != "")
 	    gs[c++] = {g:gv, gd:gdv, gid:gidv};
     }
+    if (emptyDates > 1) {
+	setError("Seulement une grade sans date est permise.");
+	setTimeout(clearStatus, 2000);
+	return;
+    }
+
     gs.sort(function(a,b) { return -compareDate(a.gd, b.gd); });
 
     // only gs[0] is allowed to have id=-1.
