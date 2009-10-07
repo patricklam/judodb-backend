@@ -550,7 +550,7 @@ function pushOne(what, handler, body) {
 }
 
 function pushGroups() {
-  var h = makeHandler('group', function() {
+  var h = makeHandler('group', function(sidp, sv, id) {
   			  db.execute
 			  ('UPDATE `payment_groups` SET server_id=?, version=?, server_version=? WHERE id=?',
   			   [sidp, sv, sv, id]);
