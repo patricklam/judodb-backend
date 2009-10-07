@@ -8,6 +8,7 @@ for (var i = 0; i < COURS.length; i++) {
 refreshResults();
 
 var act='';
+var inEditMode = false;
 
 function addMetaData() {
     var c = getElementById('cours'); var cs = c.selectedIndex;
@@ -76,6 +77,7 @@ function refreshResults() {
   }
 
   var heads = ["Nom", "Prenom", "Grade", "Tel", "JudoQC", "DDN", "Cat"];
+  var widthsForEditing = [-1, -1, -1, 3, -1, 8, -1, -1];
 
   for (h in heads)
       appendTH(heads[h]);
@@ -88,6 +90,7 @@ function refreshResults() {
   for (c in clients) {
       var cc = clients[c];
       var row = document.createElement("tr");
+      row.cid = cc[0];
 
       for (var r = 1; r < cc.length; r++) {
 	  var v = tn(cc[r]);
@@ -97,6 +100,14 @@ function refreshResults() {
 	      vv.target = "_";
 	      vv.className += "notlink-in-print";
 	      vv.appendChild(v);
+	      v = vv;
+	  }
+	  if (widthsForEditing[r] != -1 && inEditMode) {
+	      var vv = document.createElement("input");
+	      vv.type = "text";
+	      vv.size = widthsForEditing[r];
+	      vv.origValue = cc[r];
+	      vv.value = cc[r];
 	      v = vv;
 	  }
           if (r <= 8) // skip cours field
@@ -128,7 +139,7 @@ function doSearch(c, all) {
     clients[index][0] = rs.field(0);
     clients[index][1] = rs.field(1);
     clients[index][2] = rs.field(2);
-    clients[index][3] = rs.field(3).substring(0,2);
+    clients[index][3] = rs.field(3).substring(0,3);
     clients[index][4] = rs.field(4);
     clients[index][5] = rs.field(5);
     clients[index][6] = rs.field(6);
@@ -179,4 +190,61 @@ function computeFull() {
   }
   rs.close();
   getElementById('data_full').value = dv;
+}
+
+function editMode() {
+  inEditMode = !inEditMode;
+  getElementById('date_grade_span').style.display = inEditMode ?
+	'block' : 'none';
+  getElementById('saveorquit').style.display = inEditMode ?
+	'block' : 'none';
+  refreshResults();
+}
+
+function updateGrade(cid, nv) {
+  // if explicit date entered, just add that to the grades table.
+  // no date: replace any existing 0000-00-00 grades.
+  var gd = getElementById('date_grade').value;
+  if (gd == '') {
+    gd = '0000-00-00';
+    db.execute('DELETE FROM `grades` WHERE client_id=? AND date_grade=?',
+	       [cid, gd]);
+  }
+  db.execute('DELETE FROM `grades` WHERE client_id=? AND grade=?',
+	       [cid, nv]);
+  db.execute('INSERT INTO `grades` VALUES (?, null, ?, ?)',
+	     [cid, nv, gd]);
+  db.execute('UPDATE `client` SET version=version+1', [cid]);
+}
+
+function updateJudoQC(cid, nv) {
+  db.execute('UPDATE `client` SET version=version+1, affiliation=? ' +
+ 	       'WHERE id=?', [nv, cid]);
+}
+
+var updaters = [null, null, updateGrade, null, updateJudoQC, null, null, null];
+
+function handleSubmit() {
+  var rs = getElementById('results').lastChild.childNodes;
+  for (var rc = 0; rc < rs.length; rc++) {
+    var r = rs[rc];
+    if (r.firstChild.tagName == 'TH')
+      continue;
+
+    for (var i = 0; i < r.cells.length; i++) {
+      var c = r.cells[i];
+      if (c.firstChild.tagName == 'INPUT') {
+        var inp = c.firstChild;
+	if (inp.origValue != inp.value) {
+	    updaters[i](r.cid, inp.value);
+	    inp.origValue = inp.value;
+        }
+      }
+    }
+  }
+}
+
+function cancel() {
+  inEditMode = false;
+  refreshResults();
 }
