@@ -559,7 +559,7 @@ function pushGroups() {
   var ds = db.execute('SELECT * from `deleted_payment_groups`');
   while (ds.isValidRow()) {
     var cid = ds.fieldByName('id');
-    var body = "deleted=true";
+    var body = "deleted=true&version=0";
     body += "&server_id="+ds.fieldByName('server_id');
     pushOne("group", h(-1, cid, body, 3), body);
     ds.next();

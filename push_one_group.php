@@ -21,6 +21,7 @@ if (isset($_POST['server_id']) && $_POST['server_id'] != '-1' && isset($_POST['v
 //fwrite($fh, "UPDATE `payment_groups` SET version=$version WHERE id=$sid\n");
   db_query_set("UPDATE `payment_groups` SET version=$version WHERE id=$sid");
 } else {
+  if (!isset($version)) $version = 0;
   $sid = db_query_set(
       "INSERT INTO `payment_groups` VALUES (null, $version)");
 }
