@@ -5,7 +5,7 @@ function createManagedStore() {
     setError('Could not create local server: ' + ex.message);
     return;
   }
-  var mstore = localServer.createManagedStore(STORE_NAME);
+  var mstore = localServer.createManagedStore('inscriptions');
   mstore.manifestUrl = 'manifest.json';
   mstore.checkForUpdate();
 }
