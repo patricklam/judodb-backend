@@ -77,7 +77,7 @@ function refreshResults() {
   }
 
   var heads = ["Nom", "Prenom", "Grade", "Tel", "JudoQC", "DDN", "Cat"];
-  var widthsForEditing = [-1, -1, -1, 3, -1, 8, -1, -1];
+  var widthsForEditing = [-1, -1, -1, 3, -1, 8, -1, -1, -1];
 
   for (h in heads)
       appendTH(heads[h]);
