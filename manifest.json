@@ -1,6 +1,6 @@
 {
   "betaManifestVersion": 1,
-  "version": "091004",
+  "version": "091006",
   "entries": [
     { "url": "index.html" },
     { "url": ".", "redirect": "index.html" },
