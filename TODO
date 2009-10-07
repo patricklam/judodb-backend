@@ -1,13 +1,7 @@
 --- version beta4
 
-* nightly dumps of database to remote locations
-
-* check about deleted groups (17, 28)...
-
 * searches by class, grade, age
    - FT-303 mode, FPDI, http://www.setasign.de/products/pdf-php-solutions/fpdi/downloads/
-
-* edit-view of class list
 
 * configure per-category frais & global frais (passport, pas_anjou)
 * configure suggested dates for cheques
@@ -23,13 +17,14 @@
 
 * implement button 'copy all current-session cours to session being edited'
 
-* reduce number of requests
-
 * autosuggest for payment groups (search button)
 
 * implement merges/conflicts
 
 * use database for user login authentication, not stuff in textfiles!
 
-* implement table for tournament results
+--- much later:
 
+* reduce number of requests
+
+* implement table for tournament results
