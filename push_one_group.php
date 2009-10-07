@@ -30,6 +30,7 @@ if ($_POST['deleted'] == 'true') {
   db_query_set("DELETE FROM `payment_group_members` WHERE group_id=$sid");
   db_query_set("DELETE FROM `payment` WHERE group_id=$sid");
   db_query_set("REPLACE INTO `deleted_payment_groups` VALUE ($sid)");
+  print($sid);
   exit();
 }
 
