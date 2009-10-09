@@ -74,6 +74,7 @@ function initCategorie() {
 }
 
 // not currently in db.
+var AGE_MASTERS = 35;
 var SUGGESTED_PAIEMENTS = ["", "2009-11-13", "2010-02-05", "", "", ""];
 
 var FRAIS_PASSEPORT_JUDO_QUEBEC = 5;

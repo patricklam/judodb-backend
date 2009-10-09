@@ -43,6 +43,12 @@
  <span id="date_grade_span" style="float:right; text-align:right; display:none">
   Date passage de grade: <input type="text" id="date_grade" />
  </span>
+ <span id="ft303_span" style="float:right; text-align:right; display:none">
+  &Eacute;v&eacute;nement: <input type="text" id="evt" />
+  &nbsp; &nbsp; Date: <input type="text" size="10" id="date" />
+  <a href="#" onclick="makeFT(); return false">cr&eacute;er</a>&nbsp;
+  <a href="#" onclick="ftMode(); return false">annuler </a>
+ </span>
 </p>
 </form>
 
@@ -51,7 +57,7 @@
   <h3>Actions</h3>
   <p>
   <a href="#" onclick="editMode(); return false">&Eacute;diter</a><br />
-  <a href="#">Cr&eacute;er FT-303</a><br />
+  <a href="#" onclick="ftMode(); return false">Cr&eacute;er FT-303</a><br />
   </p>
  </div>
 </div>

@@ -9,6 +9,7 @@ refreshResults();
 
 var act='';
 var inEditMode = false;
+var inFtMode = false;
 
 function addMetaData() {
     var c = getElementById('cours'); var cs = c.selectedIndex;
@@ -76,6 +77,20 @@ function refreshResults() {
       row.appendChild(c);
   }
 
+  function selectSex() {
+      var s = document.createElement("select");
+      s.options[0] = new Option("M", "0", true, false);
+      s.options[1] = new Option("F", "1", false, false);
+      return s;
+  }
+
+  function selectMasters() {
+      var s = document.createElement("select");
+      s.options[0] = new Option("Senior", "S", true, false);
+      s.options[1] = new Option("Masters", "M", false, false);
+      return s;
+  }
+
   var heads = ["Nom", "Prenom", "Grade", "Tel", "JudoQC", "DDN", "Cat"];
   var widthsForEditing = [-1, -1, -1, 3, -1, 8, -1, -1, -1];
 
@@ -110,10 +125,17 @@ function refreshResults() {
 	      vv.value = cc[r];
 	      v = vv;
 	  }
-          if (r <= 8) // skip cours field
+          if (r <= 8) // skip cours & RAMQ fields
               appendTD(row, v);
           dv += cc[r] + '|';
       }
+      if (inFtMode) {
+	  var y = parseInt(cc[5].substring(0,4));
+	  appendTD(selectSex());
+	  if (CURRENT_SESSION_YEAR - y > AGE_MASTERS)
+	      appendTD(selectMasters());
+      }
+
       dv += '*';
       resultTab.appendChild(row);
   }
@@ -125,7 +147,7 @@ function refreshResults() {
 
 function doSearch(c, all) {
   var contains_current_session = '%'+CURRENT_SESSION+'%';
-  var rs = db.execute('SELECT client.id,nom,prenom,grade,tel,affiliation,ddn,cours from `client`,`services`,`grades` '+
+  var rs = db.execute('SELECT client.id,nom,prenom,grade,tel,affiliation,ddn,cours,RAMQ from `client`,`services`,`grades` '+
                       'WHERE deleted <> \'true\' AND '+
                         'client.id = services.client_id AND '+
                         'client.id = grades.client_id AND '+
@@ -192,12 +214,31 @@ function computeFull() {
   getElementById('data_full').value = dv;
 }
 
-function editMode() {
-  inEditMode = !inEditMode;
+function showEditElements() {
   getElementById('date_grade_span').style.display = inEditMode ?
 	'block' : 'none';
   getElementById('saveorquit').style.display = inEditMode ?
 	'block' : 'none';
+  getElementById('rightbar').style.display = inEditMode ?
+	'none' : 'block';
+}
+
+function editMode() {
+  inEditMode = !inEditMode;
+  showEditElements();
+  refreshResults();
+}
+
+function showFTElements() {
+  getElementById('ft303_span').style.display = inFtMode ?
+	'block' : 'none';
+  getElementById('rightbar').style.display = inFtMode ?
+	'none' : 'block';
+}
+
+function ftMode() {
+  inFtMode = !inFtMode;
+  showFTElements();
   refreshResults();
 }
 
@@ -242,9 +283,13 @@ function handleSubmit() {
       }
     }
   }
+  inEditMode = false;
+  showEditElements();
+  refreshResults();
 }
 
 function cancel() {
   inEditMode = false;
+  showEditElements();
   refreshResults();
 }

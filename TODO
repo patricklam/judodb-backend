@@ -1,11 +1,15 @@
 --- version beta4
 
-* searches by class, grade, age
-   - FT-303 mode, FPDI, http://www.setasign.de/products/pdf-php-solutions/fpdi/downloads/
+* searches by class, grade, age/categorie
+* FT-303 mode, FPDI, http://www.setasign.de/products/pdf-php-solutions/fpdi/downloads/
+   - categorie (todo: checkbox for masters), ddn, sexe (todo: checkbox), nom, prenom, grade, passport
+   + date, evenement (OK)
+   
 
 * configure per-category frais & global frais (passport, pas_anjou)
 * configure suggested dates for cheques
 * configure escomptes
+* configure club name, # club (for ft303)
 
 --- later:
 
