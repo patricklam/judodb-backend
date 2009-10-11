@@ -192,3 +192,17 @@ s=s.replace(rExps[i],repChar[i]);
 return s;
 }
 
+function inferSexFromRAMQ(r) {
+  if (r == '-2008' || r == '2008') return '';
+  // strip spaces
+  r = r.replace(/\s/g,'');
+  // strip 2008- prefix and first four letters
+  r = r.replace(/(\d\d\d\d-)?\w\w\w\w/,'');
+  // substring from 2-4 above 50
+  var m = parseInt(r.substring(2,4));
+  if (m > 50)
+    return 'F';
+  if (m > 0)
+    return 'M';
+  return '';
+}

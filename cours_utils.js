@@ -77,22 +77,39 @@ function refreshResults() {
       row.appendChild(c);
   }
 
-  function selectSex() {
+  function selectSex(id, d) {
       var s = document.createElement("select");
-      s.options[0] = new Option("M", "0", true, false);
-      s.options[1] = new Option("F", "1", false, false);
+      s.add(new Option("", "-1", false, false), null);
+      s.add(new Option("M", "0", d == 'M', false), null);
+      s.add(new Option("F", "1", d == 'F', false), null);
+      if (d == 'M')
+	  s.selectedIndex = 1;
+      if (d == 'F')
+	  s.selectedIndex = 2;
+      s.id = id;
       return s;
   }
 
-  function selectMasters() {
+  function selectMasters(id) {
       var s = document.createElement("select");
-      s.options[0] = new Option("Senior", "S", true, false);
-      s.options[1] = new Option("Masters", "M", false, false);
+      s.add(new Option("Senior", "S", true, false), null);
+      s.add(new Option("Masters", "M", false, false), null);
+      s.id = id;
+      return s;
+  }
+
+  function checkbox(id) {
+      var s = document.createElement("input");
+      s.type = "checkbox";
+      s.id = id;
       return s;
   }
 
   var heads = ["Nom", "Prenom", "Grade", "Tel", "JudoQC", "DDN", "Cat"];
   var widthsForEditing = [-1, -1, -1, 3, -1, 8, -1, -1, -1];
+
+  if (inFtMode) 
+      appendTH("");
 
   for (h in heads)
       appendTH(heads[h]);
@@ -107,6 +124,9 @@ function refreshResults() {
       var row = document.createElement("tr");
       row.cid = cc[0];
 
+      if (inFtMode)  {
+	  appendTD(row, checkbox("sel-"+c));
+      }
       for (var r = 1; r < cc.length; r++) {
 	  var v = tn(cc[r]);
 	  if (r == 1 || r == 2) {
@@ -125,15 +145,15 @@ function refreshResults() {
 	      vv.value = cc[r];
 	      v = vv;
 	  }
-          if (r <= 8) // skip cours & RAMQ fields
+          if (r < 9) // skip cours field
               appendTD(row, v);
           dv += cc[r] + '|';
       }
       if (inFtMode) {
-	  var y = parseInt(cc[5].substring(0,4));
-	  appendTD(selectSex());
-	  if (CURRENT_SESSION_YEAR - y > AGE_MASTERS)
-	      appendTD(selectMasters());
+	var y = parseInt(cc[6].substring(0,4));
+	appendTD(row, selectSex("s-"+c, inferSexFromRAMQ(cc['RAMQ'])));
+	if (CURRENT_SESSION_YEAR - y > AGE_MASTERS)
+	  appendTD(row, selectMasters("c-"+c));
       }
 
       dv += '*';
@@ -167,6 +187,7 @@ function doSearch(c, all) {
     clients[index][6] = rs.field(6);
     clients[index][7] = CATEGORY_ABBREVS[computeCategoryId
       (clients[index][6].substring(0,4), clients[index][3])];
+    clients[index]['RAMQ'] = rs.field(8);
     if (all) {
       var cn = rs.field(7);
       clients[index][8] = COURS_SHORT[cn];
@@ -185,8 +206,6 @@ function clearFull() {
 }
 
 function computeFull() {
-  getElementById('data').value = '';
-
   var contains_current_session = '%'+CURRENT_SESSION+'%';
   var rs = db.execute('SELECT nom,prenom,affiliation,ddn,courriel,adresse,ville,code_postal,tel,carte_anjou,nom_contact_urgence,tel_contact_urgence,RAMQ,grade,date_grade,c.short_desc from `client`,`services`,`grades`,`cours` AS c '+
                       'WHERE deleted <> \'true\' AND ' +
@@ -292,4 +311,32 @@ function cancel() {
   inEditMode = false;
   showEditElements();
   refreshResults();
+}
+
+// integrate user input into data field
+function makeFT() {
+  var d = getElementById('data').value.split('*');
+  var dnew = '';
+  var gotOne = false;
+  for (var dv in d) {
+    var sel = getElementById('sel-'+dv);
+    if (sel != null && sel.checked == true) {
+      gotOne = true;
+      var post = '';
+      if (getElementById('s-'+dv).value == 0)
+	post += 'M';
+      else if (getElementById('s-'+dv).value == 1)
+	post += 'F';
+      post += '|';
+      var cat = getElementById('c-'+dv);
+      if (cat != null && cat.value == 'M')
+	post += 'M';
+      post += '|';
+      dnew += d[dv] + post + '*';
+    }
+  }
+  getElementById('data_full').value = dnew;
+  getElementById('auxdata').value = CLUB + '|' + CLUBNO;
+  if (!gotOne) { alert("Aucun judoka selectionné."); return false; }
+  return true;
 }

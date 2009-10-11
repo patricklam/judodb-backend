@@ -4,8 +4,8 @@ require ('fpdf/fpdf.php');
 
 // no need for authentication on this PHP file.
 
-$pdf = new FPDF();
-$pdf->AddPage('P', 'Letter');
+$pdf = new FPDF('P', 'mm', 'Letter');
+$pdf->AddPage();
 
 // to avoid the need for syncronisation before output, use POST params 
 // for the data in the list.
