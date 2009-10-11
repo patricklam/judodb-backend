@@ -264,3 +264,7 @@ function paiementEmpty(p) {
     return getElementById(l+"chqno").value=="" &&
 	getElementById(l+"montant").value=="";
 }
+
+function unsubscribe() {
+  getElementById("saisons").value = '';
+}

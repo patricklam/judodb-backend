@@ -1,10 +1,6 @@
 --- version beta4
 
 * searches by class, grade, age/categorie
-* undo inscription / fix datastore and index_utils to use sessions not date for inscription
-* FT-303 mode, FPDI, http://www.setasign.de/products/pdf-php-solutions/fpdi/downloads/
-   - categorie (todo: checkbox for masters), ddn, sexe (todo: checkbox), nom, prenom, grade, passport
-   + date, evenement (OK)
 * option to copy data when you have a last-name match and cid=-1
 
 * configure per-category frais & global frais (passport, pas_anjou)

@@ -107,7 +107,7 @@ function doLogin(arg, successContinuation) {
 }
 
 function updateLastSync() {
-  var is = db.execute('SELECT COUNT(*) FROM `services` WHERE date_inscription > ?', [CURRENT_SESSION_FIRST_SIGNUP]);
+  var is = db.execute('SELECT COUNT(*) FROM `services` WHERE saisons LIKE ?', ['%'+CURRENT_SESSION+'%']);
   var inscr = is.field(0); is.close();
   var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE version > server_version');
   var toSync = rs.field(0); rs.close();
@@ -116,7 +116,7 @@ function updateLastSync() {
   getElementById('totalCount').innerHTML = inscr;
 
   var bail = doRequest
-    ("GET", "update_last_sync.php", {date_inscription:CURRENT_SESSION_FIRST_SIGNUP}, printLastSync_, null);
+    ("GET", "update_last_sync.php", {current_session:CURRENT_SESSION}, printLastSync_, null);
   setTimeout(bail, 1000);
   function printLastSync_(status, statusText, responseText, responseXML) {
     if (status == '200' && responseXML != null) {

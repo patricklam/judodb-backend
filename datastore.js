@@ -725,7 +725,7 @@ DataStore.prototype.sync = function(target) {
         initConfig();
         clearStatus(); 
 	var rs = 
-	      db.execute('SELECT COUNT(*) FROM `services` WHERE date_inscription > ?', [CURRENT_SESSION_FIRST_SIGNUP]);
+	      db.execute('SELECT COUNT(*) FROM `services` WHERE saisons LIKE ?', ['%'+CURRENT_SESSION+'%']);
 	var inscr = rs.field(0); rs.close();
 
 	  // we might be adding new people, so use >=

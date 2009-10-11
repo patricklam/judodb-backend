@@ -16,9 +16,9 @@ if (isset($rs)) {
   print '<last_sync>' . $rs[0]['last_sync_time'] . '</last_sync>';
 }
 
-$first_date = $_GET['date_inscription'];
-if (isset($first_date)) {
-  $cs = db_query_get("SELECT COUNT(*) FROM `services` WHERE date_inscription >= '$first_date' AND NOT EXISTS (SELECT * FROM `deleted_client` AS dc WHERE client_id = dc.id)");
+$current_session = $_GET['current_session'];
+if (isset($current_session)) {
+  $cs = db_query_get("SELECT COUNT(*) FROM `services` WHERE saisons LIKE '%$current_session%' AND NOT EXISTS (SELECT * FROM `deleted_client` AS dc WHERE client_id = dc.id)");
   print '<inscriptions>' . $cs[0]['COUNT(*)'] . '</inscriptions>';
 }
 
