@@ -5,7 +5,7 @@ function createManagedStore() {
     setError('Could not create local server: ' + ex.message);
     return;
   }
-  var mstore = localServer.createManagedStore('inscriptions');
+  var mstore = localServer.createManagedStore('anjoudb');
   mstore.manifestUrl = 'manifest.json';
   mstore.checkForUpdate();
 }
