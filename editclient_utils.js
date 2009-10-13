@@ -372,6 +372,18 @@ function updateNom() {
   selfName2 = (selfPrenom + " " + selfNom).toUpperCase();
   getElementById("nom_stripped").value = selfNom;
   getElementById("prenom_stripped").value = selfPrenom;
+
+  if (cid == null && selfNom != '') {
+    rs = db.execute('SELECT COUNT(*) FROM `client` WHERE nom_stripped=?', 
+		    [selfNom]);
+    if (rs.field(0) > 0) 
+      getElementById("copySib").style.display = "inline";
+    else
+      getElementById("copySib").style.display = "none";
+    rs.close();
+  }
+  else
+    getElementById("copySib").style.display = "none";
 }
 
 var oldDDN = getElementById("ddn").value;
@@ -450,4 +462,20 @@ function verificationView() {
   vw.document.write('</body>');
   vw.document.write('</html>');
   vw.document.close();
+}
+
+function copySibling() {
+  rs = db.execute('SELECT courriel, adresse, ville, code_postal, tel, nom_recu_impot, nom_contact_urgence, tel_contact_urgence FROM `client` WHERE nom_stripped=?', 
+		  [selfNom]);
+
+  var to_copy = ['courriel', 'adresse', 'ville', 'code_postal',
+		 'tel', 'nom_recu_impot', 'nom_contact_urgence',
+		 'tel_contact_urgence'];
+  for (c in to_copy) {
+    var cc = to_copy[c];
+    getElementById(cc).value = rs.fieldByName(cc);
+  }
+   
+  rs.close();
+
 }
