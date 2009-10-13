@@ -10,6 +10,7 @@ refreshResults();
 var act='';
 var inEditMode = false;
 var inFtMode = false;
+var inGCoursMode = false;
 
 function addMetaData() {
     var c = getElementById('cours'); var cs = c.selectedIndex;
@@ -98,6 +99,17 @@ function refreshResults() {
       return s;
   }
 
+  function selectCours(id, c) {
+      var s = document.createElement("select");
+      for (var i = 0; i < COURS_SHORT.length; i++) {
+	  s.add(new Option(COURS_SHORT[i], i), null);
+      }
+      s.selectedIndex = c;
+      s.origIndex = c;
+      s.id = id;
+      return s;
+  }
+
   function checkbox(id) {
       var s = document.createElement("input");
       s.type = "checkbox";
@@ -127,7 +139,12 @@ function refreshResults() {
       if (inFtMode)  {
 	  appendTD(row, checkbox("sel-"+c));
       }
-      for (var r = 1; r < cc.length; r++) {
+
+      var ccl = cc.length;
+
+      // don't display cours name or id when not in all-mode.
+      if (!all) ccl -= 2;
+      for (var r = 1; r < ccl; r++) {
 	  var v = tn(cc[r]);
 	  if (r == 1 || r == 2) {
 	      var vv = document.createElement("a");
@@ -154,6 +171,9 @@ function refreshResults() {
 	appendTD(row, selectSex("s-"+c, inferSexFromRAMQ(cc['RAMQ'])));
 	if (CURRENT_SESSION_YEAR - y > AGE_MASTERS)
 	  appendTD(row, selectMasters("c-"+c));
+      }
+      if (inGCoursMode) {
+	appendTD(row, selectCours("sc-"+c, cc[cc.length-1]));
       }
 
       dv += '*';
@@ -188,11 +208,11 @@ function doSearch(c, all) {
     clients[index][7] = CATEGORY_ABBREVS[computeCategoryId
       (clients[index][6].substring(0,4), clients[index][3])];
     clients[index]['RAMQ'] = rs.field(8);
-    if (all) {
-      var cn = rs.field(7);
-      clients[index][8] = COURS_SHORT[cn];
-      clients[index][9] = cn;
-    }
+
+    var cn = rs.field(7);
+    clients[index][8] = COURS_SHORT[cn];
+    clients[index][9] = cn;
+
     ++index;
     rs.next();
   }
@@ -261,6 +281,26 @@ function ftMode() {
   refreshResults();
 }
 
+function gcoursMode() {
+  inGCoursMode = !inGCoursMode;
+  showGCoursElements();
+  refreshResults();
+}
+
+function showGCoursElements() {
+  getElementById('saveorquit').style.display = inGCoursMode ?
+	'block' : 'none';
+  getElementById('rightbar').style.display = inGCoursMode ?
+	'none' : 'block';
+}
+
+function showFTElements() {
+  getElementById('ft303_span').style.display = inFtMode ?
+	'block' : 'none';
+  getElementById('rightbar').style.display = inFtMode ?
+	'none' : 'block';
+}
+
 function updateGrade(cid, nv) {
   // if explicit date entered, just add that to the grades table.
   // no date: replace any existing 0000-00-00 grades.
@@ -284,7 +324,7 @@ function updateJudoQC(cid, nv) {
 
 var updaters = [null, null, updateGrade, null, updateJudoQC, null, null, null];
 
-function handleSubmit() {
+function saveEdits() {
   var rs = getElementById('results').lastChild.childNodes;
   for (var rc = 0; rc < rs.length; rc++) {
     var r = rs[rc];
@@ -302,13 +342,47 @@ function handleSubmit() {
       }
     }
   }
-  inEditMode = false;
-  showEditElements();
+}
+
+function saveOneCoursChange(cid, newCours) {
+  db.execute('UPDATE `client` SET version=version+1 ' +
+ 	       'WHERE client.id=?', [cid]);
+  db.execute('UPDATE `services` SET cours=? ' +
+ 	       'WHERE services.client_id=? AND ' +
+	       'saisons LIKE ?', [newCours, cid, '%'+CURRENT_SESSION+'%']);
+}
+
+function saveCoursChanges() {
+  var rs = getElementById('results').lastChild.childNodes;
+  for (var rc = 0; rc < rs.length; rc++) {
+    var r = rs[rc];
+    if (r.firstChild.tagName == 'TH')
+      continue;
+
+    for (var i = 0; i < r.cells.length; i++) {
+      var c = r.cells[i];
+      if (c.firstChild.tagName == 'SELECT') {
+        var inp = c.firstChild;
+	if (inp.origIndex != inp.selectedIndex) {
+	    saveOneCoursChange(r.cid, inp.selectedIndex);
+	    inp.origIndex = inp.selectedIndex;
+        }
+      }
+    }
+  }
+}
+
+function handleSubmit() {
+  if (inEditMode) saveEdits();
+  if (inGCoursMode) saveCoursChanges();
+  inEditMode = false; inGCoursMode = false;
+  showEditElements(); showGCoursElements();
   refreshResults();
 }
 
 function cancel() {
   inEditMode = false;
+  inGCoursMode = false;
   showEditElements();
   refreshResults();
 }
