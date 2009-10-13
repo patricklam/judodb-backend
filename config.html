@@ -32,6 +32,7 @@
   <li id="tab_sessions" class="selected"><a href="#sessions" onclick="selectTab('sessions')">Sessions</a></li>
   <li id="tab_cours"><a href="#cours" onclick="selectTab('cours')">Cours</a></li>
   <li id="tab_categories"><a href="#categories" onclick="selectTab('categories')">Cat&eacute;gories et Frais</a></li>
+  <li id="tab_misc"><a href="#misc" onclick="selectTab('misc')">Autres</a></li>
   <li id="tab_usagers"><a href="#usagers" onclick="selectTab('usagers')">Usagers</a></li>
  </ul>
 </div>
@@ -53,7 +54,7 @@
   <input type="hidden" id="session_year" />
 
   <div class="fourper">
-   <label for="session_name">Nom du session
+   <label for="session_name">Nom de la session
    <input type="text" id="session_name" />
    </label>
 
@@ -202,6 +203,94 @@
   </div>
 
  </form>
+</div>
+
+<div id="misc" class="tabContent" style="display:none">
+ <form id="currentMisc" class="compactform" style="padding-left:1em">
+  <fieldset><legend>Renseignments pour FT-303</legend>
+  <div class="threeper">
+   <label for="club_name">Nom du club
+   <input type="text" id="club_name" />
+   </label>
+
+   <label for="club_no">Num&eacute;ro Judo Quebec du club
+   <input type="text" id="club_no" />
+   </label>
+
+   <label for="age_masters">Age pour division Masters
+   <input type="text" id="age_masters" />
+   </label>
+
+  </div>
+  </fieldset>
+
+  <fieldset><legend>Frais et paiements</legend>
+  <!-- suggested paiements -->
+  <!-- Frais passport judoQC, nonresident d'Anjou -->
+  <div class="twoper">
+   <label for="frais_passeport_judoqc">Frais passeport Judo Qu&eacute;bec
+   <input type="text" id="frais_passeport_judoqc" size="5" />
+   </label>
+   <label for="frais_nonresident_anjou">Frais nonr&eacute;sident Anjou
+   <input type="text" id="frais_nonresident_anjou" size="5" />
+   </label>
+  </div>
+
+  <div class="threeper">
+   <label for="date_versement_1">Date 1e versement
+   <input type="text" id="date_versement_1" size="10" />
+   </label>
+   <label for="date_versement_2">Date 2e versement
+   <input type="text" id="date_versement_2" size="10" />
+   </label>
+   <label for="date_versement_3">Date 3e versement
+   <input type="text" id="date_versement_3" size="10" />
+   </label>
+   <label for="date_versement_4">Date 4e versement
+   <input type="text" id="date_versement_4" size="10" />
+   </label>
+   <label for="date_versement_5">Date 5e versement
+   <input type="text" id="date_versement_5" size="10" />
+   </label>
+   <label for="date_versement_6">Date 6e versement
+   <input type="text" id="date_versement_6" size="10" />
+   </label>
+  </div>
+  </fieldset>
+
+
+  <fieldset><legend>Escomptes</legend>
+  <div class="threeper">
+   <label for="escompteSelect" style="width:46%">
+    <select id="escompteSelect" onchange="loadIDFromSelect('escompte'); loadEscompte();">
+     <option />
+    </select></label>
+   <label for="newEscompte" style="width:20%"><a id="newEscompte" href="#misc" onclick="newThing('escompte'); loadEscompte(); return false">Nouvelle escompte</a>
+   </label>
+   <label for="rmEscompte" style="text-align:right"><a id="rmEscompte" href="#misc" onclick="rmThing('escompte'); loadEscompte(); return false">Supprimer escompte</a>
+   </label>
+  </div>
+
+  <div class="twoper">
+   <label for="escompte_name">Nom de l'escompte
+   <input type="text" id="escompte_name" />
+   </label>
+
+   <label for="escompte_amount">Pourcentage
+   <input type="text" id="escompte_amount" />
+   </label>
+  </div>
+  </fieldset>
+
+  <div class="threeper">
+   <label for="save"><a id="save" href="#misc" onclick="saveMisc()">Sauvegarder</a>
+   </label>
+   <label for="cancel" style="text-align:right"><a id="cancel" href="#sessions" onclick="loadMisc()">Annuler</a>
+   </label>
+  </div>
+
+ </form>
+
 </div>
 
 <div id="usagers" style="display:none">
