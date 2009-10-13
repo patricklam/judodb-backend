@@ -1,7 +1,6 @@
 --- version beta4
 
 * searches by class, grade, age/categorie
-* option to copy data when you have a last-name match and cid=-1
 
 * configure per-category frais & global frais (passport, pas_anjou)
 * configure suggested dates for cheques
