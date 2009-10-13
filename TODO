@@ -3,6 +3,7 @@
 * searches by class, grade, age/categorie
 
 * configure per-category frais & global frais (passport, pas_anjou)
+
 * configure suggested dates for cheques
 * configure escomptes
 * configure club name, # club (for ft303)
@@ -10,12 +11,14 @@
 --- later:
 
 * comptabilite info
+* prorata fees
 
 * extract mailing lists
 
 * add Cadet Noire, fix computeCategoryId to permit U17 Noire.
 
 * move to session seqno from strings in services
+    + support multiple sessions
 
 * implement button 'copy all current-session cours to session being edited'
 
