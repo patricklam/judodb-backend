@@ -24,7 +24,7 @@ function refreshResults() {
     var inf = '';
     if (clients[i].date_inscription != null &&
         clients[i].date_inscription != UNSET_DATE) inf += clients[i].date_inscription;
-    if (clients[i].saisons != null) {
+    if (clients[i].saisons != '') {
       if (inf != '') inf += ', ';
       inf += clients[i].saisons;
     }
