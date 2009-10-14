@@ -35,4 +35,4 @@ var CATEGORIES_FIELDS = ['id', 'name', 'abbrev', 'years_ago', 'noire'];
 var MAX_VERSEMENTS = 6;
 var MAX_GRADES = 20;
 
-
+var UNSET_DATE = '2009-01-01';

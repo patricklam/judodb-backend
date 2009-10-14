@@ -21,7 +21,16 @@ function refreshResults() {
   resultBox.innerHTML = '';
   for (var i = firstToDisplay; i < min(firstToDisplay+10, clients.length); ++i) {
     resultBox.innerHTML += '<a href="editclient.html?cid='+clients[i].id+'">'+clients[i].nom+', '+clients[i].prenom+'</a> ';
-    if (clients[i].date_inscription != null) resultBox.innerHTML += '&nbsp;&nbsp;&nbsp;('+clients[i].date_inscription+')';
+    var inf = '';
+    if (clients[i].date_inscription != null &&
+        clients[i].date_inscription != UNSET_DATE) inf += clients[i].date_inscription;
+    if (clients[i].saisons != null) {
+      if (inf != '') inf += ', ';
+      inf += clients[i].saisons;
+    }
+    if (inf != '')
+      inf = '&nbsp;&nbsp;&nbsp;(' + inf + ')';
+    resultBox.innerHTML += inf;
     resultBox.innerHTML += '<br />';
   }
 
@@ -36,8 +45,8 @@ function refreshResults() {
 
 function doSearch() {
   var f = '%'+stripAccent(getElementById('query').value)+'%';
-  var rs = db.execute('SELECT id,nom_stripped,prenom_stripped,date_inscription from '+
-		        '(SELECT client.id,nom_stripped,prenom_stripped,date_inscription,deleted '+
+  var rs = db.execute('SELECT id,nom_stripped,prenom_stripped,date_inscription,saisons from '+
+		        '(SELECT client.id,nom_stripped,prenom_stripped,date_inscription,saisons,deleted '+
 		              'FROM `client` LEFT OUTER JOIN `services` ON client.id=services.client_id) ' +
                       'WHERE deleted <> \'true\' AND (prenom_stripped||" "||nom_stripped LIKE ? OR nom_stripped||" "||prenom_stripped LIKE ?) ' +
 		      'ORDER BY nom_stripped COLLATE NOCASE', [f, f]);
@@ -49,6 +58,7 @@ function doSearch() {
     clients[index].nom = rs.field(1);
     clients[index].prenom = rs.field(2);
     clients[index].date_inscription = rs.field(3);
+    clients[index].saisons = rs.field(4);
     ++index;
     rs.next();
   }
