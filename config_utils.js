@@ -3,8 +3,9 @@ store.init();
 
 function bumpConfigurationVersion() {
     db.execute('UPDATE `global_configuration` SET version=version+1');
-    db.execute('INSERT INTO `global_configuration` VALUES (1,0)');
+    db.execute('INSERT INTO `global_configuration` VALUES (1,0, "", "", 0, 0, 0, "", "", "", "", "", "")');
     db.execute('DELETE FROM `global_configuration` WHERE version < (SELECT MAX(version) FROM `global_configuration`)');
+    loadMisc();
 }
 
 if (location.hash)
@@ -72,7 +73,7 @@ function populateSelect(t, src, order) {
     while (things.length > 0)
         things.remove(0);
 
-    var rs = db.execute('SELECT name,id from `'+src+'` ORDER BY ?', [order]);
+    var rs = db.execute('SELECT name,id from `'+src+'` ORDER BY '+order);
     while (rs.isValidRow()) {
         things.add(new Option(rs.field(0), rs.field(1)), null);
         rs.next();
@@ -274,9 +275,53 @@ function adjustYALabel() {
 	q.textContent += ' (→ né en '+ (CURRENT_SESSION_YEAR+2-ya.value) +' et après)';
 }
 
+/**** escompte stuff ****/
+populateSelect('escompte');
+loadIDFromSelect('escompte');
+loadEscompte();
+
+function loadEscompte() {
+    var id = getElementById('escompte_id').value;
+    if (id == -1) {
+	for (s in ESCOMPTE_FIELDS) {
+            var sf = ESCOMPTE_FIELDS[s];
+            getElementById('escompte_'+sf).value = '';
+	}
+	getElementById('escompte_id').value = -1;
+	return;
+    }
+    var rs = db.execute('SELECT * from `escompte` where id=?', [id]);
+
+    for (s in ESCOMPTE_FIELDS) {
+        var sf = ESCOMPTE_FIELDS[s];
+        getElementById('escompte_'+sf).value = rs.fieldByName(sf);
+    }
+    rs.close();
+}
+
+function saveEscompte() {
+    if (!haveUniqueSeqNo('escompte')) {
+        setError('Erreur: seqno doit être defini et unique.');
+	return;
+    }
+    clearStatus();
+
+    var r = [];
+    for (s in ESCOMPTE_FIELDS) {
+        var sf = ESCOMPTE_FIELDS[s];
+        r[sf] = getElementById('escompte_'+sf).value;
+    }
+
+    storeOneEscompte(r);
+    bumpConfigurationVersion();
+
+    loadIDFromSeqNo('escompte');
+    populateSelect('escompte');
+    adjustSelectorToID('escompte');
+    initConfig();
+}
+
 /**** misc stuff ****/
-//populateSelect('misc', 'misc', 'years_ago');
-//loadIDFromSelect('categorie');
 loadMisc();
 
 function loadMisc() {
@@ -292,6 +337,7 @@ function loadMisc() {
 
 function saveMisc() {
     clearStatus();
+    getElementById('version').value++;
 
     var r = [];
     for (m in MISC_FIELDS) {
@@ -300,10 +346,9 @@ function saveMisc() {
     }
 
     storeMisc(r);
-    bumpConfigurationVersion();
 
-    //populateSelect('categorie');
-    //adjustSelectorToID('categorie');
+    populateSelect('escompte');
+    adjustSelectorToID('categorie');
     initConfig();
 }
 

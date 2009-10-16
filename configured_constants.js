@@ -12,11 +12,19 @@ var COURS = [], COURS_SHORT = [], COURS_ENTRAINEURS = [];
 var CATEGORY_NAMES = [], CATEGORY_YEARS = [], CATEGORY_ABBREVS = [],
     CATEGORY_NOIRE = [];
 
+var AGE_MASTERS, CLUB, CLUBNO;
+var SUGGESTED_PAIEMENTS = [];
+var FRAIS_PASSEPORT_JUDO_QUEBEC, FRAIS_NON_ANJOU;
+
+var ESCOMPTE_NAMES = [];
+var ESCOMPTE_AMOUNTS = [];
+
 initConfig();
 function initConfig() {
     initSession();
     initCours();
     initCategorie();
+    initMisc();
 }
 
 function initSession() {
@@ -73,18 +81,31 @@ function initCategorie() {
     rs.close();
 }
 
-// not currently in db.
-var AGE_MASTERS = 35;
-var CLUB = 'Anjou';
-var CLUBNO = '047';
-var SUGGESTED_PAIEMENTS = ["", "2009-11-13", "2010-02-05", "", "", ""];
+function initEscompte() {
+    var rs = db.execute("SELECT * FROM `escompte`");    
+    while (rs.isValidRow()) {
+	ESCOMPTE_NAMES = ESCOMPTE_NAMES.concat(rs.fieldByName('name'));
+	ESCOMPTE_AMOUNTS = ESCOMPTE_AMOUNTS.concat(rs.fieldByName('amount'));
+    }
+    rs.close();
+}
 
-var FRAIS_PASSEPORT_JUDO_QUEBEC = 5;
-var FRAIS_PAS_ANJOU = 5;
+function initMisc() {
+    var rs = db.execute("SELECT * FROM `global_configuration`");
+    AGE_MASTERS = rs.fieldByName('age_masters');
+    CLUB = rs.fieldByName('nom_club');
+    CLUBNO = rs.fieldByName('numero_club');
+    for (var i = 0; i < MAX_VERSEMENTS; i++)
+	SUGGESTED_PAIEMENTS = SUGGESTED_PAIEMENTS.concat
+          (rs.fieldByName('date_versement_'+(i+1)));
+    FRAIS_PASSEPORT_JUDO_QUEBEC = rs.fieldByName('frais_passeport_judoqc');
+    FRAIS_PAS_ANJOU = rs.fieldByName('frais_nonresident_anjou');
+    rs.close();
+}
+
+// not currently in db.
 
 var CATEGORY_PRIX_1_SESSION = [100, 100, 115, 150, 185, 185, 185, 210, 140, 140];
 var CATEGORY_PRIX_2_SESSION = [175, 175, 195, 225, 290, 290, 300, 345, 140, 140];
 var CATEGORY_PRIX_JUDO_QC = [10, 15, 25, 35, 45, 50, 60, 65, 90, 100];
 
-var ESCOMPTE_NAMES = ["Aucun", "2e membre", "3e membre", "4e membre", "Nouvel(le) ami(e)", "Membre du CA", "Cas spécial"];
-var ESCOMPTE_AMOUNTS = [0, 10, 15, 20, 10, 50, -1];

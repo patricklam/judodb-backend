@@ -32,6 +32,7 @@
   <li id="tab_sessions" class="selected"><a href="#sessions" onclick="selectTab('sessions')">Sessions</a></li>
   <li id="tab_cours"><a href="#cours" onclick="selectTab('cours')">Cours</a></li>
   <li id="tab_categories"><a href="#categories" onclick="selectTab('categories')">Cat&eacute;gories et Frais</a></li>
+  <li id="tab_escomptes"><a href="#escomptes" onclick="selectTab('escomptes')">Escomptes</a></li>
   <li id="tab_misc"><a href="#misc" onclick="selectTab('misc')">Autres</a></li>
   <li id="tab_usagers"><a href="#usagers" onclick="selectTab('usagers')">Usagers</a></li>
  </ul>
@@ -205,8 +206,51 @@
  </form>
 </div>
 
+<div id="escomptes" class="tabContent" style="display:none">
+ <form id="currentEscompte" class="compactform" style="padding-left:1em">
+  <input type="hidden" id="escompte_id" value="-1"/>
+  <fieldset><legend>Escomptes</legend>
+  <div class="threeper">
+   <label for="escompteSelect" style="width:46%">
+    <select id="escompteSelect" onchange="loadIDFromSelect('escompte'); loadEscompte();">
+     <option />
+    </select></label>
+   <label for="newEscompte" style="width:20%"><a id="newEscompte" href="#misc" onclick="newThing('escompte'); loadEscompte(); return false">Nouvelle escompte</a>
+   </label>
+   <label for="rmEscompte" style="text-align:right"><a id="rmEscompte" href="#misc" onclick="rmThing('escompte'); loadEscompte(); return false">Supprimer escompte</a>
+   </label>
+  </div>
+
+  <div class="threeper">
+   <label for="escompte_name">Nom de l'escompte
+   <input type="text" id="escompte_name" />
+   </label>
+
+   <label for="escompte_seqno">Num&eacute;ro sequence
+   <input type="text" id="escompte_seqno" />
+   </label>
+
+   <label for="escompte_amount">Pourcentage
+   <input type="text" id="escompte_amount" />
+   </label>
+  </div>
+  </fieldset>
+
+  <div class="threeper">
+   <label for="save"><a id="save" href="#escomptes" onclick="saveEscompte()">Sauvegarder</a>
+   </label>
+   <label for="cancel" style="text-align:right"><a id="cancel" href="#escomptes" onclick="loadEscompte()">Annuler</a>
+   </label>
+  </div>
+ </form>
+
+</div>
+
 <div id="misc" class="tabContent" style="display:none">
  <form id="currentMisc" class="compactform" style="padding-left:1em">
+  <input type="hidden" id="version" value="-1"/>
+  <input type="hidden" id="server_version" value="-1"/>
+
   <fieldset><legend>Renseignments pour FT-303</legend>
   <div class="threeper">
    <label for="nom_club">Nom du club
@@ -256,41 +300,12 @@
   </div>
   </fieldset>
 
-
-  <fieldset><legend>Escomptes</legend>
-  <div class="threeper">
-   <label for="escompteSelect" style="width:46%">
-    <select id="escompteSelect" onchange="loadIDFromSelect('escompte'); loadEscompte();">
-     <option />
-    </select></label>
-   <label for="newEscompte" style="width:20%"><a id="newEscompte" href="#misc" onclick="newThing('escompte'); loadEscompte(); return false">Nouvelle escompte</a>
-   </label>
-   <label for="rmEscompte" style="text-align:right"><a id="rmEscompte" href="#misc" onclick="rmThing('escompte'); loadEscompte(); return false">Supprimer escompte</a>
-   </label>
-  </div>
-
-  <div class="threeper">
-   <label for="escompte_name">Nom de l'escompte
-   <input type="text" id="escompte_name" />
-   </label>
-
-   <label for="escompte_seqno">Num&eacute;ro sequence
-   <input type="text" id="escompte_seqno" />
-   </label>
-
-   <label for="escompte_amount">Pourcentage
-   <input type="text" id="escompte_amount" />
-   </label>
-  </div>
-  </fieldset>
-
   <div class="threeper">
    <label for="save"><a id="save" href="#misc" onclick="saveMisc()">Sauvegarder</a>
    </label>
-   <label for="cancel" style="text-align:right"><a id="cancel" href="#sessions" onclick="loadMisc()">Annuler</a>
+   <label for="cancel" style="text-align:right"><a id="cancel" href="#misc" onclick="loadMisc()">Annuler</a>
    </label>
   </div>
-
  </form>
 
 </div>

@@ -80,7 +80,7 @@ function createTablesIfNeeded (db) {
   	     '`nom_club` char(30), ' +
   	     '`numero_club` char(30), ' +
   	     '`age_masters` char(10), ' +
-  	     '`frais_passeport_judo_qc` char(10), ' +
+  	     '`frais_passeport_judoqc` char(10), ' +
   	     '`frais_nonresident_anjou` char(10), ' +
   	     '`date_versement_1` DATE, ' +
   	     '`date_versement_2` DATE, ' +

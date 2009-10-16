@@ -274,6 +274,32 @@ function storeOneCategorie(r) {
     return db.lastInsertRowId;
 }
 
+function storeOneEscompte(r) {
+    if (r.id != -1)
+        db.execute('DELETE FROM `escompte` WHERE id=?', [r.id]);
+
+    if (r.id == -1 || !('id' in r)) r.id = null;
+    db.execute('INSERT INTO `escompte` '+
+                   'VALUES (?, ?, ?, ?)',
+              [r.id, r.seqno, r.name, r.amount]);
+    return db.lastInsertRowId;
+}
+
+function storeMisc(r) {
+    db.execute('DELETE FROM `global_configuration`');
+    db.execute('INSERT INTO `global_configuration` '+
+                   'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+              [r.version, r.server_version, r.nom_club, r.numero_club, 
+	       r.age_masters, r.frais_passeport_judoqc, 
+	       r.frais_nonresident_anjou, 
+	       r.date_versement_1,
+	       r.date_versement_2,
+	       r.date_versement_3,
+	       r.date_versement_4,
+	       r.date_versement_5,
+	       r.date_versement_6]);
+}
+
 function pullIndex(tableName, requestURL, pullOneCallback, mergeOneCallback, deleteCallback) {
   var rs = db.execute('SELECT id, version, server_id, server_version FROM `'+tableName+'`');
   // create array indexed by server_id
