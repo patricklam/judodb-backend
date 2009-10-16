@@ -7,6 +7,7 @@
 * configure suggested dates for cheques
 * configure escomptes
 * configure club name, # club (for ft303)
+* remove id columns from cours_session, categorie
 
 --- later:
 

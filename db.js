@@ -64,9 +64,30 @@ function createTablesIfNeeded (db) {
 	     '`chqno` INTEGER, '+
 	     '`date` DATE, '+
 	     '`montant` char(10))');
+    // upgrade path 2, for global_configuration:
+  var rs = db.execute("select * from sqlite_master where name='global_configuration'");
+  if (rs.isValidRow()) {
+      var s = rs.field(4);
+      rs.close();
+      if (s.indexOf('nom_club') == -1)
+	  db.execute('drop table `global_configuration`');
+  }
+  else rs.close();
+    // end upgrade path
   db.execute('create table if not exists `global_configuration` (' +
       	     '`version` int(5), ' +
-      	     '`server_version` int(5))');
+      	     '`server_version` int(5), ' +
+  	     '`nom_club` char(30), ' +
+  	     '`numero_club` char(30), ' +
+  	     '`age_masters` char(10), ' +
+  	     '`frais_passeport_judo_qc` char(10), ' +
+  	     '`frais_nonresident_anjou` char(10), ' +
+  	     '`date_versement_1` DATE, ' +
+  	     '`date_versement_2` DATE, ' +
+  	     '`date_versement_3` DATE, ' +
+  	     '`date_versement_4` DATE, ' +
+  	     '`date_versement_5` DATE, ' +
+  	     '`date_versement_6` DATE)');
   db.execute('insert into `global_configuration` (version, server_version) '+
   	       'SELECT 0,0 WHERE NOT EXISTS '+
 	         '(SELECT * FROM `global_configuration`)');
@@ -96,4 +117,17 @@ function createTablesIfNeeded (db) {
 	     '`abbrev` char(6),' +
 	     '`years_ago` INTEGER,' +
 	     '`noire` boolean)');
+  db.execute('create table if not exists `categorie_session` (' +
+	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
+             '`session_seqno` INTEGER,' + 
+	     '`categorie_abbrev` char(6),' +
+             '`frais_1_session` char(10),' +
+             '`frais_2_session` char(10),' +
+             '`frais_judo_qc` char(10))');
+  db.execute('create table if not exists `escompte` (' +
+	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
+             '`seqno` INTEGER,' + 
+	     '`name` varchar(25),' +
+	     '`amount` char(6))');
+
 }

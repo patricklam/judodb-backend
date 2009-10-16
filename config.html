@@ -209,12 +209,12 @@
  <form id="currentMisc" class="compactform" style="padding-left:1em">
   <fieldset><legend>Renseignments pour FT-303</legend>
   <div class="threeper">
-   <label for="club_name">Nom du club
-   <input type="text" id="club_name" />
+   <label for="nom_club">Nom du club
+   <input type="text" id="nom_club" />
    </label>
 
-   <label for="club_no">Num&eacute;ro Judo Quebec du club
-   <input type="text" id="club_no" />
+   <label for="numero_club">Num&eacute;ro Judo Quebec du club
+   <input type="text" id="numero_club" />
    </label>
 
    <label for="age_masters">Age pour division Masters
@@ -225,8 +225,6 @@
   </fieldset>
 
   <fieldset><legend>Frais et paiements</legend>
-  <!-- suggested paiements -->
-  <!-- Frais passport judoQC, nonresident d'Anjou -->
   <div class="twoper">
    <label for="frais_passeport_judoqc">Frais passeport Judo Qu&eacute;bec
    <input type="text" id="frais_passeport_judoqc" size="5" />
@@ -271,9 +269,13 @@
    </label>
   </div>
 
-  <div class="twoper">
+  <div class="threeper">
    <label for="escompte_name">Nom de l'escompte
    <input type="text" id="escompte_name" />
+   </label>
+
+   <label for="escompte_seqno">Num&eacute;ro sequence
+   <input type="text" id="escompte_seqno" />
    </label>
 
    <label for="escompte_amount">Pourcentage

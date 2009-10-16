@@ -273,3 +273,37 @@ function adjustYALabel() {
     if (ya.value != '')
 	q.textContent += ' (→ né en '+ (CURRENT_SESSION_YEAR+2-ya.value) +' et après)';
 }
+
+/**** misc stuff ****/
+//populateSelect('misc', 'misc', 'years_ago');
+//loadIDFromSelect('categorie');
+loadMisc();
+
+function loadMisc() {
+    var rs = db.execute('SELECT * from `global_configuration`');
+
+    for (m in MISC_FIELDS) {
+        var mf = MISC_FIELDS[m];
+        getElementById(mf).value = rs.fieldByName(mf);
+    }
+
+    rs.close();
+}
+
+function saveMisc() {
+    clearStatus();
+
+    var r = [];
+    for (m in MISC_FIELDS) {
+        var mf = MISC_FIELDS[m];
+        r[mf] = getElementById(mf).value;
+    }
+
+    storeMisc(r);
+    bumpConfigurationVersion();
+
+    //populateSelect('categorie');
+    //adjustSelectorToID('categorie');
+    initConfig();
+}
+

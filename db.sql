@@ -133,7 +133,18 @@ CREATE TABLE `payment` (
 
 DROP TABLE IF EXISTS `global_configuration`;
 CREATE TABLE `global_configuration` (
-  `version` INTEGER
+  `version` INTEGER,
+  `nom_club` char(30),
+  `numero_club` char(30),
+  `age_masters` char(10),
+  `frais_passeport_judo_qc` char(10),
+  `frais_nonresident_anjou` char(10),
+  `date_versement_1` DATE,
+  `date_versement_2` DATE,
+  `date_versement_3` DATE,
+  `date_versement_4` DATE,
+  `date_versement_5` DATE,
+  `date_versement_6` DATE
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 INSERT INTO `global_configuration` VALUES (0);
 
@@ -159,16 +170,30 @@ CREATE TABLE `cours` (
 
 DROP TABLE IF EXISTS `cours_session`;
 CREATE TABLE `cours_session` (
-  `id` INTEGER PRIMARY KEY auto_increment,
   `cours_seqno` INTEGER,
   `session_seqno` INTEGER
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `categorie`;
 CREATE TABLE `categorie` (
-  `id` INTEGER PRIMARY KEY auto_increment,
   `name` varchar(25),
   `abbrev` char(6),
   `years_ago` INTEGER,
   `noire` boolean
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `categorie_session`;
+CREATE TABLE `categorie_session` (
+  `session_seqno` INTEGER,
+  `categorie_abbrev` char(6),
+  `frais_1_session` char(10),
+  `frais_2_session` char(10), /* for session_seqno and session_seqno+1 */
+  `frais_judo_qc` char(10)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `escompte`;
+CREATE TABLE `escompte` (
+  `seqno` INTEGER,
+  `name` varchar(25),
+  `amount` char(6) /* in percent */
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
