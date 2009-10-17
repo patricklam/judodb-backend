@@ -264,25 +264,33 @@ function storeOneCours(r) {
 }
 
 function storeOneCategorie(r) {
-    if (r.id != -1)
-        db.execute('DELETE FROM `categorie` WHERE id=?', [r.id]);
+    var rv = [];
 
-    if (r.id == -1 || !('id' in r)) r.id = null;
-    db.execute('INSERT INTO `categorie` '+
-                   'VALUES (?, ?, ?, ?, ?)',
-              [r.id, r.name, r.abbrev, r.years_ago, r.noire]);
+    if (r.not_cat != 'true') {
+        db.execute('DELETE FROM `categorie` WHERE abbrev=?', [r.abbrev]);
 
-    var rv = []; rv.c = db.lastInsertRowId;
-    if (r.cs_id != -1)
-        db.execute('DELETE FROM `categorie_session` WHERE id=?', [r.cs_id]);
+        if (r.id == -1 || !('id' in r)) r.id = null;
+        db.execute('INSERT INTO `categorie` '+
+                       'VALUES (?, ?, ?, ?, ?)',
+                  [r.id, r.name, r.abbrev, r.years_ago, r.noire]);
+	rv.c = db.lastInsertRowId;
+    }
 
-    if (r.cs_id == -1 || !('cs_id' in r)) r.cs_id = null;
-    db.execute('INSERT INTO `categorie_session` '+
-                   'VALUES (?, ?, ?, ?, ?, ?)',
-              [r.cs_id, r.cs_session_seqno, r.cs_categorie_abbrev, 
-	       r.cs_frais_1_session, r.cs_frais_2_session, r.cs_frais_judo_qc]);
+    if (r.not_cs != 'true') {
+        db.execute('DELETE FROM `categorie_session` WHERE session_seqno=? '+
+		   'AND categorie_abbrev=?', 
+		   [r.cs_session_seqno, r.cs_categorie_abbrev]);
 
-    rv.cs = db.lastInsertRowId;
+        if (r.cs_id == -1 || !('cs_id' in r)) r.cs_id = null;
+        db.execute('INSERT INTO `categorie_session` '+
+                       'VALUES (?, ?, ?, ?, ?, ?)',
+                  [r.cs_id, r.cs_session_seqno, r.cs_categorie_abbrev, 
+    		   r.cs_frais_1_session, r.cs_frais_2_session, 
+		   r.cs_frais_judo_qc]);
+
+        rv.cs = db.lastInsertRowId;
+    }
+
     return rv;
 }
 
@@ -419,6 +427,8 @@ function actuallyPullGlobalConfig() {
         if (key == 'cours')
 	    storeSubtree(r[i].childNodes, storeOneCours);
         if (key == 'categorie')
+	    storeSubtree(r[i].childNodes, storeOneCategorie);
+	if (key == 'categorie_session')
 	    storeSubtree(r[i].childNodes, storeOneCategorie);
 	if (key == 'version')
 	    db.execute('UPDATE global_configuration SET version=?, server_version=?', [r[i].textContent, r[i].textContent]);
@@ -707,6 +717,7 @@ function pushGlobalConfig() {
     body += collectThing('session', SESSION_FIELDS);
     body += collectThing('cours', COURS_FIELDS);
     body += collectThing('categorie', CATEGORIES_FIELDS);
+    body += collectThing('categorie_session', CATEGORIE_SESSION_FIELDS.concat(['session_seqno', 'categorie_abbrev']));
     body += collectCoursSessions();
     pushOne("global_config", h(sv, null, body, 3), body);
   }

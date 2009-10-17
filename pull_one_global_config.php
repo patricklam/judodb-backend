@@ -44,10 +44,21 @@ for ($i = 0; $i < count($rs); $i++) {
 $rs = db_query_get("SELECT * FROM `categorie`");
 for ($i = 0; $i < count($rs); $i++) {
     print "<categorie>";
+    print "<not_cs>true</not_cs>"; // do not store categorie_session!
     foreach ($CATEGORIES_FIELDS as $f) {
         print "<$f>" . $rs[$i][$f] . "</$f>";
     }
     print "</categorie>";
+}
+
+$rs = db_query_get("SELECT * FROM `categorie_session`");
+for ($i = 0; $i < count($rs); $i++) {
+    print "<categorie_session>";
+    print "<cs_id>-1</cs_id><not_cat>true</not_cat>";
+    foreach ($CATEGORIE_SESSION_FIELDS as $f) {
+        print "<cs_$f>" . $rs[$i][$f] . "</cs_$f>";
+    }
+    print "</categorie_session>";
 }
 
 $rs = db_query_get("SELECT version FROM `global_configuration` ORDER BY version");
