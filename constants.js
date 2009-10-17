@@ -31,6 +31,9 @@ var SESSION_FIELDS = ['id', 'seqno', 'name', 'year', 'abbrev',
 		     'last_class_date', 'last_signup_date'];
 var COURS_FIELDS = ['id', 'seqno', 'name', 'short_desc', 'entraineur'];
 var CATEGORIES_FIELDS = ['id', 'name', 'abbrev', 'years_ago', 'noire'];
+var CATEGORIE_SESSION_FIELDS = ['id',
+				'frais_1_session', 'frais_2_session',
+				'frais_judo_qc'];
 var MISC_FIELDS = ['version', 'server_version', 'nom_club', 'numero_club', 
 		   'age_masters',
 		   'frais_passeport_judoqc', 'frais_nonresident_anjou',

@@ -11,6 +11,8 @@ var NEXT_SESSION;
 var COURS = [], COURS_SHORT = [], COURS_ENTRAINEURS = [];
 var CATEGORY_NAMES = [], CATEGORY_YEARS = [], CATEGORY_ABBREVS = [],
     CATEGORY_NOIRE = [];
+var CATEGORY_PRIX_1_SESSION = [], CATEGORY_PRIX_2_SESSION = [],
+    CATEGORY_PRIX_JUDO_QC = [];
 
 var AGE_MASTERS, CLUB, CLUBNO;
 var SUGGESTED_PAIEMENTS = [];
@@ -65,7 +67,7 @@ function initCours() {
 }
 
 function initCategorie() {
-    var rs = db.execute("SELECT * FROM `categorie`");    
+    var rs = db.execute("SELECT * FROM `categorie` as c, `categorie_session` as cs WHERE c.abbrev = cs.categorie_abbrev"); // TODO: and session
     while (rs.isValidRow()) {
 	CATEGORY_NAMES = CATEGORY_NAMES.concat(rs.fieldByName('name'));
 	CATEGORY_ABBREVS = CATEGORY_ABBREVS.concat(rs.fieldByName('abbrev'));
@@ -76,6 +78,14 @@ function initCategorie() {
 	    sy = CURRENT_SESSION_YEAR - rs.fieldByName('years_ago') + 2;
 
 	CATEGORY_YEARS = CATEGORY_YEARS.concat(sy);
+
+	CATEGORY_PRIX_1_SESSION = CATEGORY_PRIX_1_SESSION.concat
+	  (rs.fieldByName('frais_1_session'));
+	CATEGORY_PRIX_2_SESSION = CATEGORY_PRIX_2_SESSION.concat
+	  (rs.fieldByName('frais_2_session'));
+	CATEGORY_PRIX_JUDO_QC = CATEGORY_PRIX_JUDO_QC.concat
+	  (rs.fieldByName('frais_judo_qc'));
+
 	rs.next();
     }
     rs.close();
@@ -102,10 +112,4 @@ function initMisc() {
     FRAIS_PAS_ANJOU = rs.fieldByName('frais_nonresident_anjou');
     rs.close();
 }
-
-// not currently in db.
-
-var CATEGORY_PRIX_1_SESSION = [100, 100, 115, 150, 185, 185, 185, 210, 140, 140];
-var CATEGORY_PRIX_2_SESSION = [175, 175, 195, 225, 290, 290, 300, 345, 140, 140];
-var CATEGORY_PRIX_JUDO_QC = [10, 15, 25, 35, 45, 50, 60, 65, 90, 100];
 

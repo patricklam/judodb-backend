@@ -98,7 +98,6 @@ function rmThing(t) {
 
 /**** sessions stuff ****/
 populateSelect('session');
-populateSelect('fraisSession', 'session');
 loadIDFromSelect('session');
 loadSession();
 
@@ -139,7 +138,6 @@ function saveSession() {
 
     loadIDFromSeqNo('session');
     populateSelect('session');
-    populateSelect('fraisSession', 'session');
     adjustSelectorToID('session');
     initConfig();
 }
@@ -216,6 +214,7 @@ function saveCours() {
 
 /**** categorie stuff ****/
 populateSelect('categorie', 'categorie', 'years_ago');
+populateSelect('fraisSession', 'session');
 loadIDFromSelect('categorie');
 loadCategorie();
 
@@ -244,6 +243,26 @@ function loadCategorie() {
 
     rs.close();
     adjustYALabel();
+
+    var abbr = getElementById('categorie_abbrev').value;
+    var fsi = getElementById('fraisSessionSelect').value;
+    var rs = db.execute('SELECT seqno FROM `session` WHERE id=?', [fsi]);
+    var sseq = rs.field(0);
+    rs.close();
+    rs = db.execute('SELECT * from `categorie_session` WHERE categorie_abbrev=? AND session_seqno=?', [abbr, sseq]);
+    if (rs.isValidRow()) {
+	for (s in CATEGORIE_SESSION_FIELDS) {
+            var sf = CATEGORIE_SESSION_FIELDS[s];
+            getElementById('categorie_sess_'+sf).value = rs.fieldByName(sf);
+	}
+    } else {
+	for (s in CATEGORIE_SESSION_FIELDS) {
+            var sf = CATEGORIE_SESSION_FIELDS[s];
+            getElementById('categorie_sess_'+sf).value = '';
+	}
+	getElementById('categorie_sess_id').value = -1;
+    }
+    rs.close();
 }
 
 function saveCategorie() {
@@ -252,13 +271,26 @@ function saveCategorie() {
         var sf = CATEGORIES_FIELDS[s];
         r[sf] = getElementById('categorie_'+sf).value;
     }
+    for (s in CATEGORIE_SESSION_FIELDS) {
+        var sf = CATEGORIE_SESSION_FIELDS[s];
+        r['cs_'+sf] = getElementById('categorie_sess_'+sf).value;
+    }
+    r['cs_categorie_abbrev'] = r['abbrev'];
+
+    var fsi = getElementById('fraisSessionSelect').value;
+    var rs = db.execute('SELECT seqno FROM `session` WHERE id=?', [fsi]);
+    r['cs_session_seqno'] = rs.field(0);
+    rs.close();
 
     r['noire'] = getElementById('categorie_noire').checked;
 
-    getElementById('categorie_id').value = storeOneCategorie(r);
+    var rv = storeOneCategorie(r);
+    getElementById('categorie_id').value = rv.c;
+    getElementById('categorie_sess_id').value = rv.cs;
     bumpConfigurationVersion();
 
-    populateSelect('categorie');
+    populateSelect('categorie', 'categorie', 'years_ago');
+    populateSelect('fraisSession', 'session');
     adjustSelectorToID('categorie');
     initConfig();
 }
@@ -348,7 +380,7 @@ function saveMisc() {
     storeMisc(r);
 
     populateSelect('escompte');
-    adjustSelectorToID('categorie');
+    adjustSelectorToID('escompte');
     initConfig();
 }
 

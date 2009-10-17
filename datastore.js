@@ -271,7 +271,19 @@ function storeOneCategorie(r) {
     db.execute('INSERT INTO `categorie` '+
                    'VALUES (?, ?, ?, ?, ?)',
               [r.id, r.name, r.abbrev, r.years_ago, r.noire]);
-    return db.lastInsertRowId;
+
+    var rv = []; rv.c = db.lastInsertRowId;
+    if (r.cs_id != -1)
+        db.execute('DELETE FROM `categorie_session` WHERE id=?', [r.cs_id]);
+
+    if (r.cs_id == -1 || !('cs_id' in r)) r.cs_id = null;
+    db.execute('INSERT INTO `categorie_session` '+
+                   'VALUES (?, ?, ?, ?, ?, ?)',
+              [r.cs_id, r.cs_session_seqno, r.cs_categorie_abbrev, 
+	       r.cs_frais_1_session, r.cs_frais_2_session, r.cs_frais_judo_qc]);
+
+    rv.cs = db.lastInsertRowId;
+    return rv;
 }
 
 function storeOneEscompte(r) {
