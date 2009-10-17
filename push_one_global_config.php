@@ -59,10 +59,12 @@ function stash_thing($t, $f) {
 db_query_set("DELETE FROM `session`");
 db_query_set("DELETE FROM `cours`");
 db_query_set("DELETE FROM `cours_session`");
+db_query_set("DELETE FROM `escompte`");
 db_query_set("DELETE FROM `categorie`");
 db_query_set("DELETE FROM `categorie_session`");
 stash_thing('session', $SESSION_FIELDS);
 stash_thing('cours', $COURS_FIELDS);
+stash_thing('escompte', $ESCOMPTE_FIELDS);
 stash_thing('categorie', $CATEGORIES_FIELDS);
 stash_thing('categorie_session', $CATEGORIE_SESSION_FIELDS);
 

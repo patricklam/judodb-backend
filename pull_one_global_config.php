@@ -61,6 +61,15 @@ for ($i = 0; $i < count($rs); $i++) {
     print "</categorie_session>";
 }
 
+$rs = db_query_get("SELECT * FROM `escompte`");
+for ($i = 0; $i < count($rs); $i++) {
+    print "<escompte>";
+    foreach ($ESCOMPTE_FIELDS as $f) {
+        print "<$f>" . $rs[$i][$f] . "</$f>";
+    }
+    print "</escompte>";
+}
+
 $rs = db_query_get("SELECT version FROM `global_configuration` ORDER BY version");
 print "<version>" . $rs[0]['version'] . "</version>";
 

@@ -11,4 +11,5 @@ $SESSION_FIELDS = array("seqno", "name", "year", "abbrev", "first_class_date", "
 $COURS_FIELDS = array("seqno", "name", "short_desc", "entraineur");
 $CATEGORIES_FIELDS = array("name", "abbrev", "years_ago", "noire");
 $CATEGORIE_SESSION_FIELDS = array("session_seqno", "categorie_abbrev", "frais_1_session", "frais_2_session", "frais_judo_qc");
+$ESCOMPTE_FIELDS = array("seqno", "name", "amount");
 ?>

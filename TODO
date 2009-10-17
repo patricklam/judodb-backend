@@ -7,7 +7,6 @@ var CATEGORY_PRIX_2_SESSION = [175, 175, 195, 225, 290, 290, 300, 345, 140, 140]
 var CATEGORY_PRIX_JUDO_QC =   [ 10,  15,  25,  35,  45,  50,  60,  65,  90, 100];
 
 * server part for extended misc info
-* server part for escompte
 
 * remove id columns from cours_session, categorie, add tables escompte, categorie_session
 * add column to services 'verification', also to lists

@@ -297,6 +297,7 @@ function storeOneCategorie(r) {
 function storeOneEscompte(r) {
     if (r.id != -1)
         db.execute('DELETE FROM `escompte` WHERE id=?', [r.id]);
+    db.execute('DELETE FROM `escompte` WHERE seqno=?', [r.seqno]);
 
     if (r.id == -1 || !('id' in r)) r.id = null;
     db.execute('INSERT INTO `escompte` '+
@@ -430,6 +431,8 @@ function actuallyPullGlobalConfig() {
 	    storeSubtree(r[i].childNodes, storeOneCategorie);
 	if (key == 'categorie_session')
 	    storeSubtree(r[i].childNodes, storeOneCategorie);
+	if (key == 'escompte')
+	    storeSubtree(r[i].childNodes, storeOneEscompte);
 	if (key == 'version')
 	    db.execute('UPDATE global_configuration SET version=?, server_version=?', [r[i].textContent, r[i].textContent]);
     }
@@ -716,6 +719,7 @@ function pushGlobalConfig() {
     var body = 'version='+sv + '&'; 
     body += collectThing('session', SESSION_FIELDS);
     body += collectThing('cours', COURS_FIELDS);
+    body += collectThing('escompte', ESCOMPTE_FIELDS);
     body += collectThing('categorie', CATEGORIES_FIELDS);
     body += collectThing('categorie_session', CATEGORIE_SESSION_FIELDS.concat(['session_seqno', 'categorie_abbrev']));
     body += collectCoursSessions();
