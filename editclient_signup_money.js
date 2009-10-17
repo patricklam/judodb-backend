@@ -168,7 +168,7 @@ function addOrRemoveVersements() {
   for (var i = 1; i <= MAX_VERSEMENTS; i++) {
       var l = "versement"+i;
       getElementById(l).style.display="block";
-      if (getElementById(l+"_date").value=="")
+      if (getElementById(l+"_date").value=="" && SUGGESTED_PAIEMENTS[i-1] != '0000-00-00')
 	  getElementById(l+"_date").value = SUGGESTED_PAIEMENTS[i-1];
       if (paiementEmpty(i)) {
 	  for (var j = i + (needMore ? 1 : 0); j <= MAX_VERSEMENTS; j++) {
