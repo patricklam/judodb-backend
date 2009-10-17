@@ -137,7 +137,7 @@ CREATE TABLE `global_configuration` (
   `nom_club` char(30),
   `numero_club` char(30),
   `age_masters` char(10),
-  `frais_passeport_judo_qc` char(10),
+  `frais_passeport_judoqc` char(10),
   `frais_nonresident_anjou` char(10),
   `date_versement_1` DATE,
   `date_versement_2` DATE,
@@ -146,7 +146,7 @@ CREATE TABLE `global_configuration` (
   `date_versement_5` DATE,
   `date_versement_6` DATE
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-INSERT INTO `global_configuration` VALUES (0);
+INSERT INTO `global_configuration` VALUES (0, '', '', '', '', '', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00');
 
 DROP TABLE IF EXISTS `session`;
 CREATE TABLE `session` (

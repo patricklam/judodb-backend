@@ -307,6 +307,9 @@ function storeOneEscompte(r) {
 }
 
 function storeMisc(r) {
+    if (!('server_version' in r))
+	r.server_version = r.version;
+
     db.execute('DELETE FROM `global_configuration`');
     db.execute('INSERT INTO `global_configuration` '+
                    'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
@@ -433,8 +436,8 @@ function actuallyPullGlobalConfig() {
 	    storeSubtree(r[i].childNodes, storeOneCategorie);
 	if (key == 'escompte')
 	    storeSubtree(r[i].childNodes, storeOneEscompte);
-	if (key == 'version')
-	    db.execute('UPDATE global_configuration SET version=?, server_version=?', [r[i].textContent, r[i].textContent]);
+	if (key == 'misc') // must come last, or we may inadvertently update version.
+	    storeSubtree(r[i].childNodes, storeMisc);
     }
   }
 
@@ -717,6 +720,7 @@ function pushGlobalConfig() {
   rs.close();
   if (mustUpdateConfig) {
     var body = 'version='+sv + '&'; 
+    body += collectThing('global_configuration', MISC_FIELDS);
     body += collectThing('session', SESSION_FIELDS);
     body += collectThing('cours', COURS_FIELDS);
     body += collectThing('escompte', ESCOMPTE_FIELDS);

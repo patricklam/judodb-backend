@@ -70,8 +70,14 @@ for ($i = 0; $i < count($rs); $i++) {
     print "</escompte>";
 }
 
-$rs = db_query_get("SELECT version FROM `global_configuration` ORDER BY version");
-print "<version>" . $rs[0]['version'] . "</version>";
+$rs = db_query_get("SELECT * FROM `global_configuration` ORDER BY version LIMIT 1");
+for ($i = 0; $i < count($rs); $i++) {
+    print "<misc>";
+    foreach ($MISC_FIELDS as $f) {
+        print "<$f>" . $rs[$i][$f] . "</$f>";
+    }
+    print "</misc>";
+}
 
 print "</config>";
 ?>

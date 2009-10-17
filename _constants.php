@@ -12,4 +12,5 @@ $COURS_FIELDS = array("seqno", "name", "short_desc", "entraineur");
 $CATEGORIES_FIELDS = array("name", "abbrev", "years_ago", "noire");
 $CATEGORIE_SESSION_FIELDS = array("session_seqno", "categorie_abbrev", "frais_1_session", "frais_2_session", "frais_judo_qc");
 $ESCOMPTE_FIELDS = array("seqno", "name", "amount");
+$MISC_FIELDS=array("version", "nom_club", "numero_club", "age_masters", "frais_passeport_judoqc", "frais_nonresident_anjou", "date_versement_1", "date_versement_2", "date_versement_3", "date_versement_4", "date_versement_5", "date_versement_6");
 ?>

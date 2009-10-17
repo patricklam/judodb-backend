@@ -10,10 +10,6 @@ require_authentication();
 
 db_connect() || die;
 
-$version = $_POST['version'];
-db_query_set("DELETE FROM `global_configuration`");
-db_query_set("INSERT INTO `global_configuration` VALUES ($version)");
-
 // http://tech.petegraham.co.uk/2007/05/15/php-get-first-index-in-associative-array
 function getArrayFirstIndex($arr)
 {
@@ -56,12 +52,14 @@ function stash_thing($t, $f) {
   }
 }
 
+db_query_set("DELETE FROM `global_configuration`");
 db_query_set("DELETE FROM `session`");
 db_query_set("DELETE FROM `cours`");
 db_query_set("DELETE FROM `cours_session`");
 db_query_set("DELETE FROM `escompte`");
 db_query_set("DELETE FROM `categorie`");
 db_query_set("DELETE FROM `categorie_session`");
+stash_thing('global_configuration', $MISC_FIELDS);
 stash_thing('session', $SESSION_FIELDS);
 stash_thing('cours', $COURS_FIELDS);
 stash_thing('escompte', $ESCOMPTE_FIELDS);
@@ -75,4 +73,4 @@ for ($i = 0; $i < count($cs); $i++) {
   db_query_set("INSERT INTO `cours_session` (cours_seqno, session_seqno) VALUES ($c, $s)");
 }
 
-print($version);
+print($_POST['version']);
