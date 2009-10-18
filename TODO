@@ -1,9 +1,8 @@
 --- version beta4
 
-* searches by class, grade, age/categorie
+* filters by class, grade, age/categorie
 
 * add column to services 'verification', also to lists
-* lists by age category
 
 --- later:
 
