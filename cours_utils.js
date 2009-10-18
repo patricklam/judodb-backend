@@ -144,9 +144,11 @@ function refreshResults() {
   }
 
   function stringSort(a, b) {
-      if (a < b) return -1; 
-      if (a == b) return 0;
-      return 1;
+      var a0 = stripAccent(a).toLowerCase();
+      var b0 = stripAccent(b).toLowerCase();
+      if (a0 < b0) return 1; 
+      if (a0 == b0) return 0;
+      return -1;
   }
 
   function makeSort(i, c) {
@@ -160,6 +162,8 @@ function refreshResults() {
 	  var tb = resultTab.childNodes;
 	  var arr = new Array();
 	  var head = tb[0];
+	  for (var n = 0; n < head.childNodes.length; n++)
+	      head.childNodes[n].firstChild.onclick = sorts[n];
 	  head.childNodes[i].firstChild.onclick = makeSort(i, function (a, b) { return -c(a, b); });
 	  resultTab.removeChild(head);
 
@@ -189,8 +193,9 @@ function refreshResults() {
   }
 
   var heads = ["Nom", "Prenom", "Grade", "Tel", "JudoQC", "DDN", "Cat"];
-  var sorts = [null, null, makeSort(2, gradeSort), null, null, 
-	       makeSort(5, stringSort), makeSort(6, catSort)];
+  var sorts = [makeSort(0, stringSort), makeSort(1, stringSort), makeSort(2, gradeSort), 
+	       null, null, 
+	       makeSort(5, stringSort), makeSort(6, catSort), makeSort(7, coursSort)];
   var widthsForEditing = [-1, -1, -1, 3, -1, 8, -1, -1, -1];
 
   if (inFtMode) 
