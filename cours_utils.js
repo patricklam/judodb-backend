@@ -59,10 +59,17 @@ function refreshResults() {
   var clients = doSearch(cv, all);
 
   var rh = document.createElement("tr");
-  function appendTH(t) {
+  function appendTH(t, s) {
       var c = document.createElement("th");
       var ct = document.createTextNode(t);
       c.style.textAlign = "left";
+      if (s != null) {
+	  var l = document.createElement("a");
+	  l.href = "#";
+	  l.onclick = s;
+	  l.appendChild(ct);
+	  ct = l;
+      }
       c.appendChild(ct);
       rh.appendChild(c);      
   }
@@ -117,17 +124,67 @@ function refreshResults() {
       return s;
   }
 
+  function gradeSort(a, b) { 
+      var gradeOrder = ["", "Bla", "B/J", "J", "J/O", "O", "O/V", "V", "V/B", "B", "B/M", "M", "1D", "2D", "3D", "4D", "5D", "6D", "7D", "8D"];
+      return gradeOrder.indexOf(a) - gradeOrder.indexOf(b);
+  }
+  function catSort(a, b) { 
+      var cya = CATEGORY_YEARS[CATEGORY_ABBREVS.indexOf(a)];
+      var cyb = CATEGORY_YEARS[CATEGORY_ABBREVS.indexOf(b)];
+      if (cya == 0) cya = 999;
+      if (cyb == 0) cyb = 999;
+      return cya - cyb;
+  }
+  function coursSort(a, b) {
+      return COURS_SHORT.indexOf(b) - COURS_SHORT.indexOf(a);
+  }
+
+  function stringSort(a, b) {
+      if (a < b) return -1; 
+      if (a == b) return 0;
+      return 1;
+  }
+
+  function makeSort(i, c) {
+      var s = function(a, b) { 
+	  var rv = c(a.cells[i].textContent, b.cells[i].textContent);
+	  if (rv == 0) rv = stringSort(a.cells[0].textContent, b.cells[i].textContent);
+	  if (rv == 0) rv = stringSort(a.cells[1].textContent, b.cells[1].textContent);
+	  return rv;
+      };
+      return function() { 
+	  var tb = resultTab.childNodes;
+	  var arr = new Array();
+	  var head = tb[0];
+	  head.childNodes[i].firstChild.onclick = makeSort(i, function (a, b) { return -c(a, b); });
+	  resultTab.removeChild(head);
+
+	  while (resultTab.hasChildNodes()) {
+	      var v = tb[0];
+	      arr.push(v);
+	      resultTab.removeChild(v);
+	  }
+	  arr.sort(s);
+	  resultTab.appendChild(head);
+	  while (arr.length > 0) {
+	      resultTab.appendChild(arr.pop());
+	  }
+      };
+  }
+
   var heads = ["Nom", "Prenom", "Grade", "Tel", "JudoQC", "DDN", "Cat"];
+  var sorts = [null, null, makeSort(2, gradeSort), null, null, 
+	       makeSort(5, stringSort), makeSort(6, catSort)];
   var widthsForEditing = [-1, -1, -1, 3, -1, 8, -1, -1, -1];
 
   if (inFtMode) 
       appendTH("");
 
   for (h in heads)
-      appendTH(heads[h]);
+      appendTH(heads[h], sorts[h]);
 
   if (all) 
-      appendTH("Cours");
+      appendTH("Cours", makeSort(7, coursSort));
 
   resultTab.appendChild(rh);
 
