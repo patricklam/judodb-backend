@@ -66,6 +66,7 @@ function refreshResults() {
       if (s != null) {
 	  var l = document.createElement("a");
 	  l.href = "#";
+	  l.className += "notlink-in-print";
 	  l.onclick = s;
 	  l.appendChild(ct);
 	  ct = l;
@@ -78,8 +79,11 @@ function refreshResults() {
       return document.createTextNode(t);
   }
 
-  function appendTD(row, t) {
+  function appendTD(row, t, hide) {
+      if (hide === undefined) hide = false;
+
       var c = document.createElement("td");
+      if (hide) c.style.display = "none";
       c.style.paddingRight = "1em";
       c.appendChild(t);
       row.appendChild(c);
@@ -169,7 +173,19 @@ function refreshResults() {
 	  while (arr.length > 0) {
 	      resultTab.appendChild(arr.pop());
 	  }
+	  d.value = collectDV();
       };
+  }
+
+  function collectDV() {
+      var tb = resultTab.childNodes;
+      var dv = '';
+      for (var i = 1; i < resultTab.childNodes.length; i++) {
+	  for (var j = 0; j < resultTab.childNodes[i].cells.length; j++)
+              dv += resultTab.childNodes[i].cells[j].textContent + '|';
+	  dv += '*';
+      }
+      return dv;
   }
 
   var heads = ["Nom", "Prenom", "Grade", "Tel", "JudoQC", "DDN", "Cat"];
@@ -219,9 +235,10 @@ function refreshResults() {
 	      vv.value = cc[r];
 	      v = vv;
 	  }
-          if (r < 9) // skip cours field
-              appendTD(row, v);
-          dv += cc[r] + '|';
+	  hide = false;
+          if (r >= 9)
+	      hide = true;
+          appendTD(row, v, hide);
       }
       if (inFtMode) {
 	var y = parseInt(cc[6].substring(0,4));
@@ -233,11 +250,10 @@ function refreshResults() {
 	appendTD(row, selectCours("sc-"+c, cc[cc.length-1]));
       }
 
-      dv += '*';
       resultTab.appendChild(row);
   }
   re.appendChild(resultTab);
-  d.value = dv;
+  d.value = collectDV();
 
   getElementById('nb').innerHTML = "Nombre inscrit: "+clients.length;
 }
