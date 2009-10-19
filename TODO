@@ -1,22 +1,18 @@
 --- later:
 
-* comptabilite info
-* prorata fees
+* add Cadet Noire, fix computeCategoryId to permit U17 Noire. (30 mins)
+* implement button 'copy all current-session cours to session being edited' (30 mins)
+* prorata fees (2 hours)
+* move to session seqno from strings in services (2 hours)
+* autosuggest for payment groups (search button) (2 hours)
 
-* extract mailing lists
+* extract mailing lists (format?)
 
-* add Cadet Noire, fix computeCategoryId to permit U17 Noire.
+* use database for user login authentication, not stuff in textfiles! (.5 day)
 
-* move to session seqno from strings in services
-    + support multiple sessions
-
-* implement button 'copy all current-session cours to session being edited'
-
-* autosuggest for payment groups (search button)
-
-* implement merges/conflicts
-
-* use database for user login authentication, not stuff in textfiles!
+* comptabilite info (1 day)
+* support multiple sessions (1 day)
+* implement merges/conflicts (1 day)
 
 --- much later:
 
