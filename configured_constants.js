@@ -21,6 +21,8 @@ var FRAIS_PASSEPORT_JUDO_QUEBEC, FRAIS_NON_ANJOU;
 var ESCOMPTE_NAMES = [];
 var ESCOMPTE_AMOUNTS = [];
 
+var GRADE_ORDER = ["", "Bla", "B/J", "J", "J/O", "O", "O/V", "V", "V/B", "B", "B/M", "M", "1D", "2D", "3D", "4D", "5D", "6D", "7D", "8D"];
+
 initConfig();
 function initConfig() {
     initSession();

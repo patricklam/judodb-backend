@@ -2,24 +2,49 @@ var store = new DataStore();
 store.init();
 
 var cours = getElementById('cours');
-for (var i = 0; i < COURS.length; i++) {
+for (var i = 0; i < COURS.length; i++)
   cours.add(new Option(COURS[i], i), null);
-}
+var cat = getElementById('catSelect');
+for (var i = 0; i < CATEGORY_ABBREVS.length; i++)
+  cat.add(new Option(CATEGORY_ABBREVS[i], i), null);
+var grmin = getElementById('gradeMin');
+for (var i = 0; i < GRADE_ORDER.length; i++)
+  grmin.add(new Option(GRADE_ORDER[i], i), null);
+var grmax = getElementById('gradeMax');
+for (var i = 0; i < GRADE_ORDER.length; i++)
+  grmax.add(new Option(GRADE_ORDER[i], i), null);
+
 refreshResults();
 
 var act='';
 var inEditMode = false;
+var inFilterMode = false;
 var inFtMode = false;
 var inGCoursMode = false;
 
 function addMetaData() {
     var c = getElementById('cours'); var cs = c.selectedIndex;
-    if (cs > 0) {
+    if (inFilterMode || cs > 0) {
 	// single class
 	getElementById('multi').value = '0';
-	getElementById('title').value = c[cs].text;
-	getElementById('subtitle').value = 
-	    ('Entraineur: ' + COURS_ENTRAINEURS[cs-1]);
+	if (inFilterMode) {
+	    if (c.value != -1)
+		getElementById('title').value = c[cs].text;
+	    else
+		getElementById('title').value = '';
+
+	    getElementById('subtitle').value = '';
+	    if (cat.value != -1)
+		getElementById('subtitle').value += CATEGORY_NAMES[cat.value] + ' ';
+	    if (grmin.value != -1)
+		getElementById('subtitle').value += grmin[grmin.selectedIndex].text + ' ';
+	    if (grmax.value != -1 && grmax.value != grmin.value)
+		getElementById('subtitle').value += 'à ' + grmax[grmax.selectedIndex].text + ' ';
+	} else {
+	    getElementById('title').value = c[cs].text;
+	    getElementById('subtitle').value = 
+		('Entraineur: ' + COURS_ENTRAINEURS[cs-1]);
+	}
 	getElementById('short_title').value = COURS_SHORT[cs-1];
     }
     else {
@@ -48,13 +73,16 @@ function refreshResults() {
   var dv = '';
 
   var c = getElementById('cours'); var cs = c.selectedIndex;
-  getElementById('ent').innerHTML = cs > 0 ? ('Entraineur: ' + COURS_ENTRAINEURS[cs-1]) : '';
+  getElementById('ent').innerHTML = (inFilterMode && cs > 0) ? ('Entraineur: ' + COURS_ENTRAINEURS[cs-1]) : '';
   re.removeChild(re.getElementsByTagName('tbody')[0]);
 
   var resultTab = document.createElement('tbody');
 
   var cv = getElementById('cours').value;
   var all = (cv == '-1') ? 1 : 0;
+  var catv = getElementById('catSelect').value;
+  var grmin = getElementById('gradeMin').value;
+  var grmax = getElementById('gradeMax').value;
 
   var clients = doSearch(cv, all);
 
@@ -128,29 +156,6 @@ function refreshResults() {
       return s;
   }
 
-  function gradeSort(a, b) { 
-      var gradeOrder = ["", "Bla", "B/J", "J", "J/O", "O", "O/V", "V", "V/B", "B", "B/M", "M", "1D", "2D", "3D", "4D", "5D", "6D", "7D", "8D"];
-      return gradeOrder.indexOf(a) - gradeOrder.indexOf(b);
-  }
-  function catSort(a, b) { 
-      var cya = CATEGORY_YEARS[CATEGORY_ABBREVS.indexOf(a)];
-      var cyb = CATEGORY_YEARS[CATEGORY_ABBREVS.indexOf(b)];
-      if (cya == 0) cya = 999;
-      if (cyb == 0) cyb = 999;
-      return cya - cyb;
-  }
-  function coursSort(a, b) {
-      return COURS_SHORT.indexOf(b) - COURS_SHORT.indexOf(a);
-  }
-
-  function stringSort(a, b) {
-      var a0 = stripAccent(a).toLowerCase();
-      var b0 = stripAccent(b).toLowerCase();
-      if (a0 < b0) return 1; 
-      if (a0 == b0) return 0;
-      return -1;
-  }
-
   function makeSort(i, c) {
       var s = function(a, b) { 
 	  var rv = c(a.cells[i].textContent, b.cells[i].textContent);
@@ -209,8 +214,22 @@ function refreshResults() {
 
   resultTab.appendChild(rh);
 
+  var actualClientCount = 0;
   for (c in clients) {
       var cc = clients[c];
+
+      if (inFilterMode) {
+	  if (catv != -1 && CATEGORY_ABBREVS[catv] != cc[7])
+	      continue;
+	  if (grmin != -1) {
+	      var g = GRADE_ORDER.indexOf(cc[3]);
+	      if (g < grmin || g > grmax)
+		  continue;
+	  }
+      }
+
+      actualClientCount++;
+
       var row = document.createElement("tr");
       row.cid = cc[0];
 
@@ -260,7 +279,7 @@ function refreshResults() {
   re.appendChild(resultTab);
   d.value = collectDV();
 
-  getElementById('nb').innerHTML = "Nombre inscrit: "+clients.length;
+  getElementById('nb').innerHTML = "Nombre inscrit: "+actualClientCount;
 }
 
 function doSearch(c, all) {
@@ -343,6 +362,24 @@ function showEditElements() {
 function editMode() {
   inEditMode = !inEditMode;
   showEditElements();
+  refreshResults();
+}
+
+function showFilterElements() {
+  getElementById('cat').style.display = !inFilterMode ? 'none' : 'block';
+  getElementById('xls').style.display = inFilterMode ? 'none' : 'inline';
+  getElementById('xls2').style.display = inFilterMode ? 'none' : 'inline';
+  getElementById('stdTitle').style.display = inFilterMode ? 'none' : '';
+  getElementById('auxTitle').style.display = !inFilterMode ? 'none' : '';
+  getElementById('actions').style.display = inFilterMode ?
+	'none' : 'block';
+  getElementById('returnAction').style.display = !inFilterMode ?
+	'none' : 'block';
+}
+
+function filterMode() {
+  inFilterMode = !inFilterMode;
+  showFilterElements();
   refreshResults();
 }
 

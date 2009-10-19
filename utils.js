@@ -206,3 +206,25 @@ function inferSexFromRAMQ(r) {
     return 'M';
   return '';
 }
+
+function gradeSort(a, b) { 
+    return GRADE_ORDER.indexOf(a) - GRADE_ORDER.indexOf(b);
+}
+function catSort(a, b) { 
+    var cya = CATEGORY_YEARS[CATEGORY_ABBREVS.indexOf(a)];
+    var cyb = CATEGORY_YEARS[CATEGORY_ABBREVS.indexOf(b)];
+    if (cya == 0) cya = 999;
+    if (cyb == 0) cyb = 999;
+    return cya - cyb;
+}
+function coursSort(a, b) {
+    return COURS_SHORT.indexOf(b) - COURS_SHORT.indexOf(a);
+}
+
+function stringSort(a, b) {
+    var a0 = stripAccent(a).toLowerCase();
+    var b0 = stripAccent(b).toLowerCase();
+    if (a0 < b0) return 1; 
+    if (a0 == b0) return 0;
+    return -1;
+}

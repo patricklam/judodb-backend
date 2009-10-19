@@ -12,7 +12,8 @@ $pdf->AddPage();
 
 $pdf->SetFont('Times', '', 14);
 
-if ($_POST["multi"] == "1") {
+$multi = $_POST["multi"];
+if ($multi == "1") {
     $ts = explode("|", iconv("UTF-8", "ISO-8859-1", $_POST["title"]));
     $sts = explode("|", iconv("UTF-8", "ISO-8859-1", $_POST["subtitle"]));
     $c = count($ts);
@@ -23,7 +24,7 @@ if ($_POST["multi"] == "1") {
 }
 
 $notFirst = FALSE;
-$COLS = 6;
+$COLS = 7;
 for ($p = 0; $p < $c; $p++) {
     $data = iconv("UTF-8", "ISO-8859-1", $_POST['data']);
     $ds = explode("*", $data);
@@ -33,7 +34,7 @@ for ($p = 0; $p < $c; $p++) {
     $live = FALSE;
     for ($i = 0; $i < $allCount-1; $i++) {
         $d = explode("|", $ds[$i]);
-        if ($d[$COLS+2] == $p) {
+        if ($multi == "0" || $d[$COLS+1] == $p) {
 	    $live = TRUE;
 	    break;
         }
@@ -52,11 +53,11 @@ for ($p = 0; $p < $c; $p++) {
     $pdf->SetFillColor(224, 235, 255);
     $fill = true;
 
-    $w = array(45, 45, 12, 30, 20, 0);
+    $w = array(45, 45, 12, 30, 20, 25, 0);
     $actualCount = 0;
     for ($i = 0; $i < $allCount-1; $i++) {
         $d = explode("|", $ds[$i]);
-        if ($d[$COLS+2] == $p) {
+        if ($multi == "0" || $d[$COLS+1] == $p) {
             for ($j = 0; $j < $COLS; $j++) 
                 $pdf->Cell($w[$j], 6, $d[$j], '', 0, 'L', $fill);
             $fill = !$fill;
@@ -67,6 +68,7 @@ for ($p = 0; $p < $c; $p++) {
 
     $pdf->Ln();
     $pdf->Cell(0, 6, "Nombre inscrit: $actualCount");
+    if ($multi == "0") break;
 }
 
 $pdf->Output();
