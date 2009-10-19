@@ -9,9 +9,9 @@ var SERVICE_FIELDS = ["date_inscription", "saisons", "sans_affiliation",
 		      "cours", "sessions",
                       "passeport", "non_anjou", "judogi",
                       "escompte", "frais", "cas_special_note",
-                      "escompte_special" , "horaire_special"];
+                      "escompte_special" , "horaire_special", "verification"];
 
-var CHECKBOX_FIELDS = ['non_anjou', 'passeport', 'sans_affiliation'];
+var CHECKBOX_FIELDS = ['non_anjou', 'passeport', 'sans_affiliation', 'verification'];
 var SELECT_FIELDS = ['cours', 'sessions', 'escompte'];
 var PAYMENT_FIELDS = ['mode', 'chqno', 'date', 'montant'];
 

@@ -201,13 +201,16 @@ function refreshResults() {
   var sorts = [makeSort(0, stringSort), makeSort(1, stringSort), makeSort(2, gradeSort), 
 	       null, null, 
 	       makeSort(5, stringSort), makeSort(6, catSort), makeSort(7, coursSort)];
-  var widthsForEditing = [-1, -1, -1, 3, -1, 8, -1, -1, -1];
+  var widthsForEditing = [-1, -1, -1, 3, -1, 8, -1, -1, -1, -1];
 
   if (inFtMode) 
       appendTH("");
 
   for (h in heads)
       appendTH(heads[h], sorts[h]);
+
+  if (inEditMode)
+      appendTH("V");
 
   if (all) 
       appendTH("Cours", makeSort(7, coursSort));
@@ -260,7 +263,17 @@ function refreshResults() {
 	      v = vv;
 	  }
 	  hide = false;
-          if (r >= 9)
+	  if (r == 8) {
+	      if (inEditMode) {
+		  var vv = document.createElement("input");
+		  vv.type = "checkbox";
+		  vv.origChecked = cc[r] == "true";
+		  vv.checked = cc[r] == "true";
+		  v = vv;
+	      } else continue;
+	  }
+
+          if (r >= 10)
 	      hide = true;
           appendTD(row, v, hide);
       }
@@ -284,7 +297,7 @@ function refreshResults() {
 
 function doSearch(c, all) {
   var contains_current_session = '%'+CURRENT_SESSION+'%';
-  var rs = db.execute('SELECT client.id,nom,prenom,grade,tel,affiliation,ddn,cours,RAMQ from `client`,`services`,`grades` '+
+  var rs = db.execute('SELECT client.id,nom,prenom,grade,tel,affiliation,ddn,cours,verification,RAMQ from `client`,`services`,`grades` '+
                       'WHERE deleted <> \'true\' AND '+
                         'client.id = services.client_id AND '+
                         'client.id = grades.client_id AND '+
@@ -304,11 +317,12 @@ function doSearch(c, all) {
     clients[index][6] = rs.field(6);
     clients[index][7] = CATEGORY_ABBREVS[computeCategoryId
       (clients[index][6].substring(0,4), clients[index][3])];
-    clients[index]['RAMQ'] = rs.field(8);
+    clients[index][8] = rs.field(8);
+    clients[index]['RAMQ'] = rs.field(9);
 
     var cn = rs.field(7);
-    clients[index][8] = COURS_SHORT[cn];
-    clients[index][9] = cn;
+    clients[index][9] = COURS_SHORT[cn];
+    clients[index][10] = cn;
 
     ++index;
     rs.next();
@@ -437,7 +451,14 @@ function updateJudoQC(cid, nv) {
  	       'WHERE id=?', [nv, cid]);
 }
 
-var updaters = [null, null, updateGrade, null, updateJudoQC, null, null, null];
+function updateVerif(cid, nv) {
+  db.execute('UPDATE `services` SET verification=? ' + // XXX session
+ 	       'WHERE client_id=?', [nv, cid]);
+  db.execute('UPDATE `client` SET version=version+1 ' +
+ 	       'WHERE id=?', [cid]);
+}
+
+var updaters = [null, null, updateGrade, null, updateJudoQC, null, null, updateVerif, null];
 
 function saveEdits() {
   var rs = getElementById('results').lastChild.childNodes;
@@ -450,9 +471,19 @@ function saveEdits() {
       var c = r.cells[i];
       if (c.firstChild.tagName == 'INPUT') {
         var inp = c.firstChild;
-	if (inp.origValue != inp.value) {
-	    updaters[i](r.cid, inp.value);
+	if (inp.type == "checkbox") {
+	    changed = inp.origChecked != inp.checked;
+	    v = inp.checked;
+	}
+	else {
+	    changed = inp.origValue != inp.value;
+	    v = inp.value;
+	}
+
+	if (changed) {
+	    updaters[i](r.cid, v);
 	    inp.origValue = inp.value;
+	    inp.origChecked = inp.checked;
         }
       }
     }

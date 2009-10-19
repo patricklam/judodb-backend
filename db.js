@@ -28,6 +28,17 @@ function createTablesIfNeeded (db) {
              '`grade` varchar(10), '+
              '`date_grade` date' +
              ')');
+    // upgrade path 3: insert verification to services
+  var rs = db.execute("select * from sqlite_master where name='services'");
+  if (rs.isValidRow()) {
+      var s = rs.field(4);
+      rs.close();
+      if (s.indexOf('verification') == -1) {
+	  db.execute("alter table `services` add `verification` BOOLEAN");
+	  db.execute("update `services` set verification='false'");x
+      }
+  }
+  rs.close();
   db.execute('create table if not exists `services` (' +
 	     '`client_id` INTEGER, '+
 	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT, '+

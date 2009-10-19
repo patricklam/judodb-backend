@@ -92,7 +92,8 @@ CREATE TABLE `services` (
   `frais` char(10),
   `cas_special_note` varchar(50),
   `escompte_special` varchar(10),
-  `horaire_special` varchar(50)
+  `horaire_special` varchar(50),
+  `verification` BOOLEAN
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `last_sync`;
