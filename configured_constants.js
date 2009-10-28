@@ -83,11 +83,11 @@ function initCategorie() {
 	CATEGORY_YEARS = CATEGORY_YEARS.concat(sy);
 
 	CATEGORY_PRIX_1_SESSION = CATEGORY_PRIX_1_SESSION.concat
-	  (rs.fieldByName('frais_1_session'));
+	  (parseFloat(rs.fieldByName('frais_1_session')));
 	CATEGORY_PRIX_2_SESSION = CATEGORY_PRIX_2_SESSION.concat
-	  (rs.fieldByName('frais_2_session'));
+	  (parseFloat(rs.fieldByName('frais_2_session')));
 	CATEGORY_PRIX_JUDO_QC = CATEGORY_PRIX_JUDO_QC.concat
-	  (rs.fieldByName('frais_judo_qc'));
+	  (parseFloat(rs.fieldByName('frais_judo_qc')));
 
 	rs.next();
     }
@@ -98,7 +98,7 @@ function initEscompte() {
     var rs = db.execute("SELECT * FROM `escompte`");    
     while (rs.isValidRow()) {
 	ESCOMPTE_NAMES = ESCOMPTE_NAMES.concat(rs.fieldByName('name'));
-	ESCOMPTE_AMOUNTS = ESCOMPTE_AMOUNTS.concat(rs.fieldByName('amount'));
+	ESCOMPTE_AMOUNTS = ESCOMPTE_AMOUNTS.concat(parseFloat(rs.fieldByName('amount')));
 	rs.next();
     }
     rs.close();
@@ -112,8 +112,8 @@ function initMisc() {
     for (var i = 0; i < MAX_VERSEMENTS; i++)
 	SUGGESTED_PAIEMENTS = SUGGESTED_PAIEMENTS.concat
           (rs.fieldByName('date_versement_'+(i+1)));
-    FRAIS_PASSEPORT_JUDO_QUEBEC = rs.fieldByName('frais_passeport_judoqc');
-    FRAIS_PAS_ANJOU = rs.fieldByName('frais_nonresident_anjou');
+    FRAIS_PASSEPORT_JUDO_QUEBEC = parseFloat(rs.fieldByName('frais_passeport_judoqc'));
+    FRAIS_PAS_ANJOU = parseFloat(rs.fieldByName('frais_nonresident_anjou'));
     rs.close();
 }
 
