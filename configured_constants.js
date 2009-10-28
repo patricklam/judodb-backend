@@ -28,6 +28,7 @@ function initConfig() {
     initSession();
     initCours();
     initCategorie();
+    initEscompte();
     initMisc();
 }
 
