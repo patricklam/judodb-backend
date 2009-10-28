@@ -28,17 +28,6 @@ function createTablesIfNeeded (db) {
              '`grade` varchar(10), '+
              '`date_grade` date' +
              ')');
-    // upgrade path 3: insert verification to services
-  var rs = db.execute("select * from sqlite_master where name='services'");
-  if (rs.isValidRow()) {
-      var s = rs.field(4);
-      rs.close();
-      if (s.indexOf('verification') == -1) {
-	  db.execute("alter table `services` add `verification` BOOLEAN");
-	  db.execute("update `services` set verification='false'");x
-      }
-  }
-  rs.close();
   db.execute('create table if not exists `services` (' +
 	     '`client_id` INTEGER, '+
 	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT, '+
@@ -56,6 +45,17 @@ function createTablesIfNeeded (db) {
 	     '`escompte_special` varchar(10), '+
 	     '`horaire_special` varchar(50) '+
              ')');
+    // upgrade path 3: insert verification to services
+  var rs = db.execute("select * from sqlite_master where name='services'");
+  if (rs.isValidRow()) {
+      var s = rs.field(4);
+      rs.close();
+      if (s.indexOf('verification') == -1) {
+	  db.execute("alter table `services` add `verification` BOOLEAN");
+	  db.execute("update `services` set verification='false'");
+      }
+  }
+  rs.close();
   db.execute('create table if not exists `payment_groups` (' +
 	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
       	     '`version` int(5) NOT NULL, ' +
@@ -75,16 +75,6 @@ function createTablesIfNeeded (db) {
 	     '`chqno` INTEGER, '+
 	     '`date` DATE, '+
 	     '`montant` char(10))');
-    // upgrade path 2, for global_configuration:
-  var rs = db.execute("select * from sqlite_master where name='global_configuration'");
-  if (rs.isValidRow()) {
-      var s = rs.field(4);
-      rs.close();
-      if (s.indexOf('nom_club') == -1)
-	  db.execute('drop table `global_configuration`');
-  }
-  else rs.close();
-    // end upgrade path
   db.execute('create table if not exists `global_configuration` (' +
       	     '`version` int(5), ' +
       	     '`server_version` int(5), ' +
@@ -99,6 +89,16 @@ function createTablesIfNeeded (db) {
   	     '`date_versement_4` DATE, ' +
   	     '`date_versement_5` DATE, ' +
   	     '`date_versement_6` DATE)');
+    // upgrade path 2, for global_configuration:
+  var rs = db.execute("select * from sqlite_master where name='global_configuration'");
+  if (rs.isValidRow()) {
+      var s = rs.field(4);
+      rs.close();
+      if (s.indexOf('nom_club') == -1)
+	  db.execute('drop table `global_configuration`');
+  }
+  else rs.close();
+    // end upgrade path
   db.execute('insert into `global_configuration` (version, server_version) '+
   	       'SELECT 0,0 WHERE NOT EXISTS '+
 	         '(SELECT * FROM `global_configuration`)');
