@@ -99,6 +99,7 @@ function initEscompte() {
     while (rs.isValidRow()) {
 	ESCOMPTE_NAMES = ESCOMPTE_NAMES.concat(rs.fieldByName('name'));
 	ESCOMPTE_AMOUNTS = ESCOMPTE_AMOUNTS.concat(rs.fieldByName('amount'));
+	rs.next();
     }
     rs.close();
 }
