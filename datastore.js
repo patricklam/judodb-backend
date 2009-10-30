@@ -757,7 +757,7 @@ DataStore.prototype.sync = function(target) {
   }
 
   function phase3() {
-      db.execute('SELECT COUNT(*) FROM `client` WHERE version > server_version');
+      var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE version > server_version');
       var count = rs.field(0);
       rs.close();
 
@@ -772,7 +772,7 @@ DataStore.prototype.sync = function(target) {
   }
 
   function phase4() { 
-      db.execute('SELECT COUNT(*) FROM `payment_groups` WHERE version > server_version');
+      var rs = db.execute('SELECT COUNT(*) FROM `payment_groups` WHERE version > server_version');
       var count = rs.field(0);
       rs.close();
 
