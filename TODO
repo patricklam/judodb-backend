@@ -1,6 +1,3 @@
-Something I think is happening:
- - paiement groups get -1s for client ids when system starts pushing 
-    groups before it has all server ids for clients
  - on 10/17, we lost a bunch of payment groups. why?
 
 --- later:
