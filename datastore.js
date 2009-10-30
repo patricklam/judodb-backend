@@ -756,8 +756,12 @@ DataStore.prototype.sync = function(target) {
       else setTimeout(phase2, 100); 
   }
 
-  function phase3() { 
-      if (activeRequests == 0) {
+  function phase3() {
+      db.execute('SELECT COUNT(*) FROM `client` WHERE version > server_version');
+      var count = rs.field(0);
+      rs.close();
+
+      if (count == 0) {
 	  clearStatus();
 	  addStatus("un instant (syncronisation des groupes)...");
 	  pullGroups();
@@ -768,7 +772,11 @@ DataStore.prototype.sync = function(target) {
   }
 
   function phase4() { 
-      if (activeRequests == 0) {
+      db.execute('SELECT COUNT(*) FROM `payment_groups` WHERE version > server_version');
+      var count = rs.field(0);
+      rs.close();
+
+      if (count == 0) {
 	  clearStatus();
 	  addStatus("un instant (syncronisation de la configuration)...");
 	  pullGlobalConfig();
