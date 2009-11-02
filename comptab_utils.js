@@ -128,7 +128,7 @@ function refreshResults() {
 
 	  var gr = clients.idToGroup[cc[0]];
 	  if (gr.length < 1) {
-	      prevTotalFrais = cc[2];
+	      prevTotalFrais = parseFloat(cc[2]);
               addClient(cc);
 	  }
 	  else
@@ -137,7 +137,7 @@ function refreshResults() {
 	  for (var gm in gr) {
 	      processed[gr[gm]] = true;
 	      var ccp = clients[clients.idToIndex[gr[gm]]];
-	      prevTotalFrais += ccp[2];
+	      prevTotalFrais += parseFloat(ccp[2]);
 	      addClient(ccp);
 	  }
       }
