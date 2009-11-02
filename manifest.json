@@ -18,6 +18,7 @@
     { "url": "editclient_utils.js" },
     { "url": "editclient_signup_money.js" },
     { "url": "cours_utils.js" },
+    { "url": "comptab_utils.js" },
     { "url": "config_utils.js" },
     { "url": "localserver.js" },
     { "url": "xhr.js" },

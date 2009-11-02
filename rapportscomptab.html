@@ -25,9 +25,41 @@
 <h1>Rapports comptabilit&eacute;</h1>
 <p><span id="status">&nbsp;</span></p>
 
-<p>&nbsp;</p>
+<form id="form" onsubmit="addMetaData(); chooseAction(); return true" method="post">
+ <input type="hidden" name="data" id="data" />
+<!--
+<p>Rapport
+ <select id="cours" onchange="refreshResults();">
+  <option value="-1">Tous</option>
+ </select>
+</p>
+-->
+</form> 
 
-<p>&Agrave; venir.</p>
+<div id="rightbar" class="noprint">
+ <div id="actions">
+  <h3>Actions</h3>
+  <p>
+  <a href="#" onclick="editMode(); return false">&Eacute;diter grades/JudoQC</a><br />
+  <a href="#" onclick="filterMode(); return false">Filtrer résultats</a><br />
+  <a href="#" onclick="gcoursMode(); return false">G&eacute;rer classes</a><br />
+  <a href="#" onclick="ftMode(); return false">Cr&eacute;er FT-303</a><br />
+  </p>
+ </div>
+</div>
+
+<p id="ent"></p>
+<table id="results">
+<tbody></tbody>
+</table>
+
+<div class="topright noprint">
+<div style="float:right; text-align:right;">
+  <a href="index.html">R&eacute;tourner</a>
+</div>
+</div>
+
+<script type="text/javascript"  src="comptab_utils.js"></script>
 
 </body>
 
