@@ -78,7 +78,7 @@ function refreshResults() {
   }
 
   var heads = ["Nom", "", "Date", "Montant"];
-  var sorts = [makeSort(0, stringSort), makeSort(1, stringSort), makeSort(2, stringSort), makeSort(3, stringSort)];
+  var sorts = [null, null, null, null]; //makeSort(0, stringSort), makeSort(1, stringSort), makeSort(2, stringSort), makeSort(3, stringSort)];
 
   for (h in heads)
       appendTH(heads[h], sorts[h]);
@@ -91,36 +91,55 @@ function refreshResults() {
       appendTD(tailRow, tn(''));
       appendTD(tailRow, tn(asCurrency(s)), false, true);
       tailRow.style.backgroundColor = '#ddd';
-      if (s == '0.00') tailRow.style.backgroundColor = '#eee';
+      if (parseFloat(s) <= 0.0) tailRow.style.backgroundColor = '#eee';
       resultTab.appendChild(tailRow);
   }
 
+  function addClient(cc) {
+      var vv = document.createElement("a");
+      vv.href = "editclient.html?cid="+cc[0];
+      vv.target = "_";
+      vv.className += "notlink-in-print";
+      vv.appendChild(tn(cc[1]));
+      
+      var row = document.createElement("tr");
+      appendTD(row, vv);
+      appendTD(row, tn('frais'));
+      appendTD(row, tn(''));
+      appendTD(row, tn(asCurrency(cc[2])), false, true);
+      resultTab.appendChild(row);
+  }
+
+  var processed = [];
   var prevcid = -1, prevTotalFrais = 0.0, totalPaid = 0.0;
-  for (c in clients) {
+  for (var c = 0; c < clients.length; c++) {
       var cc = clients[c];
       var ccl = cc.length;
 
-      // add 'FRAIS' line
+      // new person; add 'FRAIS' line
       if (cc[0] != prevcid) {
+	  // skip if already in other group
+	  if (processed[cc[0]]) continue;
+
 	  if (prevcid != -1)
 	      addSolde(prevTotalFrais - totalPaid);
 
-	  prevcid = cc[0]; totalPaid = 0.0; prevTotalFrais = cc[2];
+	  prevcid = cc[0]; totalPaid = 0.0; 
 
-	  var vv = document.createElement("a");
-	  vv.href = "editclient.html?cid="+cc[0];
-	  vv.target = "_";
-	  vv.className += "notlink-in-print";
-	  vv.appendChild(tn(cc[1]));
+	  var gr = clients.idToGroup[cc[0]];
+	  if (gr.length < 1) {
+	      prevTotalFrais = cc[2];
+              addClient(cc);
+	  }
+	  else
+	      prevTotalFrais = 0.0;
 
-	  var headRow = document.createElement("tr");
-          appendTD(headRow, vv);
-	  appendTD(headRow, tn('frais'));
-	  appendTD(headRow, tn(''));
-	  appendTD(headRow, tn(asCurrency(cc[2])), false, true);
-	  resultTab.appendChild(headRow);
-// XXX here add other people in the same payment group and
-// increase prevTotalFrais
+	  for (var gm in gr) {
+	      processed[gr[gm]] = true;
+	      var ccp = clients[clients.idToIndex[gr[gm]]];
+	      prevTotalFrais += ccp[2];
+	      addClient(ccp);
+	  }
       }
 
       var row = document.createElement("tr");
@@ -147,16 +166,21 @@ function refreshResults() {
 
 function doSearch() {
   var contains_current_session = '%'+CURRENT_SESSION+'%';
-  var rs = db.execute('SELECT client.id,nom || ", " || prenom,frais,mode,chqno,date,montant from `client`,`services`,`payment` '+
+  var rs = db.execute('SELECT DISTINCT client.id,nom || ", " || prenom,frais,mode,chqno,date,montant from `client`,`services`,`payment`,`payment_group_members` AS pg '+
                       'WHERE deleted <> \'true\' AND '+
                         'client.id = services.client_id AND '+
-                        'client.id = payment.client_id AND '+
+                        '(client.id = payment.client_id OR '+
+                        ' (client.id = pg.client_id AND pg.group_id = payment.group_id)) AND '+
 		        'saisons LIKE ? '+
 		      'ORDER BY nom_stripped COLLATE NOCASE, prenom_stripped COLLATE NOCASE', [contains_current_session]);
   var clients = [];
+  var idToIndex = [], idToGroup = [];
   var index = 0;
   while (rs.isValidRow()) {
     clients[index] = [];
+    idToIndex[rs.field(0)] = index;
+    idToGroup[rs.field(0)] = [];
+
     for (var j = 0; j < 7; j++)
       clients[index][j] = rs.field(j);
 
@@ -165,5 +189,29 @@ function doSearch() {
   }
   rs.close();
 
+  rs = db.execute('SELECT group_id, client_id from `payment_group_members` ORDER BY group_id');
+  var prevGid = -1, currentGroup = [];
+
+  function finalizeGroup() {
+      for (ci in currentGroup) {
+	  var c = currentGroup[ci];
+	  idToGroup[c] = currentGroup;
+      }
+  }
+
+  while (rs.isValidRow()) {
+    var gid = rs.field(0), cid = rs.field(1);
+    if (gid != prevGid) {
+	finalizeGroup();
+	currentGroup = []; prevGid = gid;
+    }
+    currentGroup = currentGroup.concat(cid);
+    rs.next();
+  }
+  finalizeGroup();
+  rs.close();
+
+  clients.idToIndex = idToIndex;
+  clients.idToGroup = idToGroup;
   return clients;
 }
