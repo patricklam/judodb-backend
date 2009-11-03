@@ -137,10 +137,12 @@ function refreshResults() {
 	      prevTotalFrais = 0.0;
 
 	  for (var gm in gr) {
-	      processed[gr[gm]] = true;
-	      var ccp = clients[clients.idToIndex[gr[gm]]];
-	      prevTotalFrais += parseFloat(ccp[2]);
-	      addClient(ccp);
+	      if (clients.idToIndex[gr[gm]] in clients) {
+		  processed[gr[gm]] = true;
+		  var ccp = clients[clients.idToIndex[gr[gm]]];
+		  prevTotalFrais += parseFloat(ccp[2]);
+		  addClient(ccp);
+	      }
 	  }
       }
 
