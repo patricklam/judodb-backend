@@ -95,7 +95,9 @@ function refreshResults() {
       resultTab.appendChild(tailRow);
   }
 
+  var clientCount = 0;
   function addClient(cc) {
+      clientCount++;
       var vv = document.createElement("a");
       vv.href = "editclient.html?cid="+cc[0];
       vv.target = "_";
