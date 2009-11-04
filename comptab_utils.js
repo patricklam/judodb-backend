@@ -1,9 +1,82 @@
 var store = new DataStore();
 store.init();
 
-refreshResults();
+var cs = doSearch();
+refreshResults(cs);
 
-function refreshResults() {
+var unpaidOnlyFlag = false;
+
+function onlyUnpaid() {
+  unpaidOnlyFlag = true;
+  refreshResults(cs);
+}
+
+function showAll() {
+  unpaidOnlyFlag = false;
+  refreshResults(cs);
+}
+
+
+function collectGroups(clients) {
+  var idToGroup = [];
+  rs = db.execute('SELECT group_id, client_id from `payment_group_members` ORDER BY group_id');
+  var prevGid = -1, currentGroup = [];
+
+  for (c in clients) {
+      idToGroup[clients[c][0]] = [];
+  }
+
+  function finalizeGroup() {
+      for (ci in currentGroup) {
+	  var c = currentGroup[ci];
+	  idToGroup[c] = currentGroup;
+      }
+  }
+
+  while (rs.isValidRow()) {
+    var gid = rs.field(0), cid = rs.field(1);
+    if (gid != prevGid) {
+	finalizeGroup();
+	currentGroup = []; prevGid = gid;
+    }
+    currentGroup = currentGroup.concat(cid);
+    rs.next();
+  }
+  finalizeGroup();
+  rs.close();
+
+  return idToGroup;
+}
+
+function doSearch() {
+  var contains_current_session = '%'+CURRENT_SESSION+'%';
+  var rs = db.execute('SELECT DISTINCT client.id,nom || ", " || prenom,frais,mode,chqno,date,montant from `client`,`services`,`payment`,`payment_group_members` AS pg '+
+                      'WHERE deleted <> \'true\' AND '+
+                        'client.id = services.client_id AND '+
+                        '(client.id = payment.client_id OR '+
+                        ' (client.id = pg.client_id AND pg.group_id = payment.group_id)) AND '+
+		        'saisons LIKE ? ORDER BY nom, prenom', [contains_current_session]);
+  var clients = [];
+  var idToIndex = [];
+  var index = 0;
+  while (rs.isValidRow()) {
+    clients[index] = [];
+    idToIndex[rs.field(0)] = index;
+
+    for (var j = 0; j < 7; j++)
+      clients[index][j] = rs.field(j);
+
+    ++index;
+    rs.next();
+  }
+  rs.close();
+
+  clients.idToIndex = idToIndex;
+  clients.idToGroup = collectGroups(clients);
+  return clients;
+}
+
+function refreshResults(clients) {
   var re = getElementById('results');
   var d = getElementById('data');
   var dv = '';
@@ -11,8 +84,6 @@ function refreshResults() {
   re.removeChild(re.getElementsByTagName('tbody')[0]);
 
   var resultTab = document.createElement('tbody');
-
-  var clients = doSearch();
 
   var rh = document.createElement("tr");
   function appendTH(t, s) {
@@ -47,42 +118,24 @@ function refreshResults() {
       row.appendChild(c);
   }
 
-  function makeSort(i, c) {
-      var s = function(a, b) { 
-	  var rv = c(a.cells[i].textContent, b.cells[i].textContent);
-	  if (rv == 0) rv = stringSort(a.cells[0].textContent, b.cells[i].textContent);
-	  if (rv == 0) rv = stringSort(a.cells[1].textContent, b.cells[1].textContent);
-	  return rv;
-      };
-      return function() { 
-	  var tb = resultTab.childNodes;
-	  var arr = new Array();
-	  var head = tb[0];
-	  for (var n = 0; n < head.childNodes.length; n++)
-	      head.childNodes[n].firstChild.onclick = sorts[n];
-	  head.childNodes[i].firstChild.onclick = makeSort(i, function (a, b) { return -c(a, b); });
-	  resultTab.removeChild(head);
-
-	  while (resultTab.hasChildNodes()) {
-	      var v = tb[0];
-	      arr.push(v);
-	      resultTab.removeChild(v);
-	  }
-	  arr.sort(s);
-	  resultTab.appendChild(head);
-	  while (arr.length > 0) {
-	      resultTab.appendChild(arr.pop());
-	  }
-	  d.value = collectDV();
-      };
-  }
-
   var heads = ["Nom", "", "Date", "Montant"];
-  var sorts = [null, null, null, null]; //makeSort(0, stringSort), makeSort(1, stringSort), makeSort(2, stringSort), makeSort(3, stringSort)];
 
   for (h in heads)
-      appendTH(heads[h], sorts[h]);
+      appendTH(heads[h]);
   resultTab.appendChild(rh);
+
+  var rowsToAdd = [];
+  function buffer(s) {
+      rowsToAdd = rowsToAdd.concat(s);
+  }
+  function dischargeBuffer() {
+      for (var i = 0; i < rowsToAdd.length; i++)
+	  resultTab.appendChild(rowsToAdd[i]);
+      rowsToAdd = [];
+  }
+  function eraseBuffer() {
+      rowsToAdd = [];
+  }
 
   function addSolde(s) {
       var tailRow = document.createElement("tr");
@@ -92,7 +145,7 @@ function refreshResults() {
       appendTD(tailRow, tn(asCurrency(s)), false, true);
       tailRow.style.backgroundColor = '#ddd';
       if (parseFloat(s) <= 0.0) tailRow.style.backgroundColor = '#eee';
-      resultTab.appendChild(tailRow);
+      return tailRow;
   }
 
   var clientCount = 0;
@@ -109,7 +162,7 @@ function refreshResults() {
       appendTD(row, tn('frais'));
       appendTD(row, tn(''));
       appendTD(row, tn(asCurrency(cc[2])), false, true);
-      resultTab.appendChild(row);
+      return row;
   }
 
   var processed = [];
@@ -123,15 +176,20 @@ function refreshResults() {
 	  // skip if already in other group
 	  if (processed[cc[0]]) continue;
 
-	  if (prevcid != -1)
-	      addSolde(prevTotalFrais - totalPaid);
+	  if (prevcid != -1) {
+	      var s = prevTotalFrais - totalPaid;
+	      if (s > 0 || !unpaidOnlyFlag) {
+		  buffer(addSolde(prevTotalFrais - totalPaid));
+		  dischargeBuffer();
+	      } else eraseBuffer();
+	  }
 
 	  prevcid = cc[0]; totalPaid = 0.0; 
 
 	  var gr = clients.idToGroup[cc[0]];
 	  if (gr.length < 1) {
 	      prevTotalFrais = parseFloat(cc[2]);
-              addClient(cc);
+              buffer(addClient(cc));
 	  }
 	  else
 	      prevTotalFrais = 0.0;
@@ -141,7 +199,7 @@ function refreshResults() {
 		  processed[gr[gm]] = true;
 		  var ccp = clients[clients.idToIndex[gr[gm]]];
 		  prevTotalFrais += parseFloat(ccp[2]);
-		  addClient(ccp);
+		  buffer(addClient(ccp));
 	      }
 	  }
       }
@@ -161,61 +219,13 @@ function refreshResults() {
       totalPaid += thisPaid;
       appendTD(row, tn('('+asCurrency(thisPaid)+')'), false, true);
       if (thisPaid != '' && thisPaid > 0)
-	  resultTab.appendChild(row);
+	  buffer(row);
   }
-  addSolde(prevTotalFrais - totalPaid);
+  var s = prevTotalFrais - totalPaid;
+  if (s > 0 || !unpaidOnlyFlag) {
+      buffer(addSolde(prevTotalFrais - totalPaid));
+      dischargeBuffer();
+  }
 
   re.appendChild(resultTab);
-}
-
-function doSearch() {
-  var contains_current_session = '%'+CURRENT_SESSION+'%';
-  var rs = db.execute('SELECT DISTINCT client.id,nom || ", " || prenom,frais,mode,chqno,date,montant from `client`,`services`,`payment`,`payment_group_members` AS pg '+
-                      'WHERE deleted <> \'true\' AND '+
-                        'client.id = services.client_id AND '+
-                        '(client.id = payment.client_id OR '+
-                        ' (client.id = pg.client_id AND pg.group_id = payment.group_id)) AND '+
-		        'saisons LIKE ? '+
-		      'ORDER BY nom_stripped COLLATE NOCASE, prenom_stripped COLLATE NOCASE', [contains_current_session]);
-  var clients = [];
-  var idToIndex = [], idToGroup = [];
-  var index = 0;
-  while (rs.isValidRow()) {
-    clients[index] = [];
-    idToIndex[rs.field(0)] = index;
-    idToGroup[rs.field(0)] = [];
-
-    for (var j = 0; j < 7; j++)
-      clients[index][j] = rs.field(j);
-
-    ++index;
-    rs.next();
-  }
-  rs.close();
-
-  rs = db.execute('SELECT group_id, client_id from `payment_group_members` ORDER BY group_id');
-  var prevGid = -1, currentGroup = [];
-
-  function finalizeGroup() {
-      for (ci in currentGroup) {
-	  var c = currentGroup[ci];
-	  idToGroup[c] = currentGroup;
-      }
-  }
-
-  while (rs.isValidRow()) {
-    var gid = rs.field(0), cid = rs.field(1);
-    if (gid != prevGid) {
-	finalizeGroup();
-	currentGroup = []; prevGid = gid;
-    }
-    currentGroup = currentGroup.concat(cid);
-    rs.next();
-  }
-  finalizeGroup();
-  rs.close();
-
-  clients.idToIndex = idToIndex;
-  clients.idToGroup = idToGroup;
-  return clients;
 }
