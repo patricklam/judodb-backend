@@ -1,5 +1,3 @@
- - on 10/17, we lost a bunch of payment groups. why?
-
 --- later:
 
 * add Cadet Noire, fix computeCategoryId to permit U17 Noire. (30 mins)
@@ -13,6 +11,7 @@
 * use database for user login authentication, not stuff in textfiles! (.5 day)
 
 * comptabilite info (1 day)
+   -> sort by payment date
 * support multiple sessions (1 day)
 * implement merges/conflicts (1 day)
 
