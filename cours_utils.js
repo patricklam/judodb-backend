@@ -369,7 +369,11 @@ function showEditElements() {
 	'block' : 'none';
   getElementById('saveorquit').style.display = inEditMode ?
 	'block' : 'none';
-  getElementById('rightbar').style.display = inEditMode ?
+  getElementById('clearAction').style.display = inEditMode ?
+	'block' : 'none';
+  getElementById('returnAction').style.display = inEditMode ?
+	'none' : 'block';
+  getElementById('actions').style.display = inEditMode ?
 	'none' : 'block';
 }
 
@@ -377,6 +381,17 @@ function editMode() {
   inEditMode = !inEditMode;
   showEditElements();
   refreshResults();
+}
+
+function clearAllV() {
+  var rs = getElementById('results').lastChild.childNodes;
+  for (var rc = 0; rc < rs.length; rc++) {
+    var r = rs[rc];
+    if (r.firstChild.tagName == 'TH')
+      continue;
+
+    r.cells[7].firstChild.checked = false;
+  }
 }
 
 function showFilterElements() {

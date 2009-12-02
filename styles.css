@@ -208,7 +208,7 @@ input.text, input.button, textarea, select {
   padding: 2em;
 }
 
-#actions #returnAction {
+#actions #returnAction #clearAction {
   padding: 2em;
 }
 
