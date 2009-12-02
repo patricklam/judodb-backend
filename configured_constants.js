@@ -34,7 +34,7 @@ function initConfig() {
 
 function initSession() {
     var rs = db.execute("SELECT * FROM `session` WHERE "
-			+ "session.first_signup_date < date() AND "
+			+ "session.first_signup_date <= date() AND "
 			+ "session.last_signup_date > date()");
     if (!rs.isValidRow()) {
 	setError('Aucun session en cours! Veuillez modifier la configuration.');
