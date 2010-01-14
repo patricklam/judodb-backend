@@ -117,7 +117,14 @@ function doLogin(arg, successContinuation) {
 }
 
 function updateLastSync() {
-  var is = db.execute('SELECT COUNT(*) FROM `services` WHERE saisons LIKE ?', ['%'+CURRENT_SESSION+'%']);
+  var contains_current_session = '%'+CURRENT_SESSION+'%';
+  var is = db.execute('SELECT COUNT(client.id) from `client`,`services`,`grades` '+
+                      'WHERE deleted <> \'true\' AND '+
+                        'client.id = services.client_id AND '+
+                        'client.id = grades.client_id AND '+
+                        'date_grade = (SELECT max(date_grade) FROM `grades` WHERE grades.client_id=client.id) AND '+
+		        'saisons LIKE ? '+
+		      'ORDER BY nom_stripped COLLATE NOCASE, prenom_stripped COLLATE NOCASE', [contains_current_session]);
   var inscr = is.field(0); is.close();
   var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE version > server_version');
   var toSync = rs.field(0); rs.close();
