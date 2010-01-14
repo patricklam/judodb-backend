@@ -10,7 +10,7 @@ store.init();
 localInit();
 
 function localInit() {
-  populateCoursEscomptes();
+  populateCoursEscomptesSessions();
   if (cid)
     populateClient(cid);
   updateBlurb();
@@ -21,7 +21,7 @@ function localInit() {
   clearStatus();
 }
 
-function populateCoursEscomptes() {
+function populateCoursEscomptesSessions() {
   var cours = getElementById('cours');
   // get rid of dummy null option first
   cours.remove(0);
@@ -34,6 +34,17 @@ function populateCoursEscomptes() {
   for (i = 0; i < ESCOMPTE_NAMES.length; i++) {
     escompte.add(new Option(ESCOMPTE_NAMES[i], ESCOMPTE_AMOUNTS[i]), null);
   }
+
+  var sessions = getElementById('sessions');
+  sessions.remove(0);
+  for (i = 0; i < 2; i++) {
+    sessions.add(new Option(i+1, i+1), null);
+  }
+
+  if (CURRENT_SESSION[0] == 'A')
+    sessions[1].defaultSelected = true;
+  if (CURRENT_SESSION[0] == 'H')
+    sessions[0].defaultSelected = true;
 }
 
 function populateClient() {
