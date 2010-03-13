@@ -22,11 +22,11 @@ $pdf->SetFont('Times', '', 14);
 $c = explode('|', $_POST['auxdata']);
 $club = $c[0];
 $clubno = $c[1];
-// ["Nom", "Prenom", "Grade", "Tel", "JudoQC", "DDN", "Cat"];
-$COLS = 8;
-$display = array(true, true, true, false, true, true);
-$x = array(130, 130, 130, 0, 190, 50, 60, 60);
-$y = array(13, 23, 43, 0, 43, 57, 83, 93);
+// [ignore, "Nom", "Prenom", "Grade", "Tel", "JudoQC", "DDN", "Cat"];
+$COLS = 9;
+$display = array(false, true, true, true, false, true, true);
+$x = array(0, 130, 130, 130, 0, 190, 50, 60, 60);
+$y = array(0, 13, 23, 43, 0, 43, 57, 83, 93);
 $INCREMENT = 93.5;
 
 $catX = array('M' => 45, 'S' => 45, 'U20' => 68, 'U17' => 45, 
@@ -49,7 +49,7 @@ for ($i = 0; $i < $allCount; $i++) {
     $effOff = ($i % 3) * $INCREMENT;
     $d = explode("|", $ds[$i]);
 
-    $d[5] = substr($d[5], 0, 4);
+    $d[6] = substr($d[6], 0, 4);
     $date = str_replace("/", "      ", 
             str_replace("-", "      ", $_POST['date']));
     $pdf->SetXY(130, 33 + $effOff);
@@ -62,15 +62,15 @@ for ($i = 0; $i < $allCount; $i++) {
     $pdf->Cell(0, 0, $date);
 
     // division
-    if (substr($d[6], -1) == 'N') $d[6] = substr($d[6], 0, -1);
-    if ($d[8] == 'M') $d[6] = 'M';
-    $pdf->SetXY($catX[$d[6]], $catY[$d[6]] + $effOff);
+    if (substr($d[7], -1) == 'N') $d[7] = substr($d[7], 0, -1);
+    if ($d[13] == 'M') $d[7] = 'M';
+    $pdf->SetXY($catX[$d[7]], $catY[$d[7]] + $effOff);
     $pdf->Cell(0, 0, 'X');
 
     $sx = 0;
-    if ($d[7] == 'M')
+    if ($d[12] == 'M')
       $sx = 30.2;
-    if ($d[7] == 'F')
+    if ($d[12] == 'F')
       $sx = 43.2;
     if ($sx > 0) {
       $pdf->SetXY(60 + $sx, 57 + $effOff);
