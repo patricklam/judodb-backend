@@ -68,9 +68,9 @@ for ($i = 0; $i < $allCount; $i++) {
     $pdf->Cell(0, 0, 'X');
 
     $sx = 0;
-    if ($d[12] == 'M')
+    if ($d[11] == 'M')
       $sx = 30.2;
-    if ($d[12] == 'F')
+    if ($d[11] == 'F')
       $sx = 43.2;
     if ($sx > 0) {
       $pdf->SetXY(60 + $sx, 57 + $effOff);
