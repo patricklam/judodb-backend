@@ -24,7 +24,7 @@ if (isset($current_session)) {
 
 print '</sync_info>';
 
-if ($_GET['didSync'] == '1') {
+if (isset($_GET['didSync']) && $_GET['didSync'] == '1') {
   $u = $_SESSION[username];
   db_query_set("DELETE FROM `last_sync`");
   db_query_set("INSERT INTO `last_sync` (username) VALUE ('$u')");
