@@ -8,8 +8,6 @@
 
 * extract mailing lists (format?)
 
-* use database for user login authentication, not stuff in textfiles! (.5 day)
-
 * comptabilite info (1 day)
    -> sort by payment date
 * support multiple sessions (1 day)
