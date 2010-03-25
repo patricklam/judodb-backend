@@ -15,16 +15,13 @@
 //        4.2. Otherwise, authentication failed. Go back to login.php
 //////////////////////////////////////////////////////////////////////////////////
 header('content-type: text/html');
+require ('_database.php');
 
-$userDB = array("plam" => md5("portcartier"),
-                "rejean"  => md5("portcartier"),
-                "degyve" => md5("portcartier"),
-                "bgenier" => md5("auvers")); 
+db_connect() || die;
 
 function getPasswordForUser($username) {
-  // get password from a simple associative array
-  // but this could be easily rewritten to fetch user info from a real DB
-  global $userDB;     return $userDB[$username];
+  $rs = db_query_get("SELECT `password` FROM `user` WHERE username='$username'");
+  return $rs[0]["password"];
 } 
 
 function validate($challenge, $response, $password) {
