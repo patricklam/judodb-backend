@@ -100,7 +100,7 @@ function loginAndSync() {
 function computeResponse() {
   var postReq = "username="+getElementById('loginid').value+"&";
   postReq += "response="+
-    hex_md5(challenge+getElementById('password').value);
+    hex_md5(challenge+hex_md5(getElementById('password').value));
   return postReq;
 }
 

@@ -16,10 +16,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 header('content-type: text/html');
 
-$userDB = array("plam" => "portcartier",
-                "rejean"  => "portcartier",
-                "degyve" => "portcartier",
-                "bgenier" => "auvers"); 
+$userDB = array("plam" => md5("portcartier"),
+                "rejean"  => md5("portcartier"),
+                "degyve" => md5("portcartier"),
+                "bgenier" => md5("auvers")); 
 
 function getPasswordForUser($username) {
   // get password from a simple associative array
