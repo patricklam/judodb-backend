@@ -197,11 +197,11 @@ function refreshResults() {
       return dv;
   }
 
-  var heads = ["Nom", "Prenom", "Grade", "Tel", "JudoQC", "DDN", "Cat"];
+  var heads = ["Nom", "Prenom", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat"];
   var sorts = [makeSort(0, stringSort), makeSort(1, stringSort), makeSort(2, gradeSort), 
-	       null, null, 
-	       makeSort(5, stringSort), makeSort(6, catSort), makeSort(7, coursSort)];
-  var widthsForEditing = [-1, -1, -1, 3, -1, 8, -1, -1, -1, -1];
+         makeSort(3, dateSort), null, null, 
+         makeSort(6, stringSort), makeSort(7, catSort), makeSort(8, coursSort)];
+  var widthsForEditing = [-1, -1, -1, -1, 3, -1, 8, -1, -1, -1, -1];
 
   if (inFtMode) 
       appendTH("");
@@ -213,7 +213,7 @@ function refreshResults() {
       appendTH("V");
 
   if (all) 
-      appendTH("Cours", makeSort(7, coursSort));
+      appendTH("Cours", makeSort(9, coursSort));
 
   resultTab.appendChild(rh);
 
@@ -222,7 +222,7 @@ function refreshResults() {
       var cc = clients[c];
 
       if (inFilterMode) {
-	  if (catv != -1 && CATEGORY_ABBREVS[catv] != cc[7])
+	  if (catv != -1 && CATEGORY_ABBREVS[catv] != cc[8])
 	      continue;
 	  if (grmin != -1) {
 	      var g = GRADE_ORDER.indexOf(cc[3]);
@@ -263,7 +263,7 @@ function refreshResults() {
 	      v = vv;
 	  }
 	  hide = false;
-	  if (r == 8) {
+	  if (r == 9) {
 	      if (inEditMode) {
 		  var vv = document.createElement("input");
 		  vv.type = "checkbox";
@@ -273,12 +273,12 @@ function refreshResults() {
 	      } else continue;
 	  }
 
-          if (r >= 10)
+          if (r >= 11)
 	      hide = true;
           appendTD(row, v, hide);
       }
       if (inFtMode) {
-	var y = parseInt(cc[6].substring(0,4));
+	var y = parseInt(cc[7].substring(0,4));
 	appendTD(row, selectSex("s-"+c, inferSexFromRAMQ(cc['RAMQ'])));
 	if (CURRENT_SESSION_YEAR - y > AGE_MASTERS)
 	  appendTD(row, selectMasters("c-"+c));
@@ -297,7 +297,7 @@ function refreshResults() {
 
 function doSearch(c, all) {
   var contains_current_session = '%'+CURRENT_SESSION+'%';
-  var rs = db.execute('SELECT client.id,nom,prenom,grade,tel,affiliation,ddn,cours,verification,RAMQ from `client`,`services`,`grades` '+
+  var rs = db.execute('SELECT client.id,nom,prenom,grade,date_grade,tel,affiliation,ddn,cours,verification,RAMQ from `client`,`services`,`grades` '+
                       'WHERE deleted <> \'true\' AND '+
                         'client.id = services.client_id AND '+
                         'client.id = grades.client_id AND '+
@@ -315,14 +315,15 @@ function doSearch(c, all) {
     clients[index][4] = rs.field(4);
     clients[index][5] = rs.field(5);
     clients[index][6] = rs.field(6);
-    clients[index][7] = CATEGORY_ABBREVS[computeCategoryId
-      (clients[index][6].substring(0,4), clients[index][3])];
-    clients[index][8] = rs.field(8);
-    clients[index]['RAMQ'] = rs.field(9);
+    clients[index][7] = rs.field(7);
+    clients[index][8] = CATEGORY_ABBREVS[computeCategoryId
+      (clients[index][7].substring(0,4), clients[index][3])];
+    clients[index][9] = rs.field(9);
+    clients[index]['RAMQ'] = rs.field(10);
 
-    var cn = rs.field(7);
-    clients[index][9] = COURS_SHORT[cn];
-    clients[index][10] = cn;
+    var cn = rs.field(8);
+    clients[index][10] = COURS_SHORT[cn];
+    clients[index][11] = cn;
 
     ++index;
     rs.next();
