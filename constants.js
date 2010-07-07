@@ -1,9 +1,10 @@
 var VERSION = '100324-beta4';
 
 // See also constants.php for another definition of GLOBAL_FIELDS.
-var GLOBAL_FIELDS = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "code_postal", "tel", "affiliation", "carte_anjou", "nom_recu_impot", "nom_contact_urgence", "tel_contact_urgence", "RAMQ", "nom_stripped", "prenom_stripped"];
+var GLOBAL_FIELDS = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "code_postal", "tel", "affiliation", "carte_anjou", "nom_recu_impot", "nom_contact_urgence", "tel_contact_urgence", "sexe", "nom_stripped", "prenom_stripped"];
 var LOCAL_FIELDS = ["version", "server_version", "server_id", "deleted"];
 var ALL_FIELDS = LOCAL_FIELDS.concat(GLOBAL_FIELDS);
+var SCHEMA_VERSION = 1;
 
 var SERVICE_FIELDS = ["date_inscription", "saisons", "sans_affiliation", 
 		      "cours", "sessions",

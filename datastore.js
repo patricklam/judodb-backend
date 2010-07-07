@@ -134,7 +134,7 @@ function storeOneClient(cid, rs) {
               rs.adresse, rs.ville, rs.code_postal,
               rs.tel, rs.affiliation, rs.carte_anjou,
               rs.nom_recu_impot, 
-              rs.nom_contact_urgence, rs.tel_contact_urgence, rs.RAMQ,
+              rs.nom_contact_urgence, rs.tel_contact_urgence, rs.sexe,
 	      rs.nom_stripped, rs.prenom_stripped,
               rs.version, rs.server_version, rs.server_id]);
 
@@ -313,8 +313,8 @@ function storeMisc(r) {
 
     db.execute('DELETE FROM `global_configuration`');
     db.execute('INSERT INTO `global_configuration` '+
-                   'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-              [r.version, r.server_version, r.nom_club, r.numero_club, 
+                   'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+              [r.version, r.server_version, SCHEMA_VERSION, r.nom_club, r.numero_club, 
 	       r.age_masters, r.frais_passeport_judoqc, 
 	       r.frais_nonresident_anjou, 
 	       r.date_versement_1,

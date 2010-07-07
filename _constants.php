@@ -1,6 +1,6 @@
 <?
 // See also constants.js for another definition of GLOBAL_FIELDS.
-$GLOBAL_FIELDS = array("nom", "prenom", "ddn", "courriel", "adresse", "ville", "code_postal", "tel", "affiliation", "carte_anjou", "nom_recu_impot", "nom_contact_urgence", "tel_contact_urgence", "RAMQ");
+$GLOBAL_FIELDS = array("nom", "prenom", "ddn", "courriel", "adresse", "ville", "code_postal", "tel", "affiliation", "carte_anjou", "nom_recu_impot", "nom_contact_urgence", "tel_contact_urgence", "sexe");
 $ALL_FIELDS = $GLOBAL_FIELDS;
 array_push($ALL_FIELDS, "version");
 $GRADES_FIELDS = array("date_grade", "grade");

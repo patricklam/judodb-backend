@@ -3,7 +3,7 @@ store.init();
 
 function bumpConfigurationVersion() {
     db.execute('UPDATE `global_configuration` SET version=version+1');
-    db.execute('INSERT INTO `global_configuration` VALUES (1,0, "", "", 0, 0, 0, "", "", "", "", "", "")');
+    db.execute('INSERT INTO `global_configuration` VALUES (1,0, '+SCHEMA_VERSION+', "", "", 0, 0, 0, "", "", "", "", "", "")');
     db.execute('DELETE FROM `global_configuration` WHERE version < (SELECT MAX(version) FROM `global_configuration`)');
     loadMisc();
 }

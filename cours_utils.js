@@ -280,7 +280,7 @@ function refreshResults() {
       }
       if (inFtMode) {
 	var y = parseInt(cc[7].substring(0,4));
-	appendTD(row, selectSex("s-"+c, inferSexFromRAMQ(cc['RAMQ'])));
+	appendTD(row, selectSex("s-"+c, cc[12]));
 	if (CURRENT_SESSION_YEAR - y > AGE_MASTERS)
 	  appendTD(row, selectMasters("c-"+c));
       }
@@ -298,7 +298,7 @@ function refreshResults() {
 
 function doSearch(c, all) {
   var contains_current_session = '%'+CURRENT_SESSION+'%';
-  var rs = db.execute('SELECT client.id,nom,prenom,grade,date_grade,tel,affiliation,ddn,cours,verification,RAMQ from `client`,`services`,`grades` '+
+  var rs = db.execute('SELECT client.id,nom,prenom,grade,date_grade,tel,affiliation,ddn,cours,verification,sexe from `client`,`services`,`grades` '+
                       'WHERE deleted <> \'true\' AND '+
                         'client.id = services.client_id AND '+
                         'client.id = grades.client_id AND '+
@@ -320,7 +320,7 @@ function doSearch(c, all) {
     clients[index][8] = CATEGORY_ABBREVS[computeCategoryId
       (clients[index][7].substring(0,4), clients[index][3])];
     clients[index][9] = rs.field(9);
-    clients[index]['RAMQ'] = rs.field(10);
+    clients[index][12] = rs.field(10);
 
     var cn = rs.field(8);
     clients[index][10] = COURS_SHORT[cn];
@@ -340,7 +340,7 @@ function clearFull() {
 
 function computeFull() {
   var contains_current_session = '%'+CURRENT_SESSION+'%';
-  var rs = db.execute('SELECT nom,prenom,affiliation,ddn,courriel,adresse,ville,code_postal,tel,carte_anjou,nom_contact_urgence,tel_contact_urgence,RAMQ,grade,date_grade,c.short_desc from `client`,`services`,`grades`,`cours` AS c '+
+  var rs = db.execute('SELECT nom,prenom,affiliation,ddn,courriel,adresse,ville,code_postal,tel,carte_anjou,nom_contact_urgence,tel_contact_urgence,grade,date_grade,c.short_desc from `client`,`services`,`grades`,`cours` AS c '+
                       'WHERE deleted <> \'true\' AND ' +
 		        'c.seqno = services.cours AND ' +
                         'client.id = services.client_id AND '+

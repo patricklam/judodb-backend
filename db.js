@@ -1,4 +1,28 @@
+function bail() {
+  setError('s.v.p. faire un reset');
+}
+
 function createTablesIfNeeded (db) {
+    // check for schema version existing
+  var rs = db.execute("select * from sqlite_master where name='global_configuration'");
+  if (rs.isValidRow()) {
+      var s = rs.field(4);
+      rs.close();
+      if (s.indexOf('schema_version') == -1) {
+	  bail(); return;
+      }
+
+      // check for schema version correctness
+      var rs = db.execute("select schema_version from global_configuration");
+      if (rs.isValidRow()) {
+	  if (rs.field(0) != SCHEMA_VERSION) {
+	      rs.close();
+	      bail(); return;
+	  }
+      }
+      rs.close();
+  }
+
   db.execute('create table if not exists `client` (' +
              '`id` INTEGER PRIMARY KEY AUTOINCREMENT, ' +
       	     '`nom` varchar(50) NOT NULL, ' +
@@ -14,7 +38,6 @@ function createTablesIfNeeded (db) {
       	     '`nom_recu_impot` varchar(255), ' +
       	     '`nom_contact_urgence` varchar(255), ' +
       	     '`tel_contact_urgence` varchar(255), ' +
-      	     '`RAMQ` varchar(20), ' +
 	     '`sexe` char(1), ' + 
              '`nom_stripped` varchar(50), '+
              '`prenom_stripped` varchar(50), '+
@@ -23,15 +46,6 @@ function createTablesIfNeeded (db) {
       	     '`server_id` int(5) NOT NULL, ' +
       	     '`deleted` boolean ' +
       	     ')');
-    // upgrade path 4: add `sexe` to client
-  var rs = db.execute("select * from sqlite_master where name='client'");
-  if (rs.isValidRow()) {
-      var s = rs.field(4);
-      rs.close();
-      if (s.indexOf('sexe') == -1) {
-	  db.execute("alter table `client` add `sexe` char(1)");
-      }
-  }
   db.execute('create table if not exists `grades` (' +
              '`client_id` INTEGER, ' +
              '`id` INTEGER PRIMARY KEY AUTOINCREMENT, ' +
@@ -53,7 +67,8 @@ function createTablesIfNeeded (db) {
 	     '`frais` varchar(10), '+
 	     '`cas_special_note` varchar(50), '+
 	     '`escompte_special` varchar(10), '+
-	     '`horaire_special` varchar(50) '+
+	     '`horaire_special` varchar(50), ' +
+	     '`verification` boolean' + 
              ')');
   rs.close();
   db.execute('create table if not exists `payment_groups` (' +
@@ -78,6 +93,7 @@ function createTablesIfNeeded (db) {
   db.execute('create table if not exists `global_configuration` (' +
       	     '`version` int(5), ' +
       	     '`server_version` int(5), ' +
+             '`schema_version` int(5), ' +
   	     '`nom_club` char(30), ' +
   	     '`numero_club` char(30), ' +
   	     '`age_masters` char(10), ' +
@@ -89,8 +105,8 @@ function createTablesIfNeeded (db) {
   	     '`date_versement_4` DATE, ' +
   	     '`date_versement_5` DATE, ' +
   	     '`date_versement_6` DATE)');
-  db.execute('insert into `global_configuration` (version, server_version) '+
-  	       'SELECT 0,0 WHERE NOT EXISTS '+
+  db.execute('insert into `global_configuration` (version, server_version, schema_version) '+
+  	       'SELECT 0,0,'+SCHEMA_VERSION+' WHERE NOT EXISTS '+
 	         '(SELECT * FROM `global_configuration`)');
   db.execute('create table if not exists `session` (' +
 	     '`id` INTEGER PRIMARY KEY AUTOINCREMENT,' +
