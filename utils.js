@@ -228,7 +228,3 @@ function stringSort(a, b) {
     if (a0 == b0) return 0;
     return -1;
 }
-
-function dateSort(a, b) {
-    if (a < b) return 1; if (a == b) return 0; return -1;
-}

@@ -89,15 +89,17 @@ function refreshResults() {
   var clients = doSearch(cv, all);
 
   var rh = document.createElement("tr");
-  function appendTH(t, s) {
+  function appendTH(t, s, hide) {
       var c = document.createElement("th");
       var ct = document.createTextNode(t);
       c.style.textAlign = "left";
+      if (hide) c.style.display = "none";
       if (s != null) {
 	  var l = document.createElement("a");
 	  l.href = "#";
 	  l.className += "notlink-in-print";
 	  l.onclick = s;
+          l.initialOnClick = s;
 	  l.appendChild(ct);
 	  ct = l;
       }
@@ -157,8 +159,9 @@ function refreshResults() {
 	  var arr = new Array();
 	  var head = tb[0];
 	  for (var n = 0; n < head.childNodes.length; n++)
-	      head.childNodes[n].firstChild.onclick = sorts[n];
-	  head.childNodes[i].firstChild.onclick = makeSort(i, function (a, b) { return -c(a, b); });
+              head.childNodes[n].firstChild.onclick = head.childNodes[n].firstChild.initialOnClick;
+          head.childNodes[i+1].firstChild.onclick = 
+	      makeSort(i, function (a, b) { return -c(a, b); });
 	  resultTab.removeChild(head);
 
 	  while (resultTab.hasChildNodes()) {
@@ -186,18 +189,20 @@ function refreshResults() {
       return dv;
   }
 
-  var headNames = ["ft", "nom", "prenom", "grade", "dategrade", "tel", "judoqc", "ddn", "cat", "verif", "cours", "cours_id", "sexe"];
-  var heads =     ["", "Nom",   "Prenom", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat", "V", "Cours", "", "Sexe"];
-  var widthsForEditing = [-1, -1, -1, 3, 8, -1, -1, 8, -1, -1, -1, -1, 1];
-  var sorts = [null, stringSort, stringSort, gradeSort, dateSort,  null,  null,     stringSort, catSort, null, coursSort, null, null];
-  for (s in sorts)
-    if (sorts[s] != null) 
-      sorts[s] = makeSort(s, sorts[s]);
-  var visibilityPredicates = [inFtMode, true, true, true, true, true, true, true, true, inEditMode, all, false, true];
+  var headNames = ["ft", "nom", "prenom", "sexe", "grade", "dategrade", "tel", "judoqc", "ddn", "cat", "verif", "cours", "cours_id"];
+  var heads =     ["", "Nom",   "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat", "V", "Cours", ""];
+  var widthsForEditing = [-1, -1, -1, 1, 3, 8, -1, -1, 8, -1, -1, -1, -1];
+  var rawSorts = [null, stringSort, stringSort, null, gradeSort, stringSort,  null,  null, stringSort, catSort, null, coursSort, null];
+  var sorts = [];
+  var visibilityPredicates = [inFtMode, true, true, true, true, true, true, true, true, true, inEditMode, all, false];
 
-  for (h in heads)
-    if (visibilityPredicates[h])
-      appendTH(heads[h], sorts[h]);
+  for (h in heads) {
+    if (rawSorts[h] != null)
+      s = makeSort(h-1, rawSorts[h]);
+    else 
+      s = null;
+    appendTH(heads[h], s, !visibilityPredicates[h]);
+  }
 
   resultTab.appendChild(rh);
 
@@ -274,7 +279,7 @@ function refreshResults() {
 
 function doSearch(c, all) {
   var contains_current_session = '%'+CURRENT_SESSION+'%';
-  var rs = db.execute('SELECT client.id,nom,prenom,grade,date_grade,tel,affiliation,ddn,cours,verification,sexe from `client`,`services`,`grades` '+
+  var rs = db.execute('SELECT client.id,nom,prenom,sexe,grade,date_grade,tel,affiliation,ddn,cours,verification from `client`,`services`,`grades` '+
                       'WHERE deleted <> \'true\' AND '+
                         'client.id = services.client_id AND '+
                         'client.id = grades.client_id AND '+
@@ -288,19 +293,19 @@ function doSearch(c, all) {
     clients[index][0] = rs.field(0);
     clients[index][1] = rs.field(1);
     clients[index][2] = rs.field(2);
-    clients[index][3] = rs.field(3).substring(0,3);
-    clients[index][4] = rs.field(4);
+    clients[index][3] = rs.field(3);
+    clients[index][4] = rs.field(4).substring(0,3);
     clients[index][5] = rs.field(5);
     clients[index][6] = rs.field(6);
     clients[index][7] = rs.field(7);
-    clients[index][8] = CATEGORY_ABBREVS[computeCategoryId
-      (clients[index][7].substring(0,4), clients[index][3])];
-    clients[index][9] = rs.field(9);
-    clients[index][12] = rs.field(10);
+    clients[index][8] = rs.field(8);
+    clients[index][9] = CATEGORY_ABBREVS[computeCategoryId
+      (clients[index][8].substring(0,4), clients[index][4])];
+    clients[index][10] = rs.field(10);
 
-    var cn = rs.field(8);
-    clients[index][10] = COURS_SHORT[cn];
-    clients[index][11] = cn;
+    var cn = rs.field(9);
+    clients[index][11] = COURS_SHORT[cn];
+    clients[index][12] = cn;
 
     ++index;
     rs.next();
@@ -378,7 +383,7 @@ function showFilterElements() {
   getElementById('xls').style.display = isFiltering ? 'none' : 'inline';
   getElementById('xls2').style.display = isFiltering ? 'none' : 'inline';
   getElementById('stdTitle').style.display = isFiltering ? 'none' : '';
-  getElementById('auxTitle').style.display = !isFiltering ? 'none' : '';
+  getElementById('filterTitle').style.display = !isFiltering ? 'none' : '';
   getElementById('returnAction').style.display = inMainMode ?
 	'none' : 'block';
 }
