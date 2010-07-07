@@ -113,11 +113,11 @@ function upct() {
 // autoupdate for date_inscription field
 function ud() {
   getElementById("date_inscription").value = formatDate(new Date());
+  getElementById("saisons").value = calcSaison();
 }
 
 // autoupdate for frais field
 function uFrais() {
-  getElementById("saisons").value = calcSaison();
   getElementById("frais").value = calcFrais();
   uFraisFamille();
   uSolde();
