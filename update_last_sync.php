@@ -28,5 +28,6 @@ if (isset($_GET['didSync']) && $_GET['didSync'] == '1') {
   $u = $_SESSION[username];
   db_query_set("DELETE FROM `last_sync`");
   db_query_set("INSERT INTO `last_sync` (username) VALUE ('$u')");
+  db_query_set("UPDATE `user` SET last_update=NOW() WHERE `username`='$u'");
 }
 ?>

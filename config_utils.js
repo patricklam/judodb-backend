@@ -353,6 +353,37 @@ function saveEscompte() {
     initConfig();
 }
 
+/**** user stuff ****/
+loadUser();
+
+function loadUser() {
+  doRequest("GET", "user.php", null, populateUser_, null);
+
+  function populateUser_(status, statusText, responseText, responseXML) {
+    if (status == '200' && responseXML != null) {
+	var resultTab = document.createElement('tbody');
+
+	var t = responseXML.childNodes[0].childNodes; // table
+	for (i = 0; i < t.length; i++) {
+	    var row = document.createElement("tr");
+            if (t[i].nodeName != "tr") continue;
+	    
+	    for (j = 1; j < 4; j++) 
+		addNode(t[i].childNodes[j].textContent, row);
+	    resultTab.appendChild(row);
+	}
+	getElementById('usertable').appendChild(resultTab);
+    }
+  }
+}
+
+function addNode(t, row) {
+    var c = document.createElement("td");
+    c.style.paddingRight = "1em";
+    c.appendChild(document.createTextNode(t));
+    row.appendChild(c);
+}
+
 /**** misc stuff ****/
 loadMisc();
 

@@ -38,6 +38,7 @@ CREATE TABLE `user` (
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `last_update` date,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -59,6 +60,7 @@ CREATE TABLE `client` (
   `nom_contact_urgence` varchar(255),
   `tel_contact_urgence` varchar(255),
   `RAMQ` varchar(20),
+  `sexe` char(1),
   `version` int(5) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
