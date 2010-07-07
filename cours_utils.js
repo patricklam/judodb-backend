@@ -17,9 +17,10 @@ for (var i = 0; i < GRADE_ORDER.length; i++)
 refreshResults();
 
 var act='';
+var isFiltering = false;
+
 var inMainMode = true;
 var inEditMode = false;
-var isFiltering = false;
 var inFtMode = false;
 var inGCoursMode = false;
 
@@ -118,19 +119,6 @@ function refreshResults() {
       row.appendChild(c);
   }
 
-  function selectSex(id, d) {
-      var s = document.createElement("select");
-      s.add(new Option("", "-1", false, false), null);
-      s.add(new Option("M", "0", d == 'M', false), null);
-      s.add(new Option("F", "1", d == 'F', false), null);
-      if (d == 'M')
-	  s.selectedIndex = 1;
-      if (d == 'F')
-	  s.selectedIndex = 2;
-      s.id = id;
-      return s;
-  }
-
   function selectMasters(id) {
       var s = document.createElement("select");
       s.add(new Option("Senior", "S", true, false), null);
@@ -198,23 +186,18 @@ function refreshResults() {
       return dv;
   }
 
-  var heads = ["Nom", "Prenom", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat"];
-  var sorts = [makeSort(0, stringSort), makeSort(1, stringSort), makeSort(2, gradeSort), 
-         makeSort(3, dateSort), null, null, 
-         makeSort(6, stringSort), makeSort(7, catSort), makeSort(8, coursSort)];
-  var widthsForEditing = [-1, -1, -1, -1, 3, -1, 8, -1, -1, -1, -1];
-
-  if (inFtMode) 
-      appendTH("");
+  var headNames = ["ft", "nom", "prenom", "grade", "dategrade", "tel", "judoqc", "ddn", "cat", "verif", "cours", "cours_id", "sexe"];
+  var heads =     ["", "Nom",   "Prenom", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat", "V", "Cours", "", "Sexe"];
+  var widthsForEditing = [-1, -1, -1, 3, 8, -1, -1, 8, -1, -1, -1, -1, 1];
+  var sorts = [null, stringSort, stringSort, gradeSort, dateSort,  null,  null,     stringSort, catSort, null, coursSort, null, null];
+  for (s in sorts)
+    if (sorts[s] != null) 
+      sorts[s] = makeSort(s, sorts[s]);
+  var visibilityPredicates = [inFtMode, true, true, true, true, true, true, true, true, inEditMode, all, false, true];
 
   for (h in heads)
+    if (visibilityPredicates[h])
       appendTH(heads[h], sorts[h]);
-
-  if (inEditMode)
-      appendTH("V");
-
-  if (all) 
-      appendTH("Cours", makeSort(9, coursSort));
 
   resultTab.appendChild(rh);
 
@@ -241,13 +224,9 @@ function refreshResults() {
 	  appendTD(row, checkbox("sel-"+c));
       }
 
-      var ccl = cc.length;
-
-      // don't display cours name or id when not in all-mode.
-      if (!all) ccl -= 2;
-      for (var r = 1; r < ccl; r++) {
+      for (var r = 1; r < cc.length; r++) {
 	  var v = tn(cc[r]);
-	  if (r == 1 || r == 2) {
+	  if (headNames[r] == "nom" || headNames[r] == "prenom") {
 	      var vv = document.createElement("a");
 	      vv.href = "editclient.html?cid="+cc[0];
 	      vv.target = "_";
@@ -263,24 +242,21 @@ function refreshResults() {
 	      vv.value = cc[r];
 	      v = vv;
 	  }
-	  hide = false;
-	  if (r == 9) {
+
+	  if (headNames[r] == "verif") {
 	      if (inEditMode) {
 		  var vv = document.createElement("input");
 		  vv.type = "checkbox";
 		  vv.origChecked = cc[r] == "true";
 		  vv.checked = cc[r] == "true";
 		  v = vv;
-	      } else continue;
+	      }
 	  }
 
-          if (r >= 11)
-	      hide = true;
-          appendTD(row, v, hide);
+          appendTD(row, v, !visibilityPredicates[r]);
       }
       if (inFtMode) {
 	var y = parseInt(cc[7].substring(0,4));
-	appendTD(row, selectSex("s-"+c, cc[12]));
 	if (CURRENT_SESSION_YEAR - y > AGE_MASTERS)
 	  appendTD(row, selectMasters("c-"+c));
       }
@@ -424,7 +400,7 @@ function mainMode() {
   showEditElements();
   showGCoursElements();
   showFTElements();
-	refreshResults();
+  refreshResults();
 }
 
 function gcoursMode() {
