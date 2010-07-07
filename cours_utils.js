@@ -17,17 +17,18 @@ for (var i = 0; i < GRADE_ORDER.length; i++)
 refreshResults();
 
 var act='';
+var inMainMode = true;
 var inEditMode = false;
-var inFilterMode = false;
+var isFiltering = false;
 var inFtMode = false;
 var inGCoursMode = false;
 
 function addMetaData() {
     var c = getElementById('cours'); var cs = c.selectedIndex;
-    if (inFilterMode || cs > 0) {
+    if (isFiltering || cs > 0) {
 	// single class
 	getElementById('multi').value = '0';
-	if (inFilterMode) {
+	if (isFiltering) {
 	    if (c.value != -1)
 		getElementById('title').value = c[cs].text;
 	    else
@@ -73,7 +74,7 @@ function refreshResults() {
   var dv = '';
 
   var c = getElementById('cours'); var cs = c.selectedIndex;
-  getElementById('ent').innerHTML = (inFilterMode && cs > 0) ? ('Entraineur: ' + COURS_ENTRAINEURS[cs-1]) : '';
+  getElementById('ent').innerHTML = (isFiltering && cs > 0) ? ('Entraineur: ' + COURS_ENTRAINEURS[cs-1]) : '';
   re.removeChild(re.getElementsByTagName('tbody')[0]);
 
   var resultTab = document.createElement('tbody');
@@ -221,7 +222,7 @@ function refreshResults() {
   for (c in clients) {
       var cc = clients[c];
 
-      if (inFilterMode) {
+      if (isFiltering) {
 	  if (catv != -1 && CATEGORY_ABBREVS[catv] != cc[8])
 	      continue;
 	  if (grmin != -1) {
@@ -372,7 +373,7 @@ function showEditElements() {
 	'block' : 'none';
   getElementById('clearAction').style.display = inEditMode ?
 	'block' : 'none';
-  getElementById('returnAction').style.display = inEditMode ?
+  getElementById('returnAction').style.display = inMainMode ?
 	'none' : 'block';
   getElementById('actions').style.display = inEditMode ?
 	'none' : 'block';
@@ -380,6 +381,7 @@ function showEditElements() {
 
 function editMode() {
   inEditMode = !inEditMode;
+	inMainMode = !inEditMode;
   showEditElements();
   refreshResults();
 }
@@ -396,38 +398,38 @@ function clearAllV() {
 }
 
 function showFilterElements() {
-  getElementById('cat').style.display = !inFilterMode ? 'none' : 'block';
-  getElementById('xls').style.display = inFilterMode ? 'none' : 'inline';
-  getElementById('xls2').style.display = inFilterMode ? 'none' : 'inline';
-  getElementById('stdTitle').style.display = inFilterMode ? 'none' : '';
-  getElementById('auxTitle').style.display = !inFilterMode ? 'none' : '';
-  getElementById('actions').style.display = inFilterMode ?
-	'none' : 'block';
-  getElementById('returnAction').style.display = !inFilterMode ?
+  getElementById('cat').style.display = !isFiltering ? 'none' : 'block';
+  getElementById('xls').style.display = isFiltering ? 'none' : 'inline';
+  getElementById('xls2').style.display = isFiltering ? 'none' : 'inline';
+  getElementById('stdTitle').style.display = isFiltering ? 'none' : '';
+  getElementById('auxTitle').style.display = !isFiltering ? 'none' : '';
+  getElementById('returnAction').style.display = inMainMode ?
 	'none' : 'block';
 }
 
 function filterMode() {
-  inFilterMode = !inFilterMode;
+  isFiltering = !isFiltering;
+  var t = getElementById('filterText').innerHTML;
+  getElementById('filterText').innerHTML = getElementById('filterAlt').innerHTML;
+  getElementById('filterAlt').innerHTML = t;
   showFilterElements();
   refreshResults();
 }
 
-function showFTElements() {
-  getElementById('ft303_span').style.display = inFtMode ?
-	'block' : 'none';
-  getElementById('rightbar').style.display = inFtMode ?
-	'none' : 'block';
-}
-
-function ftMode() {
-  inFtMode = !inFtMode;
+function mainMode() {
+  inMainMode = true;
+  inEditMode = false;
+  inGCoursMode = false;
+  inFtMode = false;
+  showEditElements();
+  showGCoursElements();
   showFTElements();
-  refreshResults();
+	refreshResults();
 }
 
 function gcoursMode() {
   inGCoursMode = !inGCoursMode;
+  inMainMode = !inGCoursMode;
   showGCoursElements();
   refreshResults();
 }
@@ -435,14 +437,21 @@ function gcoursMode() {
 function showGCoursElements() {
   getElementById('saveorquit').style.display = inGCoursMode ?
 	'block' : 'none';
-  getElementById('rightbar').style.display = inGCoursMode ?
+  getElementById('returnAction').style.display = inMainMode ?
 	'none' : 'block';
+}
+
+function ftMode() {
+  inFtMode = !inFtMode;
+  inMainMode = !inFtMode;
+  showFTElements();
+  refreshResults();
 }
 
 function showFTElements() {
   getElementById('ft303_span').style.display = inFtMode ?
 	'block' : 'none';
-  getElementById('rightbar').style.display = inFtMode ?
+  getElementById('returnAction').style.display = inMainMode ?
 	'none' : 'block';
 }
 
