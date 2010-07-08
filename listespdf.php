@@ -24,7 +24,9 @@ if ($multi == "1") {
 }
 
 $notFirst = FALSE;
-$COLS = 7;
+// ["Nom", "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat", "Masters", "Cours", "Cours_num"];
+$COLS = 10;
+$display = array(true, true, false, true, false, true, true, true, false, false, false);
 for ($p = 0; $p < $c; $p++) {
     $data = iconv("UTF-8", "ISO-8859-1", $_POST['data']);
     $ds = explode("*", $data);
@@ -53,13 +55,15 @@ for ($p = 0; $p < $c; $p++) {
     $pdf->SetFillColor(224, 235, 255);
     $fill = true;
 
-    $w = array(45, 45, 12, 30, 20, 25, 0);
+    $w = array(45, 45, -1, 12, -1, 30, 20, 25, 0);
     $actualCount = 0;
     for ($i = 0; $i < $allCount-1; $i++) {
         $d = explode("|", $ds[$i]);
         if ($multi == "0" || $d[$COLS+1] == $p) {
-            for ($j = 0; $j < $COLS; $j++) 
-                $pdf->Cell($w[$j], 6, $d[$j], '', 0, 'L', $fill);
+            for ($j = 0; $j < $COLS; $j++) {
+	        if ($display[$j])
+		    $pdf->Cell($w[$j], 6, $d[$j], '', 0, 'L', $fill);
+	    }
             $fill = !$fill;
             $pdf->Ln();
             $actualCount++;
