@@ -210,14 +210,16 @@ function refreshResults() {
 
   var actualClientCount = 0;
   var ddnCol = headNames.indexOf("ddn");
+  var catCol = headNames.indexOf("cat");
+  var gradeCol = headNames.indexOf("grade");
   for (c in clients) {
       var cc = clients[c];
 
       if (isFiltering) {
-	  if (catv != -1 && CATEGORY_ABBREVS[catv] != cc[8])
+	  if (catv != -1 && CATEGORY_ABBREVS[catv] != cc[catCol])
 	      continue;
 	  if (grmin != -1) {
-	      var g = GRADE_ORDER.indexOf(cc[3]);
+	      var g = GRADE_ORDER.indexOf(cc[gradeCol]);
 	      if (g < grmin || g > grmax)
 		  continue;
 	  }
@@ -360,13 +362,11 @@ function showEditElements() {
 	'block' : 'none';
   getElementById('returnAction').style.display = inMainMode ?
 	'none' : 'block';
-  getElementById('actions').style.display = inEditMode ?
-	'none' : 'block';
 }
 
 function editMode() {
   inEditMode = !inEditMode;
-	inMainMode = !inEditMode;
+  inMainMode = !inEditMode;
   showEditElements();
   refreshResults();
 }
