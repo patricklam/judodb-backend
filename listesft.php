@@ -2,6 +2,7 @@
 
 require ('fpdf/fpdf.php');
 require ('fpdi/fpdi.php');
+require ('produceoutput.php');
 
 // no need for authentication on this PHP file.
 
@@ -84,6 +85,11 @@ for ($i = 0; $i < $allCount; $i++) {
     }
     $actualCount++;
 }
+$pdf->AddPage();
+
+$display = array(false, true, true, false, false, false, true, false, false, true, false);
+$w = array(0, 45, 45, -1, -1, -1, 35, -1, -1, 10);
+produceOutput($pdf, array($_POST['evt']), array($_POST['date']), $ds, 1, $multi, $display, $w, true);
 
 $pdf->Output();
 ?>

@@ -1,6 +1,7 @@
 <? 
 
 require ('fpdf/fpdf.php');
+require ('produceoutput.php');
 
 // no need for authentication on this PHP file.
 
@@ -23,57 +24,12 @@ if ($multi == "1") {
     $c = 1;
 }
 
-$notFirst = FALSE;
-// ["Nom", "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat", "Masters", "Cours", "Cours_num"];
-$COLS = 10;
-$display = array(true, true, false, true, false, true, true, true, false, false, false);
-for ($p = 0; $p < $c; $p++) {
-    $data = iconv("UTF-8", "ISO-8859-1", $_POST['data']);
-    $ds = explode("*", $data);
-    $allCount = count($ds);
+$data = iconv("UTF-8", "ISO-8859-1", $_POST['data']);
+$ds = explode("*", $data);
 
-    // extra unnecessary O(n) pass to verify non-emptiness.
-    $live = FALSE;
-    for ($i = 0; $i < $allCount-1; $i++) {
-        $d = explode("|", $ds[$i]);
-        if ($multi == "0" || $d[$COLS+1] == $p) {
-	    $live = TRUE;
-	    break;
-        }
-    }
-    
-    if (!$live) continue;
-
-    if ($notFirst)
-        $pdf->AddPage();
-    $notFirst = TRUE;
-
-    $pdf->Cell(0, 6, $ts[$p], 0, 1, 'C');
-    $pdf->Cell(0, 6, $sts[$p], 0, 1, 'C');
-    $pdf->Ln();
-
-    $pdf->SetFillColor(224, 235, 255);
-    $fill = true;
-
-    $w = array(45, 45, -1, 12, -1, 30, 20, 25, 0);
-    $actualCount = 0;
-    for ($i = 0; $i < $allCount-1; $i++) {
-        $d = explode("|", $ds[$i]);
-        if ($multi == "0" || $d[$COLS+1] == $p) {
-            for ($j = 0; $j < $COLS; $j++) {
-	        if ($display[$j])
-		    $pdf->Cell($w[$j], 6, $d[$j], '', 0, 'L', $fill);
-	    }
-            $fill = !$fill;
-            $pdf->Ln();
-            $actualCount++;
-	}
-    }
-
-    $pdf->Ln();
-    $pdf->Cell(0, 6, "Nombre inscrit: $actualCount");
-    if ($multi == "0") break;
-}
+$display = array(false, true, true, false, true, false, true, true, true, false, false, false);
+$w = array(-1, 45, 45, -1, 12, -1, 30, 20, 25, 0);
+produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, false);
 
 $pdf->Output();
 ?>
