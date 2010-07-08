@@ -14,6 +14,8 @@ var grmax = getElementById('gradeMax');
 for (var i = 0; i < GRADE_ORDER.length; i++)
   grmax.add(new Option(GRADE_ORDER[i], i), null);
 
+var headNames = ["ft", "nom", "prenom", "sexe", "grade", "dategrade", "tel", "judoqc", "ddn", "cat", "verif", "cours", "cours_id"];
+
 refreshResults();
 
 var act='';
@@ -189,12 +191,12 @@ function refreshResults() {
       return dv;
   }
 
-  var headNames = ["ft", "nom", "prenom", "sexe", "grade", "dategrade", "tel", "judoqc", "ddn", "cat", "verif", "cours", "cours_id"];
   var heads =     ["", "Nom",   "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat", "V", "Cours", ""];
-  var widthsForEditing = [-1, -1, -1, 1, 3, 8, -1, -1, 8, -1, -1, -1, -1];
+  var widthsForEditing = [-1, -1, -1, 1, 3, 8, -1, 8, -1, -1, -1, -1, -1];
+  var onchange = [null, null, null, null, insertDefaultDate, null, null, null, null, null, null, null, null];
   var rawSorts = [null, stringSort, stringSort, null, gradeSort, stringSort,  null,  null, stringSort, catSort, null, coursSort, null];
   var sorts = [];
-  var visibilityPredicates = [inFtMode, true, true, true, true, true, true, true, true, true, inEditMode, all, false];
+  var visibilityPredicates = [inFtMode, true, true, inFtMode, true, true, true, true, true, true, inEditMode, all, false];
 
   for (h in heads) {
     if (rawSorts[h] != null)
@@ -207,6 +209,7 @@ function refreshResults() {
   resultTab.appendChild(rh);
 
   var actualClientCount = 0;
+  var ddnCol = headNames.indexOf("ddn");
   for (c in clients) {
       var cc = clients[c];
 
@@ -243,6 +246,7 @@ function refreshResults() {
 	      var vv = document.createElement("input");
 	      vv.type = "text";
 	      vv.size = widthsForEditing[r];
+              vv.onchange = onchange[r];
 	      vv.origValue = cc[r];
 	      vv.value = cc[r];
 	      v = vv;
@@ -261,7 +265,7 @@ function refreshResults() {
           appendTD(row, v, !visibilityPredicates[r]);
       }
       if (inFtMode) {
-	var y = parseInt(cc[7].substring(0,4));
+	var y = parseInt(cc[ddnCol].substring(0,4));
 	if (CURRENT_SESSION_YEAR - y > AGE_MASTERS)
 	  appendTD(row, selectMasters("c-"+c));
       }
@@ -436,20 +440,25 @@ function showFTElements() {
 	'none' : 'block';
 }
 
+function insertDefaultDate() {
+  if (this.value == '') return;
+
+  var gd = getElementById('date_grade').value;
+  if (gd.value == '') return;
+
+  this.parentNode.nextSibling.firstChild.value = gd;
+}
+
 function updateGrade(cid, nv) {
   // if explicit date entered, just add that to the grades table.
   // no date: replace any existing 0000-00-00 grades.
-  var gd = getElementById('date_grade').value;
-  if (gd == '') {
-    gd = '0000-00-00';
-    db.execute('DELETE FROM `grades` WHERE client_id=? AND date_grade=?',
-	       [cid, gd]);
-  }
+  db.execute('DELETE FROM `grades` WHERE client_id=? AND date_grade="0000-00-0000"',
+	       [cid]);
   db.execute('DELETE FROM `grades` WHERE client_id=? AND grade=?',
-	       [cid, nv]);
+	       [cid, nv[0]]);
   db.execute('INSERT INTO `grades` VALUES (?, null, ?, ?)',
-	     [cid, nv, gd]);
-  db.execute('UPDATE `client` SET version=version+1', [cid]);
+	     [cid, nv[0], nv[1]]);
+  db.execute('UPDATE `client` SET version=version+1 WHERE id=?', [cid]);
 }
 
 function updateJudoQC(cid, nv) {
@@ -457,14 +466,19 @@ function updateJudoQC(cid, nv) {
  	       'WHERE id=?', [nv, cid]);
 }
 
+function updateSexe(cid, nv) {
+  db.execute('UPDATE `client` SET version=version+1, sexe=? '+
+               'WHERE id=?', [nv, cid]);
+}
+
 function updateVerif(cid, nv) {
-  db.execute('UPDATE `services` SET verification=? ' + // XXX session
+  db.execute('UPDATE `services` SET verification=? ' + 
  	       'WHERE client_id=?', [nv, cid]);
   db.execute('UPDATE `client` SET version=version+1 ' +
  	       'WHERE id=?', [cid]);
 }
 
-var updaters = [null, null, updateGrade, null, updateJudoQC, null, null, updateVerif, null];
+var updaters = [null, null, updateSexe, null, null, null, updateJudoQC, null, null, updateVerif, null, null];
 
 function saveEdits() {
   var rs = getElementById('results').lastChild.childNodes;
@@ -487,7 +501,12 @@ function saveEdits() {
 	}
 
 	if (changed) {
-	    updaters[i](r.cid, v);
+            if (updaters[i] != null)
+              updaters[i](r.cid, v);
+	    if (headNames[i+1] == "dategrade")
+	      updateGrade(r.cid, [c.previousSibling.firstChild.value, v]);
+            if (headNames[i+1] == "grade")
+              updateGrade(r.cid, [v, c.nextSibling.firstChild.value]);
 	    inp.origValue = inp.value;
 	    inp.origChecked = inp.checked;
         }
