@@ -7,12 +7,20 @@ for (var i = 0; i < COURS.length; i++)
 var cat = getElementById('catSelect');
 for (var i = 0; i < CATEGORY_ABBREVS.length; i++)
   cat.add(new Option(CATEGORY_ABBREVS[i], i), null);
+
 var grmin = getElementById('gradeMin');
 for (var i = 0; i < GRADE_ORDER.length; i++)
   grmin.add(new Option(GRADE_ORDER[i], i), null);
 var grmax = getElementById('gradeMax');
 for (var i = 0; i < GRADE_ORDER.length; i++)
   grmax.add(new Option(GRADE_ORDER[i], i), null);
+
+var ddnmin = getElementById('ddnMin');
+for (var i = CURRENT_SESSION_YEAR; i > FIRST_DDN_YEAR; i--)
+  ddnmin.add(new Option(i, i), null);
+var ddnmax = getElementById('ddnMax');
+for (var i = CURRENT_SESSION_YEAR; i > FIRST_DDN_YEAR; i--)
+  ddnmax.add(new Option(i, i), null);
 
 var headNames = ["ft", "nom", "prenom", "sexe", "grade", "dategrade", "tel", "judoqc", "ddn", "cat", "verif", "cours", "cours_id"];
 
@@ -44,6 +52,12 @@ function addMetaData() {
 		getElementById('subtitle').value += grmin[grmin.selectedIndex].text + ' ';
 	    if (grmax.value != -1 && grmax.value != grmin.value)
 		getElementById('subtitle').value += 'à ' + grmax[grmax.selectedIndex].text + ' ';
+
+	    if (ddnmin.value != -1)
+		getElementById('subtitle').value += ddnmin[ddnmin.selectedIndex].text + ' ';
+	    if (ddnmax.value != -1 && ddnmax.value != grmin.value)
+		getElementById('subtitle').value += 'à ' + ddnmax[ddnmax.selectedIndex].text + ' ';
+
 	} else {
 	    getElementById('title').value = c[cs].text;
 	    getElementById('subtitle').value = 
@@ -87,6 +101,8 @@ function refreshResults() {
   var catv = getElementById('catSelect').value;
   var grmin = getElementById('gradeMin').value;
   var grmax = getElementById('gradeMax').value;
+  var ddnmin = getElementById('ddnMin').value;
+  var ddnmax = getElementById('ddnMax').value;
 
   var clients = doSearch(cv, all);
 
@@ -222,6 +238,12 @@ function refreshResults() {
 	      var g = GRADE_ORDER.indexOf(cc[gradeCol]);
 	      if (g < grmin || g > grmax)
 		  continue;
+	  }
+	  if (ddnmin != -1) {
+	      var g = cc[ddnCol].substring(0, 4);
+              if ((ddnmin <= ddnmax && (g < ddnmin || g > ddnmax)) ||
+                  (ddnmax <= ddnmin && (g < ddnmax || g > ddnmin)))
+                  continue;
 	  }
       }
 

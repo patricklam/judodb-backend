@@ -5,6 +5,7 @@ var GLOBAL_FIELDS = ["nom", "prenom", "ddn", "courriel", "adresse", "ville", "co
 var LOCAL_FIELDS = ["version", "server_version", "server_id", "deleted"];
 var ALL_FIELDS = LOCAL_FIELDS.concat(GLOBAL_FIELDS);
 var SCHEMA_VERSION = 1;
+var FIRST_DDN_YEAR = 1950;
 
 var SERVICE_FIELDS = ["date_inscription", "saisons", "sans_affiliation", 
 		      "cours", "sessions",

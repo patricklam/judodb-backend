@@ -66,6 +66,13 @@
  <select id="gradeMax" onchange="refreshResults();">
   <option value="-1">Tous</option>
  </select> &nbsp; &nbsp;
+ DDN: de 
+ <select id="ddnMin" onchange="getElementById('ddnMax').selectedIndex = getElementById('ddnMin').selectedIndex; refreshResults();">
+  <option value="-1">Tous</option>
+ </select> &agrave;
+ <select id="ddnMax" onchange="refreshResults();">
+  <option value="-1">Tous</option>
+ </select> &nbsp; &nbsp;
 </p>
 </form>
 
