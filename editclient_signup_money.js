@@ -98,6 +98,14 @@ function calcSaison() {
 }
 
 function upval() {
+  var pct = getElementById("cas_special_pct").value;
+  if (pct.indexOf("/") != -1) {
+    var p = pct.split("/");
+    getElementById("cas_special_pct").value = 
+      Math.round((p[0] / p[1])*10000) / 100;
+    pct = getElementById("cas_special_pct").value;
+  }
+
   getElementById("escompte_special").value = 
 	stripDollars(getElementById("categorieFrais").value) * 
         getElementById("cas_special_pct").value / 100;
