@@ -196,7 +196,7 @@ function refreshResults() {
   var onchange = [null, null, null, null, insertDefaultDate, null, null, null, null, null, null, null, null];
   var rawSorts = [null, stringSort, stringSort, null, gradeSort, stringSort,  null,  null, stringSort, catSort, null, coursSort, null];
   var sorts = [];
-  var visibilityPredicates = [inFtMode, true, true, inFtMode, true, true, true, true, true, true, inEditMode, all, false];
+  var visibilityPredicates = [inFtMode, true, true, inEditMode || inFtMode, true, true, true, true, true, true, inEditMode, all, false];
 
   for (h in heads) {
     if (rawSorts[h] != null)
@@ -444,7 +444,7 @@ function insertDefaultDate() {
   if (this.value == '') return;
 
   var gd = getElementById('date_grade').value;
-  if (gd.value == '') return;
+  if (gd == '') return;
 
   this.parentNode.nextSibling.firstChild.value = gd;
 }
