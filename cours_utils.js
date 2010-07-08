@@ -353,22 +353,34 @@ function computeFull() {
   getElementById('data_full').value = dv;
 }
 
-function showEditElements() {
-  getElementById('date_grade_span').style.display = inEditMode ?
-	'block' : 'none';
+function showElements() {
+  // bottom
   getElementById('saveorquit').style.display = inEditMode ?
 	'block' : 'none';
+
+  // side
   getElementById('clearAction').style.display = inEditMode ?
 	'block' : 'none';
   getElementById('returnAction').style.display = inMainMode ?
 	'none' : 'block';
-}
 
-function editMode() {
-  inEditMode = !inEditMode;
-  inMainMode = !inEditMode;
-  showEditElements();
-  refreshResults();
+  // filtering
+  getElementById('cat').style.display = !isFiltering ? 'none' : 'block';
+  getElementById('xls').style.display = isFiltering ? 'none' : 'inline';
+  getElementById('xls2').style.display = isFiltering ? 'none' : 'inline';
+  getElementById('stdTitle').style.display = isFiltering ? 'none' : '';
+  getElementById('filterTitle').style.display = !isFiltering ? 'none' : '';
+  getElementById('returnAction').style.display = inMainMode ?
+	'none' : 'block';
+
+  // editing
+  getElementById('date_grade_span').style.display = inEditMode ?
+	'block' : 'none';
+
+  // ft303
+  getElementById('ft303_span').style.display = inFtMode ?
+	'block' : 'none';
+
 }
 
 function clearAllV() {
@@ -382,62 +394,41 @@ function clearAllV() {
   }
 }
 
-function showFilterElements() {
-  getElementById('cat').style.display = !isFiltering ? 'none' : 'block';
-  getElementById('xls').style.display = isFiltering ? 'none' : 'inline';
-  getElementById('xls2').style.display = isFiltering ? 'none' : 'inline';
-  getElementById('stdTitle').style.display = isFiltering ? 'none' : '';
-  getElementById('filterTitle').style.display = !isFiltering ? 'none' : '';
-  getElementById('returnAction').style.display = inMainMode ?
-	'none' : 'block';
-}
-
 function filterMode() {
   isFiltering = !isFiltering;
   var t = getElementById('filterText').innerHTML;
   getElementById('filterText').innerHTML = getElementById('filterAlt').innerHTML;
   getElementById('filterAlt').innerHTML = t;
-  showFilterElements();
+  showElements();
+  refreshResults();
+}
+
+function editMode() {
+  inEditMode = true;
+  inMainMode = false; inGCoursMode = false; inFtMode = false;
+  showElements();
   refreshResults();
 }
 
 function mainMode() {
   inMainMode = true;
-  inEditMode = false;
-  inGCoursMode = false;
-  inFtMode = false;
-  showEditElements();
-  showGCoursElements();
-  showFTElements();
+  inEditMode = false; inGCoursMode = false; inFtMode = false;
+  showElements();
   refreshResults();
 }
 
 function gcoursMode() {
-  inGCoursMode = !inGCoursMode;
-  inMainMode = !inGCoursMode;
-  showGCoursElements();
+  inGCoursMode = true;
+  inEditMode = false; inFtMode = false; inMainMode = false;
+  showElements();
   refreshResults();
-}
-
-function showGCoursElements() {
-  getElementById('saveorquit').style.display = inGCoursMode ?
-	'block' : 'none';
-  getElementById('returnAction').style.display = inMainMode ?
-	'none' : 'block';
 }
 
 function ftMode() {
-  inFtMode = !inFtMode;
-  inMainMode = !inFtMode;
-  showFTElements();
+  inFtMode = true;
+  inEditMode = false; inGCoursMode = false; inMainMode = false;
+  showElements();
   refreshResults();
-}
-
-function showFTElements() {
-  getElementById('ft303_span').style.display = inFtMode ?
-	'block' : 'none';
-  getElementById('returnAction').style.display = inMainMode ?
-	'none' : 'block';
 }
 
 function insertDefaultDate() {
@@ -546,16 +537,7 @@ function saveCoursChanges() {
 function handleSubmit() {
   if (inEditMode) saveEdits();
   if (inGCoursMode) saveCoursChanges();
-  inEditMode = false; inGCoursMode = false;
-  showEditElements(); showGCoursElements();
-  refreshResults();
-}
-
-function cancel() {
-  inEditMode = false;
-  inGCoursMode = false;
-  showEditElements();
-  refreshResults();
+  mainMode();
 }
 
 // integrate user input into data field
@@ -568,11 +550,6 @@ function makeFT() {
     if (sel != null && sel.checked == true) {
       gotOne = true;
       var post = '';
-      if (getElementById('s-'+dv).value == 0)
-	post += 'M';
-      else if (getElementById('s-'+dv).value == 1)
-	post += 'F';
-      post += '|';
       var cat = getElementById('c-'+dv);
       if (cat != null && cat.value == 'M')
 	post += 'M';
