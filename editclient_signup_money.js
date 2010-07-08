@@ -107,7 +107,7 @@ function upct() {
   getElementById("cas_special_pct").value = 
 	Math.round(stripDollars(getElementById("escompte_special").value) / 
 		   stripDollars(getElementById("categorieFrais").value)
-		   * 100);
+		   * 10000)/100;
 }
 
 // autoupdate for date_inscription field
