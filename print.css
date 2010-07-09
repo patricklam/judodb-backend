@@ -12,7 +12,7 @@ body {
 
 body {
   font-family: arial, sans-serif;
-  font-size: 8pt;
+  font-size: 9pt;
 }
 
 label {
@@ -59,7 +59,6 @@ legend .versement {
 }
 
 #identite label input {
- font-size: large;
  font-weight: bold;
 }
 

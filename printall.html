@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Facturation Club Judo Anjou: Verification</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="shortcut icon" href="/files/favicon.ico" type="image/x-icon" />
+  <style type="text/css" media="all">@import "styles.css";</style>
+  <style type="text/css" media="print">@import "print.css";</style>
+</head>
+
+<body>
+
+<script type="text/javascript"  src="gears_init.js"></script>
+<script type="text/javascript"  src="constants.js"></script>
+<script type="text/javascript"  src="utils.js"></script>
+<script type="text/javascript"  src="db.js"></script>
+<script type="text/javascript"  src="datastore.js"></script>
+<script type="text/javascript"  src="configured_constants.js"></script>
+<script type="text/javascript"  src="base.js"></script>
+
+<div><span id="status">&nbsp;</span></div>
+
+<form name="client" class="compactform" id="master" style="page-break-after: always">
+<input id="version" type="hidden" value="" />
+<input id="server_version" type="hidden" value="-1" />
+<input id="server_id" type="hidden" value="-1" />
+<input id="deleted" type="hidden" value="false" />
+<input id="nom_stripped" type="hidden" value="" />
+<input id="prenom_stripped" type="hidden" value="" />
+<input id="grade_id" type="hidden" value="-1" />
+
+<h1>VERIFICATION DES DONN&Eacute;ES</h1>
+
+<fieldset> <legend>Identit&eacute;</legend>
+ <div class="fourper" id="identite">
+  <label for="nom"><input id="nom" type="label" size="24" /></label>
+  <label for="prenom"><input id="prenom" type="label" size="24" /></label>
+  <label for="ddn"> <input id="ddn" type="label" size="24" /> </label>
+  <label for="sexe"><input id="sexe" type="label" size="2" /></label>
+ </div>
+</fieldset>
+
+<fieldset> <legend>Adresse</legend>
+ <div class="oneper">
+  <label for="adresse">
+   <input id="adresse" type="text" size="60" value="" maxlength="80" />
+  </label>
+ </div>
+ <div class="fourper">
+  <label for="ville">
+    <input id="ville" type="text" size="16" value="" maxlength="50" />
+  </label>
+  <label for="code_postal">
+    <input id="code_postal" type="text" size="10" value="" maxlength="20" />
+  </label>
+  <label for="tel">T&eacute;l&eacute;phone(s)
+    <input id="tel" type="text" size="18" value="" maxlength="20" />
+  </label>
+  <label for="courriel">Courriel
+    <input id="courriel" type="text" size="19.5" value="" maxlength="255" />
+  </label>
+ </div>
+</fieldset>
+
+ <fieldset> <legend>Autres renseignments</legend>
+ <div class="fourper">
+   <label for="affiliation">Num&eacute;ro Judo Qu&eacute;bec
+    <input id="affiliation" type="text" size="10" value="" maxlength="20" />
+   </label>
+   <label for="grade">Grade judo
+    <input id="grade" type="text" size="10" value="" maxlength="20" /></label>
+   <label for="date_grade">Date du grade
+    <input id="date_grade" type="text" size="10" value="" maxlength="20" />
+   </label>
+   <label for="carte_anjou">N° arrondissement Anjou
+    <input id="carte_anjou" type="text" size="19" value="" maxlength="20" />
+   </label>
+  </div>
+ <div class="twoper">
+   <label for="nom_recu_impot">Nom re&ccedil;u imp&ocirc;t
+    <input id="nom_recu_impot" type="text" size="40" value="" maxlength="50" /> 
+   </label>
+ </div>
+ </fieldset>
+
+ <fieldset> <legend>Urgence</legend>
+  <div class="twoper">
+   <label for="nom_contact_urgence">Contact en cas d'urgence
+    <input id="nom_contact_urgence" type="text" size="30" value="" maxlength="50" />
+   </label>
+   <label for="tel_contact_urgence">T&eacute;l&eacute;phone urgence
+    <input id="tel_contact_urgence" type="text" size="24" value="" maxlength="50" /></label>
+  </div>
+ </fieldset>
+
+</form>
+
+<script type="text/javascript"  src="printall_utils.js"></script>
+
+</body>
+
+</html>
