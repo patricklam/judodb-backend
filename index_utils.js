@@ -118,19 +118,19 @@ function doLogin(arg, successContinuation) {
 
 function updateLastSync() {
   var contains_current_session = '%'+CURRENT_SESSION+'%';
-  var is = db.execute('SELECT COUNT(client.id) from `client`,`services`,`grades` '+
-                      'WHERE deleted <> \'true\' AND '+
-                        'client.id = services.client_id AND '+
-                        'client.id = grades.client_id AND '+
-                        'date_grade = (SELECT max(date_grade) FROM `grades` WHERE grades.client_id=client.id) AND '+
-		        'saisons LIKE ? '+
-		      'ORDER BY nom_stripped COLLATE NOCASE, prenom_stripped COLLATE NOCASE', [contains_current_session]);
-  var inscr = is.field(0); is.close();
+  var tcs = db.execute('SELECT COUNT(client.id) from `client` '+
+                       'WHERE client.deleted <> \'true\' ');
+  var totalCount = tcs.field(0); tcs.close(); 
   var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE version > server_version');
   var toSync = rs.field(0); rs.close();
+  var is = db.execute('SELECT count(client.id) from `client`,`services` '+
+                      'WHERE client.id = services.client_id AND '+
+	              'saisons LIKE ?', [contains_current_session]);
+  var inscrThisYear = is.field(0); is.close();
 
   getElementById('toSync').innerHTML = toSync;
-  getElementById('totalCount').innerHTML = inscr;
+  getElementById('thisYearCount').innerHTML = inscrThisYear;
+  getElementById('totalCount').innerHTML = totalCount;
 
   var bail = doRequest
     ("GET", "update_last_sync.php", {current_session:CURRENT_SESSION}, printLastSync_, null);
