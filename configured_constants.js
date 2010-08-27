@@ -69,27 +69,35 @@ function initCours() {
 }
 
 function initCategorie() {
-    var rs = db.execute("SELECT * FROM `categorie` as c, `categorie_session` as cs WHERE c.abbrev = cs.categorie_abbrev"); // TODO: and session
+    var rs = db.execute("SELECT * FROM `categorie` as c, `categorie_session` as cs WHERE c.abbrev = cs.categorie_abbrev AND cs.session_seqno = ? ORDER BY `years_ago` DESC, `noire` DESC", [CURRENT_SESSION_SEQNO]);
+    var objs = [CATEGORY_NAMES, CATEGORY_ABBREVS, CATEGORY_NOIRE, CATEGORY_YEARS, CATEGORY_PRIX_1_SESSION, CATEGORY_PRIX_2_SESSION, CATEGORY_PRIX_JUDO_QC];
+    // prepend all of the non-seniors, then append the seniors.
+    // hackery to get the right order!
+    var args = [], brgs = [];
     while (rs.isValidRow()) {
-	CATEGORY_NAMES = CATEGORY_NAMES.concat(rs.fieldByName('name'));
-	CATEGORY_ABBREVS = CATEGORY_ABBREVS.concat(rs.fieldByName('abbrev'));
-	CATEGORY_NOIRE = CATEGORY_NOIRE.concat(rs.fieldByName('noire'));
+        var sy = 0, ya = rs.fieldByName('years_ago');
+        if (ya != '') {
+            sy = CURRENT_SESSION_YEAR - ya + 2;
+        }
 
-	var sy = 0;
-	if (rs.fieldByName('years_ago') != '')
-	    sy = CURRENT_SESSION_YEAR - rs.fieldByName('years_ago') + 2;
-
-	CATEGORY_YEARS = CATEGORY_YEARS.concat(sy);
-
-	CATEGORY_PRIX_1_SESSION = CATEGORY_PRIX_1_SESSION.concat
-	  (parseFloat(rs.fieldByName('frais_1_session')));
-	CATEGORY_PRIX_2_SESSION = CATEGORY_PRIX_2_SESSION.concat
-	  (parseFloat(rs.fieldByName('frais_2_session')));
-	CATEGORY_PRIX_JUDO_QC = CATEGORY_PRIX_JUDO_QC.concat
-	  (parseFloat(rs.fieldByName('frais_judo_qc')));
-
-	rs.next();
+        var a = [rs.fieldByName('name'), rs.fieldByName('abbrev'), rs.fieldByName('noire'), sy, parseFloat(rs.fieldByName('frais_1_session')), parseFloat(rs.fieldByName('frais_2_session')), parseFloat(rs.fieldByName('frais_judo_qc'))];
+        if (ya == 0)
+            args.push(a);
+        else
+            brgs.push(a);
+        rs.next();
     }
+    for (var i = 0; i < args.length; i++) {
+        for (var j = 0; j < objs.length; j++) {
+            objs[j].unshift(args[i][j]);
+        }
+    }
+    for (var i = 0; i < brgs.length; i++) {
+        for (var j = 0; j < objs.length; j++) {
+            objs[j].unshift(brgs[i][j]);
+        }
+    }
+
     rs.close();
 }
 
