@@ -9,7 +9,7 @@ function computeCategoryId(yr, grade) {
     // if yudansha, increase rv (could be cadet or junior)
     if (grade.toUpperCase().indexOf('DAN') != -1 ||
         ndRegexp.test(grade))
-        rv += 2;
+        rv ++;
     return rv;
 }
 
