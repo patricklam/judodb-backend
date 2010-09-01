@@ -3,7 +3,7 @@ function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $only_sel
     $allCount = count($ds);
     $notFirst = FALSE;
     // ["Nom", "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat", "Masters", "Cours", "Cours_num"];
-    $COLS = 11;
+    $COLS = 10;
     for ($p = 0; $p < $c; $p++) {
         // extra unnecessary O(n) pass to verify non-emptiness.
         $live = FALSE;

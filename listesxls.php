@@ -24,8 +24,8 @@ if ($_POST["multi"] == "1") {
 
 $sheetNum = 0;
 // ["Nom", "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat", "Masters", "Cours", "Cours_num"];
-$COURS = 12;
-$display = array(false, true, true, false, true, false, true, true, true, false, false, false);
+$COURS = 11;
+$display = array(true, true, false, true, false, true, true, true, false, false, false);
 
 for ($p = 0; $p < $c; $p++) {
     $data = $_POST['data'];
@@ -69,17 +69,17 @@ for ($p = 0; $p < $c; $p++) {
     for ($i = 0; $i < $allCount-1; $i++) {
         $d = explode("|", $ds[$i]);
         if ($d[$COURS] == $p) {
-            $s->setCellValue("A$r", $d[1]);
-            $s->setCellValue("B$r", $d[2]);
-            $s->setCellValue("C$r", $d[4]);
-            $s->getCell("D$r")->setValueExplicit($d[6], 
+            $s->setCellValue("A$r", $d[0]);
+            $s->setCellValue("B$r", $d[1]);
+            $s->setCellValue("C$r", $d[3]);
+            $s->getCell("D$r")->setValueExplicit($d[5], 
 	      	  PHPExcel_Cell_DataType::TYPE_STRING);
-            $s->setCellValue("E$r", $d[7]);
-	    $dd = (int)(25569 + (strtotime("$d[8] 12:00:00") / 86400));
+            $s->setCellValue("E$r", $d[6]);
+	    $dd = (int)(25569 + (strtotime("$d[7] 12:00:00") / 86400));
             $s->setCellValue("F$r", $dd);
 	    $s->getStyle("F$r")->
                 getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD);
-            $s->setCellValue("G$r", $d[9]);
+            $s->setCellValue("G$r", $d[8]);
             $actualCount++; $r++;
 	}
     }

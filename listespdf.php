@@ -19,6 +19,7 @@ if ($multi == "1") {
     $sts = explode("|", iconv("UTF-8", "ISO-8859-1", $_POST["subtitle"]));
     $c = count($ts);
 } else {
+        $pdf->Cell(0, 6, "multifalse");
     $ts = array(iconv("UTF-8", "ISO-8859-1", $_POST["title"]));
     $sts = array(iconv("UTF-8", "ISO-8859-1", $_POST["subtitle"]));
     $c = 1;
@@ -27,8 +28,9 @@ if ($multi == "1") {
 $data = iconv("UTF-8", "ISO-8859-1", $_POST['data']);
 $ds = explode("*", $data);
 
-$display = array(false, true, true, false, true, false, true, true, true, false, false, false);
-$w = array(-1, 45, 45, -1, 12, -1, 30, 20, 25, 0);
+    // ["Nom", "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat", "Masters", "Cours", "Cours_num"];
+$display = array(true, true, false, true, false, true, true, true, false, false, false, false);
+$w = array(45, 45, -1, 12, -1, 30, 20, 25, 0, 0);
 produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, false);
 
 $pdf->Output();
