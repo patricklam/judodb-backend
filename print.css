@@ -31,7 +31,7 @@ label {
   width: 20em;
   display: block;
   border: solid;
-  top: 12em;
+  top: 14.5em;
   right: 0;
 }
 
@@ -194,4 +194,16 @@ input.text, input.button, textarea, select {
 .notlink-in-print {
   text-decoration: none;
   color: black;
+}
+
+#nom,#prenom,#sexe {
+  font-size: xx-large;
+}
+
+#ddn {
+  font-size: large;
+}
+
+#blurb {
+  font-size: x-small;
 }
