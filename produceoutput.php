@@ -1,9 +1,11 @@
 <?
-function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $only_selected) {
+function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $only_selected, $grid) {
     $allCount = count($ds);
     $notFirst = FALSE;
     // ["Nom", "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat", "Masters", "Cours", "Cours_num"];
     $COLS = 10;
+    $BOXES = 35;
+    $EXTRAS = 5;
     for ($p = 0; $p < $c; $p++) {
         // extra unnecessary O(n) pass to verify non-emptiness.
         $live = FALSE;
@@ -29,6 +31,21 @@ function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $only_sel
         $fill = true;
 
         $actualCount = 0;
+
+	if ($grid) { // space for dates
+	    $fill = false;
+            for ($j = 0; $j < $COLS; $j++) {
+                if ($display[$j])
+                    $pdf->Cell($w[$j], 12, '', '', 0, 'L', $fill);
+            }
+            $pdf->Cell(4, 12, '', 0, 0, 'C', $fill);
+            for ($j = 0; $j < $BOXES; $j++) {
+                $pdf->Cell(4, 12, '', 'RB', 0, 'C', $fill);
+	    }
+	    $pdf->Ln();
+	    $fill = true;
+	}
+
         for ($i = 0; $i < $allCount-1; $i++) {
             $d = explode("|", $ds[$i]);
             if ($onlyselected && $d[0] == '') continue;
@@ -37,11 +54,32 @@ function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $only_sel
                     if ($display[$j])
                         $pdf->Cell($w[$j], 6, $d[$j], '', 0, 'L', $fill);
                 }
+		if ($grid) {
+		    $pdf->Cell(4, 6, '', 0, 0, 'C', $fill);
+		    for ($j = 0; $j < $BOXES; $j++) {
+		        $pdf->Cell(4, 6, '', 'R', 0, 'C', $fill);
+		    }
+		}
                 $fill = !$fill;
                 $pdf->Ln();
                 $actualCount++;
             }
         }
+
+	if ($grid) { // extras
+	    for ($i = 0; $i < $EXTRAS; $i++) {
+                for ($j = 0; $j < $COLS; $j++) {
+                    if ($display[$j])
+                        $pdf->Cell($w[$j], 6, '', '', 0, 'L', $fill);
+                }
+                $pdf->Cell(4, 6, '', 0, 0, 'C', $fill);
+                for ($j = 0; $j < $BOXES; $j++) {
+                    $pdf->Cell(4, 6, '', 'R', 0, 'C', $fill);
+                }
+                $fill = !$fill;
+                $pdf->Ln();
+   	    }
+	}
 
         $pdf->Ln();
         $pdf->Cell(0, 6, "Nombre inscrit: $actualCount");

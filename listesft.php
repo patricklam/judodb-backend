@@ -89,7 +89,7 @@ $pdf->AddPage();
 
 $display = array(false, true, true, false, false, false, true, false, false, true, false);
 $w = array(0, 45, 45, -1, -1, -1, 35, -1, -1, 10);
-produceOutput($pdf, array($_POST['evt']), array($_POST['date']), $ds, 1, $multi, $display, $w, true);
+produceOutput($pdf, array($_POST['evt']), array($_POST['date']), $ds, 1, $multi, $display, $w, true, false);
 
 $pdf->Output();
 ?>
