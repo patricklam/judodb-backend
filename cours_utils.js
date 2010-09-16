@@ -377,11 +377,11 @@ function computeFull() {
 
 function showElements() {
   // bottom
-  getElementById('saveorquit').style.display = inEditMode ?
+  getElementById('saveorquit').style.display = (inEditMode || inGCoursMode) ?
 	'block' : 'none';
 
   // side
-  getElementById('clearAction').style.display = inEditMode ?
+  getElementById('clearAction').style.display = (inEditMode || inGCoursMode) ?
 	'block' : 'none';
   getElementById('returnAction').style.display = inMainMode ?
 	'none' : 'block';
