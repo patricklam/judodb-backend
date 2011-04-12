@@ -179,6 +179,10 @@ function handleSubmit() {
     rs['grade'] = rs['grade'].concat(f[1]);
     rs['date_grade'] = rs['date_grade'].concat(f[2]);
   }
+  if (rs['grade'].length == 0) {
+    rs['grade_id'] = [null]; rs['grade'] = ['']; 
+    rs['date_grade'] = ['0000-00-00'];
+  }
 
   rs.version++; getElementById("version").value = rs.version;
 
