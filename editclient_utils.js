@@ -58,7 +58,7 @@ function populateClient() {
     getElementById(key).value = rs[key];
   }
 
-  var gs = executeToObjects(db, 'SELECT id, grade, date_grade from `grades` WHERE client_id = ? ORDER BY date_grade DESC', [cid]);
+  var gs = executeToObjects(db, 'SELECT id, grade, date_grade from `grades` WHERE client_id = ? ORDER BY date_grade DESC, grade DESC', [cid]);
 
   if (gs[0]) {
     getElementById('grade_id').value = gs[0]['id'];
@@ -68,6 +68,7 @@ function populateClient() {
 
   var more_grades = '';
   for (i = 0; i < gs.length; i++) {
+    if (gs[i]['grade'] == '') continue;
     more_grades += gs[i]['id'] + '|' + gs[i]['grade'] + '|' + gs[i]['date_grade'] + '#';
   }
   if (more_grades != '')
@@ -172,6 +173,7 @@ function handleSubmit() {
     if (m == '') break;
     f = m.split("|");
 
+    if (f[1] == '') continue;
     var gid = f[0]; if (gid < 0) gid = null;
     rs['grade_id'] = rs['grade_id'].concat(gid);
     rs['grade'] = rs['grade'].concat(f[1]);
