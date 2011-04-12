@@ -165,11 +165,19 @@ function refreshResults() {
       return s;
   }
 
+  function hidden(id) {
+      var s = document.createElement("input");
+      s.type = "hidden";
+      s.id = id;
+      s.style.display="none";
+      return s;
+  }
+
   function makeSort(i, c) {
       var s = function(a, b) { 
-	  var rv = c(a.cells[i].textContent, b.cells[i].textContent);
-	  if (rv == 0) rv = stringSort(a.cells[0].textContent, b.cells[i].textContent);
+	  var rv = c(a.cells[i+1].textContent, b.cells[i+1].textContent);
 	  if (rv == 0) rv = stringSort(a.cells[1].textContent, b.cells[1].textContent);
+	  if (rv == 0) rv = stringSort(a.cells[2].textContent, b.cells[2].textContent);
 	  return rv;
       };
       return function() { 
@@ -254,8 +262,9 @@ function refreshResults() {
 
       if (inFtMode)  {
 	  appendTD(row, checkbox("sel-"+c));
+      } else {
+	  appendTD(row, hidden("sel-"+c), true);
       }
-
       for (var r = 1; r < cc.length; r++) {
 	  var v = tn(cc[r]);
 	  if (headNames[r] == "nom" || headNames[r] == "prenom") {
