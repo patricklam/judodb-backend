@@ -1,3 +1,5 @@
+* port to IndexedDB
+
 --- later:
 
 * add Cadet Noire, fix computeCategoryId to permit U17 Noire. (30 mins)

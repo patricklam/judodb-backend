@@ -1,5 +1,13 @@
 Requires PHP, some SQL database, FPDF for PDF generation.
 
+Offline HTTP: you enable it by adding
+
+AddType text/cache-manifest .manifest
+ExpiresActive On
+ExpiresDefault "access"
+
+to your apache site config [http://diveintohtml5.org/offline.html]
+
 Backup strategy: here's what I do.
 
 0. Create a passwordless ssh key (~/.ssh/backup_dsa) on the backup
