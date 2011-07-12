@@ -6,7 +6,6 @@ if (!window.google || !google.gears) {
 
 var db;
 
-createManagedStore();
 var store = new DataStore();
 store.init();
 updateLastSync();
