@@ -1,0 +1,120 @@
+class SharedObject {
+  int id, version, server_version, server_id;
+  boolean deleted;
+}
+
+class Client extends SharedObject {
+  string nom, prenom;
+  string sexe; // char[1]
+  date ddn;
+  string courriel;
+
+  string adresse, ville, code_postal, tel;
+  string affiliation;
+  boolean affiliationVerifie;
+  string carte_anjou;
+
+  string poids;
+  string notes;
+
+  string nom_recu_impot;
+  string nom_contact_urgence, tel_contact_urgence;
+
+  string nom_stripped, prenom_stripped;
+
+  Grade[] grades;
+  Inscription[] inscriptions;
+  Paiement[] paiements;
+}
+
+class Grade
+{
+        // contained inside Client
+  var DanKyu = Object.freeze({"Blanche":0, "B/J":1, "Jaune":2, "J/O":3,
+                "Orange":4, "O/V":5, "Verte":6, "V/B": 7,
+                "Bleue":8, "B/M": 9, "Marron":10,
+                "1D":11, "2D":12, "3D":13, "4D":14, 
+                "5D":15, "6D":16});
+
+  DanKyu grade;
+  date date_grade; // may be null
+}
+
+class Inscription
+{
+        // contained inside Client
+  date date_inscription;
+  string saisons;
+  boolean inscription_sans_affiliation;
+  string cours, sessions;
+  boolean frais_passeport, frais_non_anjou;
+  string judogi;
+  int escompte;
+  string escompte_special, cas_special_note, horaire_special;
+  float frais;
+}
+
+class GroupePaiement extends SharedObject {
+  Client[] clients;
+  Paiement[] paiements;
+}
+
+class Paiement extends SharedObject {
+  string mode; // comptant, cheque
+  string chqno;
+  date date_cheque;
+  float montant;
+}
+
+class GlobalConfig {
+      // also a shared object, but not like the others; singleton object.
+  int version, server_version;
+  int schema_version;
+  string nom_club, numero_club;
+  int age_masters;
+
+  float frais_passport_judoqc, frais_nonresident_anjou;
+  date[] date_versement;
+  Session[] sessions;
+  Categorie[] categories;
+}
+
+class Session {
+      // stored inside GlobalConfig
+  int id, seqno;
+  string name, year, abbrev;
+  date first_class_date, first_signup_date;
+  date last_class_date, last_signup_date;
+  Cours[] cours;
+  CategorieSession[] cs;
+}
+
+
+class Cours {
+      // stored inside Session
+  int id, seqno;
+  string name, short_desc;
+  string entraineur;
+}
+
+class Categorie {
+      // stored inside GlobalConfig
+  int id;
+  string name, abbrev;
+  int years_ago;
+  boolean noire;
+}
+
+class CategorieSession {
+      // stored inside Session
+  int categorie_id;
+  float frais1Session, frais2Session;
+  float fraisJudoQC;
+}
+
+class Escompte {
+      // stored inside GlobalConfig
+  int id, seqno;
+  string name;
+  float percent;
+}
