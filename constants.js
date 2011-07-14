@@ -48,4 +48,10 @@ var ESCOMPTE_FIELDS = ['id', 'seqno', 'name', 'amount'];
 var MAX_VERSEMENTS = 6;
 var MAX_GRADES = 20;
 
+var GRADES = Object.freeze({"Blanche":0, "B/J":1, "Jaune":2, "J/O":3,
+			    "Orange":4, "O/V":5, "Verte":6, "V/B": 7,
+			    "Bleue":8, "B/M": 9, "Marron":10,
+			    "1D":11, "2D":12, "3D":13, "4D":14, 
+			    "5D":15, "6D":16});
+
 var UNSET_DATE = '2009-01-01';
