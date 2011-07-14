@@ -1,8 +1,4 @@
 clearStatus();
-if (!window.google || !google.gears) {
-  location.href = "http://gears.google.com/?action=install&message=Installer Google Gears pour acceder au base de données du club." +
-                  "&return=http://www.judo-anjou.qc.ca/anjoudb";
-}
 
 var db;
 
