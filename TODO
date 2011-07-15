@@ -1,6 +1,9 @@
 * port to IndexedDB
 * add a 'saison' selector to allow browsing previous years
 
+* no config -> start a sync right away
+* update datastore.js
+
 --- later:
 
 * add Cadet Noire, fix computeCategoryId to permit U17 Noire. (30 mins)

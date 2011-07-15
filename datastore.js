@@ -1,30 +1,6 @@
-var activeRequests = 0; var MAX_REQUESTS = 2;
-
-function DataStore() {
-}
-
-var db;
-
-// Open this page's local database.
-DataStore.prototype.init = function() {
-  if (window.google && google.gears) {
-    try {
-      db = google.gears.factory.create('beta.database');
-      if (!db) {
-	  setError("Problème d'initialisation: est-ce que Google Gears est installé?");
-          return;
-      }
-
-      db.open('anjoudb');
-      createTablesIfNeeded(db);
-    } catch (ex) {
-      setError('Could not create database: ' + ex.message);
-    }
-  }
-};
-
 // overwrites client's current entry for cid with server info
 function pullClient(cid, sid) {
+    return; // YYY
   function integrateClient(status, statusText, responseText, responseXML) {
     if (status != '200') {
 	setError('Problème de connexion: pullClient ('+status+')');
@@ -73,6 +49,7 @@ function pullClient(cid, sid) {
 
 // overwrites client's current entry for gid with server info
 function pullGroup(cid, sid) {
+    return; // YYY
   function integrateGroup(status, statusText, responseText, responseXML) {
     if (status != '200') {
 	setError('Problème de connexion: pullGroup ('+status+')');
@@ -128,6 +105,7 @@ function pullGroup(cid, sid) {
 // Both server and form create rs objects.
 // Adds rs information to client db, trampling old cid information.
 function storeOneClient(cid, rs) {
+    return; // YYY
   db.execute('INSERT OR REPLACE INTO `client` ' +
              'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"false")',
               [cid, rs.nom, rs.prenom, rs.ddn, rs.courriel,
@@ -228,21 +206,27 @@ function storeOneClient(cid, rs) {
 }
 
 function storeOneSession(r) {
-    if (r.id != -1 || r.seqno != -1)
-        db.execute('DELETE FROM `session` WHERE id=? OR seqno=?', [r.id,r.seqno]);
+    if (r.id != -1 || r.seqno != -1) {
+	for (int i = 0; i < config.sessions.length; i++)
+	    if (config.sessions[i].id == r.id ||
+		config.sessions[i].seqno == r.seqno)
+		config.sessions.splice(i, 1);
+    }
 
     if (r.id == -1 || !('id' in r)) r.id = null;
     r.year = '20' + r.abbrev.substr(1,2);
     if (r.abbrev.substr(0,1) == 'H') r.year--;
-    db.execute('INSERT INTO `session` '+
-                   'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-              [r.id, r.seqno, r.name, r.year, r.abbrev,
-               r.first_class_date, r.first_signup_date,
-               r.last_class_date, r.last_signup_date]);
+
+    var rr = new Session();
+    for (var prop in r)
+	rr[prop] = r[prop];
+
+    config.sessions.push(rr);
 }
 
 /* precondition: seqno is not -1 and unique. */
 function storeOneCours(r) {
+    return; // YYY
     if (r.id != -1)
         db.execute('DELETE FROM `cours` WHERE id=?', [r.id]);
     db.execute('DELETE FROM `cours` WHERE seqno=?', [r.seqno]);
@@ -265,6 +249,7 @@ function storeOneCours(r) {
 }
 
 function storeOneCategorie(r) {
+    return; // YYY
     var rv = [];
 
     if (r.not_cat != 'true') {
@@ -296,6 +281,7 @@ function storeOneCategorie(r) {
 }
 
 function storeOneEscompte(r) {
+    return; // YYY
     if (r.id != -1)
         db.execute('DELETE FROM `escompte` WHERE id=?', [r.id]);
     db.execute('DELETE FROM `escompte` WHERE seqno=?', [r.seqno]);
@@ -308,6 +294,7 @@ function storeOneEscompte(r) {
 }
 
 function storeMisc(r) {
+    return; // YYY
     if (!('server_version' in r))
 	r.server_version = r.version;
 
@@ -326,6 +313,7 @@ function storeMisc(r) {
 }
 
 function pullIndex(tableName, requestURL, pullOneCallback, mergeOneCallback, deleteCallback) {
+    return; // YYY
   var rs = db.execute('SELECT id, version, server_id, server_version FROM `'+tableName+'`');
   // create array indexed by server_id
   var localEntries = []; var i = 0;
@@ -384,9 +372,7 @@ function pullGroups() {
 }
 
 function pullGlobalConfig() {
-  var rs = db.execute('SELECT version, server_version FROM `global_configuration`');
-  var localv = rs.field(0), localsv = rs.field(1);
-  rs.close();
+  var localv = config.version, localsv = config.server_version;
 
   function updateGlobalConfig(status, statusText, responseText, responseXML) {
     var svers = parseInt(responseText);
@@ -423,8 +409,8 @@ function actuallyPullGlobalConfig() {
 	f(obj);	
     }
 
-      // categorie has no seqno, so we must explicitly delete.
-    db.execute('DELETE FROM `categorie`');
+    // categorie has no seqno, so we must explicitly delete.
+    config.categories = new Array();
     for (var i = 0; i < r.length; i++) {
         var key = r[i].nodeName;
         if (key == 'session')
@@ -442,16 +428,12 @@ function actuallyPullGlobalConfig() {
     }
   }
 
-  if (activeRequests >= MAX_REQUESTS)
-    setTimer(actuallyPullGlobalConfig, 100);
-
-  activeRequests++;
   doRequest("GET", "pull_one_global_config.php", {}, 
 	    integrateGlobalConfig, null);
-  activeRequests--;
 }
 
 function deleteClient(cid) {
+    return; // YYY
   db.execute('DELETE FROM `client` WHERE id=?', [cid]);
   db.execute('DELETE FROM `grades` WHERE client_id=?', [cid]);
   db.execute('DELETE FROM `services` WHERE client_id=?', [cid]);
@@ -460,6 +442,7 @@ function deleteClient(cid) {
 }
 
 function deleteGroup(cid) {
+    return; // YYY
   db.execute('DELETE FROM `payment_groups` WHERE id=?', [cid]);
   db.execute('DELETE FROM `deleted_payment_groups` WHERE id=?', [cid]);
   db.execute('DELETE FROM `payment_group_members` WHERE group_id=?', [cid]);
@@ -491,6 +474,8 @@ function makeHandler(what, successCallback) {
 }
 
 function pushClients() {
+    return; // YYY
+
     // pulling out my COMP302 skillz:
     // create a closure which binds sidp, sv, and id.
   var h = makeHandler('client', 
@@ -605,6 +590,7 @@ function pushOne(what, handler, body) {
 }
 
 function pushGroups() {
+    return; // YYY
   var h = makeHandler('group', function(sidp, sv, id) {
   			  db.execute
 			  ('UPDATE `payment_groups` SET server_id=?, version=?, server_version=? WHERE id=?',
@@ -667,6 +653,7 @@ function pushGroups() {
 }
 
 function collectThing(t, f) {
+    return; // YYY
     var r = [];
     var body = '';
 
@@ -691,6 +678,7 @@ function collectThing(t, f) {
 }
 
 function collectCoursSessions() {
+    return; // YYY
     var body = '';
     var rs = 
 	db.execute('SELECT cours_seqno, session_seqno FROM `cours_session`');
@@ -703,6 +691,7 @@ function collectCoursSessions() {
 }
 
 function pushGlobalConfig() {
+    return; // YYY
   var h = makeHandler('global_config',
 		     function(sidp, sv, id) { 
   			 db.execute
@@ -733,6 +722,7 @@ function pushGlobalConfig() {
 }
 
 function isValidClient(n) {
+    return; // YYY
   var nt = stripAccent(n.trim());
   var rs = db.execute('SELECT COUNT(*) FROM `client` WHERE deleted <> \'true\' AND (UPPER(prenom_stripped||" "||nom_stripped) = UPPER(?) OR UPPER(nom_stripped||" "||prenom_stripped) = UPPER(?))', [nt, nt]);
   var count = rs.field(0);
@@ -740,7 +730,14 @@ function isValidClient(n) {
   return count;
 }
 
-DataStore.prototype.sync = function(target) {
+function DataStore_Sync(target) {
+    addStatus("un instant (syncronisation de la configuration)...");
+    pullGlobalConfig();
+    //pushGlobalConfig();
+    setTimeout(clearWhenDone, 1000);
+
+    return; // YYY
+
   addStatus("un instant (lecture des clients)...");
 
   pullClients();

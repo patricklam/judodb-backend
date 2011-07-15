@@ -4,8 +4,8 @@ function bail() {
 
 // http://greenido.wordpress.com/2011/06/24/how-to-use-indexdb-code-and-example/
 
-var clubDb = (function() {
-    var idb_;           // Our local DB
+var ClubDb = (function() {
+    var db;           // Our local DB
     var idbRequest_;    // Our DB request obj
 
     // IndexedDB spec is still evolving - see: http://www.w3.org/TR/IndexedDB/
@@ -21,32 +21,32 @@ var clubDb = (function() {
     // Open our IndexedDB if the browser supports it.
     if (window.indexedDB) {
         idbRequest_ = window.indexedDB.open("clubdb", "Base des donnees judo");
-        idbRequest_.onerror = idbError_;
+        idbRequest_.onerror = dbError_;
         idbRequest_.addEventListener('success', function(e) { }, false);
     }
     
     // on errors - show us what is going wrong
-    function idbError_(e) {
+    function dbError(e) {
         addStatus('Error: ' +
 		  e.message + ' (' + e.code + ')', 'error');
     }
 
-    function idbCreate_() {
-        if (!idb_) {
+    function create() {
+        if (!db) {
             if (idbRequest_) {
                 // If indexedDB is still opening, just queue this up.
-                idbRequest_.addEventListener('success', idb_.removeObjectStore, false); 
+                idbRequest_.addEventListener('success', db.removeObjectStore, false); 
             }
             return;
         }
 	
-        var request = idb_.setVersion(DB_VERSION);
-        request.onerror = idbError_;
+        var request = db.setVersion(DB_VERSION);
+        request.onerror = dbError_;
         request.onsuccess = function(e) {
             var createStore = function(n) {
-		if (!idb_.objectStoreNames.contains(n)) {
+		if (!db.objectStoreNames.contains(n)) {
                     try {
-			var objectStore = idb_.createObjectStore(n, 
+			var objectStore = db.createObjectStore(n, 
 								 {keyPath: 'id'}); 
                     } catch (err) {
 			addStatus('Error: ' + err.toString(), 'error');
@@ -62,7 +62,7 @@ var clubDb = (function() {
     }
 });
 
-var db = (function () {
+var objs = (function () {
     function SharedObject() {
         this.id = -1;
 	this.server_id = -1;

@@ -1,11 +1,17 @@
-clearStatus();
+var idb;
 
-var db;
+function init() {
+    clearStatus();
 
-var store = new DataStore();
-store.init();
-updateLastSync();
-getElementById('version').innerHTML = 'version ' + VERSION;
+    idb = new ClubDb();
+    idb.create();
+
+    updateLastSync();
+
+    getElementById('version').innerHTML = 'version ' + VERSION;
+}
+
+window.addEventListener("DOMContentLoaded", init(), false);
 
 var clients = [];
 var serverJudokaCount = 0;
@@ -66,7 +72,7 @@ function doSearch() {
 var challenge;
 
 function actuallySync() {
-    store.sync(serverJudokaCount);
+    DataStore_Sync(serverJudokaCount);
     setTimeout(updateLastSync, 5000);
 }
 

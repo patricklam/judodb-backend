@@ -48,6 +48,8 @@ var ESCOMPTE_FIELDS = ['id', 'seqno', 'name', 'amount'];
 var MAX_VERSEMENTS = 6;
 var MAX_GRADES = 20;
 
+var GRADE_ORDER = ["", "Bla", "B/J", "J", "J/O", "O", "O/V", "V", "V/B", "B", "B/M", "M", "1D", "2D", "3D", "4D", "5D", "6D", "7D", "8D"];
+
 var GRADES = Object.freeze({"Blanche":0, "B/J":1, "Jaune":2, "J/O":3,
 			    "Orange":4, "O/V":5, "Verte":6, "V/B": 7,
 			    "Bleue":8, "B/M": 9, "Marron":10,
