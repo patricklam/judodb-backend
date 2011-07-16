@@ -4,49 +4,41 @@ function bail() {
 
 // http://greenido.wordpress.com/2011/06/24/how-to-use-indexdb-code-and-example/
 
-var ClubDb = (function() {
-    var db;           // Our local DB
+var DB = (function() {
+    var db_;           // Our local DB
     var idbRequest_;    // Our DB request obj
 
     // IndexedDB spec is still evolving - see: http://www.w3.org/TR/IndexedDB/
     // various browsers keep it
     // behind various flags and implementation varies.
     if ('webkitIndexedDB' in window) {
-        window.indexedDB = window.webkitIndexedDB;
+        db_ = window.webkitIndexedDB;
         window.IDBTransaction = window.webkitIDBTransaction;
     } else if ('mozIndexedDB' in window) {
-        window.indexedDB = window.mozIndexedDB;
+        db_ = window.mozIndexedDB;
     }
  
     // Open our IndexedDB if the browser supports it.
-    if (window.indexedDB) {
-        idbRequest_ = window.indexedDB.open("clubdb", "Base des donnees judo");
+    if (_db) {
+        idbRequest_ = _db.open("clubdb", "Base des donnees judo");
         idbRequest_.onerror = dbError_;
         idbRequest_.addEventListener('success', function(e) { }, false);
     }
     
     // on errors - show us what is going wrong
-    function dbError(e) {
+    function dbError_(e) {
         addStatus('Error: ' +
 		  e.message + ' (' + e.code + ')', 'error');
     }
 
-    function create() {
-        if (!db) {
-            if (idbRequest_) {
-                // If indexedDB is still opening, just queue this up.
-                idbRequest_.addEventListener('success', db.removeObjectStore, false); 
-            }
-            return;
-        }
-	
-        var request = db.setVersion(DB_VERSION);
+    function createIfNeeded_() {
+        var request = db_.setVersion(DB_VERSION);
         request.onerror = dbError_;
         request.onsuccess = function(e) {
             var createStore = function(n) {
-		if (!db.objectStoreNames.contains(n)) {
+		if (!db_.objectStoreNames.contains(n)) {
                     try {
-			var objectStore = db.createObjectStore(n, 
+			var objectStore = db_.createObjectStore(n, 
 								 {keyPath: 'id'}); 
                     } catch (err) {
 			addStatus('Error: ' + err.toString(), 'error');
@@ -60,7 +52,13 @@ var ClubDb = (function() {
 	    createStore('global_config'); // singleton object
         }
     }
-});
+
+    return {
+	db: db_,
+	dbError: dbError_,
+	createIfNeeded: createIfNeeded_
+    }
+})();
 
 var objs = (function () {
     function SharedObject() {
@@ -182,4 +180,4 @@ var objs = (function () {
 	this.name = "";
 	this.percent = 0.0;
     }
-});
+})();

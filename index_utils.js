@@ -3,9 +3,9 @@ var idb;
 function init() {
     clearStatus();
 
-    idb = new ClubDb();
-    idb.create();
+    DB.createIfNeeded();
 
+    initConfig();
     updateLastSync();
 
     getElementById('version').innerHTML = 'version ' + VERSION;

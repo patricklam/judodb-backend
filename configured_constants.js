@@ -9,8 +9,8 @@ var CONSTANTS = (function() {
 var config;
 
 function initConfig() {
-    var db = idb.db;
-    var trans = db.transaction(["global_config"], IDBTransaction.READ_ONLY);
+    var db = DB.db;
+    var trans = db.transaction(["global_config"]);
     var store = trans.objectStore("global_config");
 
     var keyRange = IDBKeyRange.lowerBound(0);
@@ -58,5 +58,4 @@ function selectSessionByIndex(session_index) {
     }
 }
 
-initConfig();
 
