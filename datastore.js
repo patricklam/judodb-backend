@@ -207,7 +207,7 @@ function storeOneClient(cid, rs) {
 
 function storeOneSession(r) {
     if (r.id != -1 || r.seqno != -1) {
-	for (int i = 0; i < config.sessions.length; i++)
+	for (var i = 0; i < config.sessions.length; i++)
 	    if (config.sessions[i].id == r.id ||
 		config.sessions[i].seqno == r.seqno)
 		config.sessions.splice(i, 1);
@@ -372,7 +372,7 @@ function pullGroups() {
 }
 
 function pullGlobalConfig() {
-  var localv = config.version, localsv = config.server_version;
+  var localv = Cfg.cfg.version, localsv = Cfg.cfg.server_version;
 
   function updateGlobalConfig(status, statusText, responseText, responseXML) {
     var svers = parseInt(responseText);
@@ -410,7 +410,7 @@ function actuallyPullGlobalConfig() {
     }
 
     // categorie has no seqno, so we must explicitly delete.
-    config.categories = new Array();
+    Cfg.cfg.categories = new Array();
     for (var i = 0; i < r.length; i++) {
         var key = r[i].nodeName;
         if (key == 'session')
@@ -784,23 +784,21 @@ function DataStore_Sync(target) {
   }
 
   function clearWhenDone() { 
-      if (activeRequests == 0) {
-        initConfig();
-        clearStatus(); 
-	var rs = 
-	      db.execute('SELECT COUNT(*) FROM `services` WHERE saisons LIKE ?', ['%'+CURRENT_SESSION+'%']);
-	var inscr = rs.field(0); rs.close();
-
-	  // we might be adding new people, so use >=
-	if (inscr >= target) {
+      return;
+      // reload config!
+      clearStatus(); 
+      var rs = 
+	  db.execute('SELECT COUNT(*) FROM `services` WHERE saisons LIKE ?', ['%'+CURRENT_SESSION+'%']);
+      var inscr = rs.field(0); rs.close();
+      
+      // we might be adding new people, so use >=
+      if (inscr >= target) {
           addStatus("Syncronisé avec succès.");
           doRequest("POST", "update_last_sync.php", {didSync:1}, function (s,st,r,rx) {}, null);
 	  setTimeout(updateLastSync, 100);
-	}
-	else
-	  setError("Syncronisation incomplet: "+(inscr-target)+" inscriptions non syncronisés. Veuillez re-essayer.");
-        setTimeout(clearStatus, 5000);
       }
-      else setTimeout(clearWhenDone, 100); 
-  }
-};
+      else
+	  setError("Syncronisation incomplet: "+(inscr-target)+" inscriptions non syncronisés. Veuillez re-essayer.");
+      setTimeout(clearStatus, 5000);
+  };
+}

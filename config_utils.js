@@ -1,15 +1,34 @@
-var store = new DataStore();
-store.init();
+function init() {
+    clearStatus();
 
-function bumpConfigurationVersion() {
-    db.execute('UPDATE `global_configuration` SET version=version+1');
-    db.execute('INSERT INTO `global_configuration` VALUES (1,0, '+SCHEMA_VERSION+', "", "", 0, 0, 0, "", "", "", "", "", "")');
-    db.execute('DELETE FROM `global_configuration` WHERE version < (SELECT MAX(version) FROM `global_configuration`)');
-    loadMisc();
+    populateSelect(Cfg.cfg.sessions);
+    loadIDFromSelect('session');
+    loadSession();
+
+    populateSelect('cours');
+    loadIDFromSelect('cours');
+    loadCours();
+
+    populateSelect('categorie', 'categorie', 'years_ago');
+    populateSelect('fraisSession', 'session');
+    loadIDFromSelect('categorie');
+    loadCategorie();
+
+    populateSelect('escompte');
+    loadIDFromSelect('escompte');
+    loadEscompte();
+    loadUser();
+
+    if (location.hash)
+	selectTab(location.hash.substring(1, location.hash.length));
 }
 
-if (location.hash)
-    selectTab(location.hash.substring(1, location.hash.length));
+Hooks.addHaveConfig(init);
+
+function bumpConfigurationVersion() {
+    Cfg.cfg.version++;
+    loadMisc();
+}
 
 /**** nav stuff ****/
 
@@ -41,9 +60,10 @@ function loadIDFromSelect(t) {
 
 function loadIDFromSeqNo(t) {
     var seqno = getElementById(t+'_seqno').value;
-    var rs = db.execute('SELECT id FROM `'+t+'` WHERE seqno=?', [seqno]);
-    getElementById(t+'_id').value = rs.field(0);
-    rs.close();
+    for (var i = 0; i < Cfg.cfg[t].length; i++) {
+	if (Cfg.cfg[t][i].seqno == seqno)
+	    getElementById(t+'_id').value = Cfg.cfg[t][i].id;
+    }
 }
 
 function adjustSelectorToID(t) {
@@ -73,12 +93,9 @@ function populateSelect(t, src, order) {
     while (things.length > 0)
         things.remove(0);
 
-    var rs = db.execute('SELECT name,id from `'+src+'` ORDER BY '+order);
-    while (rs.isValidRow()) {
-        things.add(new Option(rs.field(0), rs.field(1)), null);
-        rs.next();
+    for (var i = 0; i < src.length; i++) {
+	things.add(new Option(src[i].name, src[i].id), null);
     }
-    rs.close();
 }
 
 function newThing(t) {
@@ -89,17 +106,13 @@ function newThing(t) {
 }
 
 function rmThing(t) {
+    return; // YYY
     var id = getElementById(t+'_id').value;
     if (id != -1)
         db.execute('DELETE FROM `'+t+'` WHERE id=?', [id]);
     populateSelect(t);
     loadIDFromSelect('session');
 }
-
-/**** sessions stuff ****/
-populateSelect('session');
-loadIDFromSelect('session');
-loadSession();
 
 function loadSession() {
     var id = getElementById('session_id').value;
@@ -111,13 +124,10 @@ function loadSession() {
 	getElementById('session_id').value = -1;
 	return;
     }
-    var rs = db.execute('SELECT * from `session` where id=?', [id]);
-
     for (s in SESSION_FIELDS) {
         var sf = SESSION_FIELDS[s];
-        getElementById('session_'+sf).value = rs.fieldByName(sf);
+        getElementById('session_'+sf).value = Cfg.cfg.sessions[id][sf];
     }
-    rs.close();
 }
 
 function saveSession() {
@@ -139,13 +149,9 @@ function saveSession() {
     loadIDFromSeqNo('session');
     populateSelect('session');
     adjustSelectorToID('session');
-    initConfig();
 }
 
 /**** cours stuff ****/
-populateSelect('cours');
-loadIDFromSelect('cours');
-loadCours();
 
 function loadCours() {
     var id = getElementById('cours_id').value;
@@ -158,25 +164,20 @@ function loadCours() {
 	getElementById('cours_session').value = '';
 	return;
     }
-    var rs = db.execute('SELECT * FROM `cours` WHERE id=?', [id]);
-
     for (s in COURS_FIELDS) {
         var sf = COURS_FIELDS[s];
-        getElementById('cours_'+sf).value = rs.fieldByName(sf);
+        getElementById('cours_'+sf).value = Cfg.cfg.sessions[CURRENT_SESSION].cours[id][sf];
     }
-    rs.close();
+
     var seqno = getElementById('cours_seqno').value;
     var t = '';
 
-    rs = db.execute('SELECT abbrev FROM `session`, `cours_session` WHERE cours_seqno=? AND session.seqno = cours_session.session_seqno ORDER BY session.seqno',
-		   [seqno]);
-    while (rs.isValidRow()) {
-	t += rs.field(0);
-	rs.next();
-	if (rs.isValidRow()) t += ' ';
-    }
+    for (var i = 0; i < Cfg.cfg.sessions.length; i++)
+	for (var j = 0; j < Cfg.cfg.sessions[i].cours.length; j++)
+	    if (Cfg.cfg.sessions[i].cours[j].seqno == seqno) 
+		t += ' ' + Cfg.cfg.sessions[i].abbrev;
+
     getElementById('cours_session').value = t;
-    rs.close();
 }
 
 function saveCours() {
@@ -209,14 +210,9 @@ function saveCours() {
     loadIDFromSeqNo('cours');
     populateSelect('cours');
     adjustSelectorToID('cours');
-    initConfig();
 }
 
 /**** categorie stuff ****/
-populateSelect('categorie', 'categorie', 'years_ago');
-populateSelect('fraisSession', 'session');
-loadIDFromSelect('categorie');
-loadCategorie();
 
 function loadCategorie() {
     var id = getElementById('categorie_id').value;
@@ -230,39 +226,47 @@ function loadCategorie() {
 	adjustYALabel();
 	return;
     }
-    var rs = db.execute('SELECT * from `categorie` where id=?', [id]);
 
     for (s in CATEGORIES_FIELDS) {
         var sf = CATEGORIES_FIELDS[s];
-        getElementById('categorie_'+sf).value = rs.fieldByName(sf);
+        getElementById('categorie_'+sf).value = Cfg.cfg.categories[id][sf];
     }
     if (getElementById('categorie_noire').value == 1 || getElementById('categorie_noire').value == 'true') 
       getElementById('categorie_noire').checked = true;
     else
       getElementById('categorie_noire').checked = false;
 
-    rs.close();
     adjustYALabel();
 
     var abbr = getElementById('categorie_abbrev').value;
     var fsi = getElementById('fraisSessionSelect').value;
-    var rs = db.execute('SELECT seqno FROM `session` WHERE id=?', [fsi]);
-    var sseq = rs.field(0);
-    rs.close();
-    rs = db.execute('SELECT * from `categorie_session` WHERE categorie_abbrev=? AND session_seqno=?', [abbr, sseq]);
-    if (rs.isValidRow()) {
-	for (s in CATEGORIE_SESSION_FIELDS) {
-            var sf = CATEGORIE_SESSION_FIELDS[s];
-            getElementById('categorie_sess_'+sf).value = rs.fieldByName(sf);
+    var sseq = '';
+    for (var i = 0; i < Cfg.cfg.sessions.length; i++) {
+	if (Cfg.cfg.sessions[i].id == fsi)
+	    sseq = Cfg.cfg.sessions[i].seqno;
+    }
+
+    var found = false;
+    for (var i = 0; i < Cfg.cfg.sessions.length; i++) {
+	if (Cfg.cfg.sessions[i].seqno == sseq && 
+	    Cfg.cfg.sessions[i].abbrev == abbrev) {
+	    found = true;
+	    for (var j = 0; j < Cfg.cfg.sessions[i].cs.length; j++) {
+ 		for (s in CATEGORIE_SESSION_FIELDS) {
+		    var sf = CATEGORIE_SESSION_FIELDS[s];
+		    getElementById('categorie_sess_'+sf).value = 
+			Cfg.cfg.sessions[i].cs[j][s];
+		}
+	    }
 	}
-    } else {
+    }
+    if (!found) {
 	for (s in CATEGORIE_SESSION_FIELDS) {
             var sf = CATEGORIE_SESSION_FIELDS[s];
             getElementById('categorie_sess_'+sf).value = '';
 	}
 	getElementById('categorie_sess_id').value = -1;
     }
-    rs.close();
 }
 
 function saveCategorie() {
@@ -278,9 +282,9 @@ function saveCategorie() {
     r['cs_categorie_abbrev'] = r['abbrev'];
 
     var fsi = getElementById('fraisSessionSelect').value;
-    var rs = db.execute('SELECT seqno FROM `session` WHERE id=?', [fsi]);
-    r['cs_session_seqno'] = rs.field(0);
-    rs.close();
+    for (var i = 0; i < Cfg.cfg.sessions.length; i++)
+	if (Cfg.cfg.sessions[i].id == fsi)
+	    r['cs_session_seqno'] = Cfg.cfg.sessions[i].seqno;
 
     r['noire'] = getElementById('categorie_noire').checked;
 
@@ -292,7 +296,6 @@ function saveCategorie() {
     populateSelect('categorie', 'categorie', 'years_ago');
     populateSelect('fraisSession', 'session');
     adjustSelectorToID('categorie');
-    initConfig();
 }
 
 var origYALabel;
@@ -308,10 +311,6 @@ function adjustYALabel() {
 }
 
 /**** escompte stuff ****/
-populateSelect('escompte');
-loadIDFromSelect('escompte');
-loadEscompte();
-
 function loadEscompte() {
     var id = getElementById('escompte_id').value;
     if (id == -1) {
@@ -322,13 +321,15 @@ function loadEscompte() {
 	getElementById('escompte_id').value = -1;
 	return;
     }
-    var rs = db.execute('SELECT * from `escompte` where id=?', [id]);
-
-    for (s in ESCOMPTE_FIELDS) {
-        var sf = ESCOMPTE_FIELDS[s];
-        getElementById('escompte_'+sf).value = rs.fieldByName(sf);
+    for (var i = 0; i < Cfg.cfg.escomptes.length; i++) {
+	if (Cfg.cfg.escomptes[i] == id) {
+	    for (s in ESCOMPTE_FIELDS) {
+		var sf = ESCOMPTE_FIELDS[s];
+		getElementById('escompte_'+sf).value = 
+		    Cfg.cfg.escomptes[i][sf];
+	    }
+	}
     }
-    rs.close();
 }
 
 function saveEscompte() {
@@ -350,12 +351,9 @@ function saveEscompte() {
     loadIDFromSeqNo('escompte');
     populateSelect('escompte');
     adjustSelectorToID('escompte');
-    initConfig();
 }
 
 /**** user stuff ****/
-loadUser();
-
 function loadUser() {
   doRequest("GET", "user.php", null, populateUser_, null);
 
@@ -385,33 +383,14 @@ function addNode(t, row) {
 }
 
 /**** misc stuff ****/
-loadMisc();
-
-function loadMisc() {
-    var rs = db.execute('SELECT * from `global_configuration`');
-
-    for (m in MISC_FIELDS) {
-        var mf = MISC_FIELDS[m];
-        getElementById(mf).value = rs.fieldByName(mf);
-    }
-
-    rs.close();
-}
 
 function saveMisc() {
     clearStatus();
     getElementById('version').value++;
 
-    var r = [];
-    for (m in MISC_FIELDS) {
-        var mf = MISC_FIELDS[m];
-        r[mf] = getElementById(mf).value;
-    }
-
     storeMisc(r);
 
     populateSelect('escompte');
     adjustSelectorToID('escompte');
-    initConfig();
 }
 

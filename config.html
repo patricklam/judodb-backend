@@ -1,5 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" manifest="cache.manifest">
+<!--<html xmlns="http://www.w3.org/1999/xhtml" manifest="cache.manifest">-->
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>Facturation Club Judo Anjou: Modifier configuration systeme</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -9,8 +10,7 @@
 
 <body>
 
-<script type="text/javascript" src="gears_init.js"></script>
-<script type="text/javascript" src="localserver.js"></script>
+<script type="text/javascript" src="hooks.js"></script>
 <script type="text/javascript" src="constants.js"></script>
 <script type="text/javascript" src="db.js"></script>
 <script type="text/javascript" src="datastore.js"></script>
@@ -41,44 +41,44 @@
  <form id="currentSession" class="compactform" style="padding-left:1em">
   <div class="threeper">
    <label for="sessionSelect">
-    <select id="sessionSelect" onchange="loadIDFromSelect('session'); loadSession();">
+    <select id="sessionSelect" onchange="loadIDFromSelect('sessions'); loadSession();">
      <option />
     </select></label>
-   <label for="newSession" style="text-align:center"><a id="newSession" href="#sessions" onclick="newThing('session'); loadSession(); return false">Nouvelle session</a>
+   <label for="newSession" style="text-align:center"><a id="newSession" href="#sessions" onclick="newThing('sessions'); loadSession(); return false">Nouvelle session</a>
    </label>
-   <label for="rmSession" style="text-align:right"><a id="rmSession" href="#sessions" onclick="rmThing('session'); loadSession(); return false">Supprimer session</a>
-   </label>
-  </div>
-
-  <input type="hidden" id="session_id" value="-1"/>
-  <input type="hidden" id="session_year" />
-
-  <div class="fourper">
-   <label for="session_name">Nom de la session
-   <input type="text" id="session_name" />
-   </label>
-
-   <label for="session_abbrev">Abbr&eacute;viation
-   <input type="text" id="session_abbrev" />
-   </label>
-
-   <label for="session_seqno">Num&eacute;ro sequence
-   <input type="text" id="session_seqno" />
+   <label for="rmSession" style="text-align:right"><a id="rmSession" href="#sessions" onclick="rmThing('sessions'); loadSession(); return false">Supprimer session</a>
    </label>
   </div>
 
+  <input type="hidden" id="sessions_id" value="-1"/>
+  <input type="hidden" id="sessions_year" />
+
   <div class="fourper">
-   <label for="session_first_signup_date">Début des inscriptions
-   <input type="text" id="session_first_signup_date" />
+   <label for="sessions_name">Nom de la session
+   <input type="text" id="sessions_name" />
    </label>
-   <label for="session_first_class_date">Début des cours
-   <input type="text" id="session_first_class_date" />
+
+   <label for="sessions_abbrev">Abbr&eacute;viation
+   <input type="text" id="sessions_abbrev" />
    </label>
-   <label for="session_last_signup_date">Fin des inscriptions
-   <input type="text" id="session_last_signup_date" />
+
+   <label for="sessions_seqno">Num&eacute;ro sequence
+   <input type="text" id="sessions_seqno" />
    </label>
-   <label for="session_last_class_date">Fin des cours
-   <input type="text" id="session_last_class_date" />
+  </div>
+
+  <div class="fourper">
+   <label for="sessions_first_signup_date">Début des inscriptions
+   <input type="text" id="sessions_first_signup_date" />
+   </label>
+   <label for="sessions_first_class_date">Début des cours
+   <input type="text" id="sessions_first_class_date" />
+   </label>
+   <label for="sessions_last_signup_date">Fin des inscriptions
+   <input type="text" id="sessions_last_signup_date" />
+   </label>
+   <label for="sessions_last_class_date">Fin des cours
+   <input type="text" id="sessions_last_class_date" />
    </label>
   </div>
 

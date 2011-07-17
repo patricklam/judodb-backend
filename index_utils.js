@@ -1,17 +1,10 @@
-var idb;
-
 function init() {
-    clearStatus();
-
-    DB.createIfNeeded();
-
-    initConfig();
     updateLastSync();
-
+    clearStatus();
     getElementById('version').innerHTML = 'version ' + VERSION;
 }
 
-window.addEventListener("DOMContentLoaded", init(), false);
+window.addEventListener("DOMContentLoaded", init, false);
 
 var clients = [];
 var serverJudokaCount = 0;
@@ -118,6 +111,7 @@ function doLogin(arg, successContinuation) {
 }
 
 function updateLastSync() {
+    return; // YYY
   var contains_current_session = '%'+CURRENT_SESSION+'%';
   var tcs = db.execute('SELECT COUNT(client.id) from `client` '+
                        'WHERE client.deleted <> \'true\' ');

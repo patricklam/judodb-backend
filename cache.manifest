@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# rev 1
+# rev 3
 index.html
 editclient.html
 cours.html
@@ -10,6 +10,7 @@ constants.js
 configured_constants.js
 datastore.js
 db.js
+hooks.js
 md5.js
 utils.js
 index_utils.js
