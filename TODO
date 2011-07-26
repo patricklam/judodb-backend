@@ -1,5 +1,6 @@
 * port to GWT
 * add a 'saison' selector to allow browsing previous years
+* remove constants.php
 
 --- later:
 
