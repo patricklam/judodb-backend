@@ -6,40 +6,27 @@ require_authentication();
 $id = $_GET["id"];
 if (!isset ($id)) die;
 
-header('content-type: text/xml');
-echo "<?xml version=\"1.0\"?>";
+header('content-type: application/json');
 
 require ('_constants.php');
-require ('_database.php');
+require ('_dbconfig.php');
 
-db_connect() || die;
+$link = mysql_connect($DBI_HOST, $DBI_USERNAME, $DBI_PASSWORD) || die("could not connect to db");
+mysql_select_db($DBI_DATABASE) || die("could not select db");
 
-$rs = db_query_get("SELECT * FROM `payment_groups` WHERE id=$id");
-$version = $rs[0]['version'];
+$rs = mysql_query("SELECT * FROM `payment_groups` WHERE id=$id");
+$group = mysql_fetch_object($rs);
 
-print "<group server_id='$id'>";
-
-$rs = db_query_get("SELECT * FROM `payment_group_members` " .
+$rs = mysql_query("SELECT * FROM `payment_group_members` " .
                    "WHERE group_id=$id");
 if (isset($rs)) {
- foreach ($rs as $r) {
-  print "<member_id>" . $r['client_id'] . "</member_id>";
+ $group->members = array();
+ while ($m = mysql_fetch_object($rs)) {
+  unset($m->group_id);
+  $group->members[] = $m;
  }
 }
 
-$rs = db_query_get("SELECT * from `payment` " .
-           "WHERE group_id=$id ORDER BY date ASC");
-if (isset($rs)) {
- foreach ($rs as $r) {
-  print "<payment>";
-  foreach ($PAYMENT_FIELDS as $f) {
-   print "<$f>" . $r[$f] . "</$f>";
-  }
-  print "</payment>";
- }
-}
-print "<version>" . $version . "</version>";
-
-print "</group>";
+echo '{"group":'.json_encode($group).'}';
 
 ?>
