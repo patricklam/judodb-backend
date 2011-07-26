@@ -1,56 +1,50 @@
 <?
 require ('_authutils.php');
 
-require_authentication();
+//require_authentication();
 
 $id = $_GET["id"];
 if (!isset ($id)) die;
 
-header('content-type: text/xml');
-echo "<?xml version=\"1.0\"?>";
+header('content-type: application/json');
 
 require ('_constants.php');
-require ('_database.php');
+require('_dbconfig.php');
 
-db_connect() || die;
+$link = mysql_connect($DBI_HOST, $DBI_USERNAME, $DBI_PASSWORD) || die("could not connect to db");
+mysql_select_db($DBI_DATABASE) || die("could not select db");
 
-$rs = db_query_get("SELECT * FROM `client` WHERE id=$id");
+$rs = mysql_query("SELECT * FROM `client` WHERE id=$id");
 
-print "<client server_id='$id'>";
+  $client = mysql_fetch_object($rs);
 
-foreach ($ALL_FIELDS as $f) {
- print "<$f>" . $rs[0][$f] . "</$f>";
-}
+mysql_free_result($rs);
 
-$rs = db_query_get("SELECT * FROM `grades` " .
+$rs = mysql_query("SELECT * FROM `grades` " .
            "WHERE client_id=$id ORDER BY date_grade ASC");
-if (isset($rs)) {
- foreach ($rs as $r) {
-  print "<grade>" . $r['grade'] . "</grade>";
-  print "<date_grade>" . $r['date_grade'] . "</date_grade>";
- }
-}
 
-$rs = db_query_get("SELECT * FROM `services` " .
+  if (isset($rs)) {
+   $client->grades = array();
+   while ($g = mysql_fetch_object($rs)) {
+    unset($g->client_id);
+    unset($g->id);
+    $client->grades[] = $g;
+   }
+  }
+
+mysql_free_result($rs);
+
+$rs = mysql_query("SELECT * FROM `services` " .
            "WHERE client_id=$id ORDER BY date_inscription ASC");
-if (isset($rs)) {
- foreach ($rs as $r) {
-  foreach ($SERVICE_FIELDS as $f) {
-   print "<$f>" . $r[$f] . "</$f>";
-  }
- }
-}
 
-$rs = db_query_get("SELECT * from `payment` " .
-           "WHERE client_id=$id ORDER BY date ASC");
-if (isset($rs)) {
- foreach ($rs as $r) {
-  foreach ($PAYMENT_FIELDS as $f) {
-   print "<$f>" . $r[$f] . "</$f>";
+  if (isset($rs)) {
+   $client->services = array();
+   while ($s = mysql_fetch_object($rs)) {
+    unset($s->client_id);
+    $client->services[] = $s;
+   }
   }
- }
-}
 
-print "</client>";
+echo '{"client":'.json_encode($client).'}';
 
 ?>
