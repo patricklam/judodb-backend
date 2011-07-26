@@ -8,7 +8,6 @@ if (!isset ($id)) die;
 
 header('content-type: application/json');
 
-require ('_constants.php');
 require ('_dbconfig.php');
 
 $link = mysql_connect($DBI_HOST, $DBI_USERNAME, $DBI_PASSWORD) || die("could not connect to db");
