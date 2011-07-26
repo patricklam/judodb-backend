@@ -15,7 +15,7 @@ $link = mysql_connect($DBI_HOST, $DBI_USERNAME, $DBI_PASSWORD) || die("could not
 mysql_select_db($DBI_DATABASE) || die("could not select db");
 
 $rs = mysql_query("SELECT * FROM `client` WHERE id=$id");
-  $client = mysql_fetch_object($rs);
+$client = mysql_fetch_object($rs);
 
 $rs = mysql_query("SELECT * FROM `grades` " .
            "WHERE client_id=$id ORDER BY date_grade ASC");
