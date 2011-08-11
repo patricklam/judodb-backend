@@ -1,6 +1,10 @@
-* port to GWT
 * add a 'saison' selector to allow browsing previous years
 * remove constants.php
+
+* create the 'edit client' page, implement push_one_client
+  * new client
+* implement the search page
+  * create the list of noms/prenoms/sessions/ids in PHP
 
 --- later:
 
