@@ -10,7 +10,7 @@ $challenge = "";
 for ($i = 0; $i < 80; $i++) {
     $challenge .= dechex(rand(0, 15));
 }
-$_SESSION[challenge] = $challenge;
+$_SESSION['challenge'] = $challenge;
 
 print $challenge;
 ?>

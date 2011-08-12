@@ -9,7 +9,7 @@
 //////////////////////////////////////////////////////////////////////////////// 
 session_start();
 function is_authenticated() {
- return isset($_SESSION[authenticated]) && $_SESSION[authenticated] == "yes";
+ return isset($_SESSION["authenticated"]) && $_SESSION["authenticated"] == "yes";
 }
 function require_authentication() {
  if (!is_authenticated()) {
