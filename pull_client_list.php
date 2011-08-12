@@ -1,7 +1,7 @@
 <?
 require ('_authutils.php');
 
-//require_authentication();
+require_authentication();
 
 header('content-type: application/json');
 
