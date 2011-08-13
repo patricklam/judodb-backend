@@ -37,6 +37,10 @@ if (isset($rs)) {
  }
 }
 
-echo '{"client":'.json_encode($client).'}';
+$callback = trim($_GET['callback']);
+echo $callback;
+echo '(';
+echo json_encode($client);
+echo ');';
 
 ?>
