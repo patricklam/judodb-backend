@@ -37,6 +37,10 @@ while ($client = mysql_fetch_object($rs0)) {
   $clients[] = $client;
 }
 
-echo '{"clients":'.json_encode($clients).'}';
+$callback = trim($_GET['callback']);
+echo $callback;
+echo '(';
+echo json_encode($clients);
+echo ');';
 
 ?>
