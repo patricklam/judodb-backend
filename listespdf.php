@@ -19,7 +19,6 @@ if ($multi == "1") {
     $sts = explode("|", iconv("UTF-8", "ISO-8859-1", $_POST["subtitle"]));
     $c = count($ts);
 } else {
-        $pdf->Cell(0, 6, "multifalse");
     $ts = array(iconv("UTF-8", "ISO-8859-1", $_POST["title"]));
     $sts = array(iconv("UTF-8", "ISO-8859-1", $_POST["subtitle"]));
     $c = 1;
