@@ -1,7 +1,6 @@
 <?
 // Unconditionally tramples the input on the server-side DB.
 // If server_id is not -1, uses it. 
-//  Otherwise uses nom/prenom/ddn as key, if that matches db.
 //  Otherwise creates new row on server.
 // Returns server_id.
 // Guarantees that server_version == c.version on exit.
@@ -26,14 +25,6 @@ if (isset($_POST['server_id']) && $_POST['server_id'] != '-1') {
 //fwrite($fh, "server says sid $sid\n");
   $sid = $_POST['server_id'];
 } else {
-  $rs = db_query_get("SELECT (id) FROM `client` WHERE " .
-                     "nom='$nom' AND prenom='$prenom' AND ddn='$ddn'");
-
-  if (isset($rs) && isset($rs[0])) {
-    $sid = $rs[0]["id"];
-//fwrite($fh, "alleged sid $sid\n");
-}
-  else {
 //fwrite($fh, "INSERT INTO `client` (nom, prenom, ddn) VALUES ('$nom', '$prenom', '$ddn')\n");
     $sid = db_query_set(
       "INSERT INTO `client` (nom, prenom, ddn) VALUES ('$nom', '$prenom', '$ddn')");
@@ -46,7 +37,6 @@ if ($_POST['deleted'] == 'true') {
   db_query_set("DELETE FROM `services` WHERE client_id=$sid");
   db_query_set("DELETE FROM `payment_group_members` WHERE client_id=$sid");
   db_query_set("DELETE FROM `payment` WHERE client_id=$sid");
-  db_query_set("REPLACE INTO `deleted_client` VALUE ($sid)");
   print($sid);
   exit();
 }
@@ -105,20 +95,7 @@ foreach ($PAYMENT_FIELDS as $s) {
 }
 $payment_namelist .= ')';
 
-$i = 0;
 db_query_set("DELETE FROM `payment` WHERE client_id='$sid'");
-if ($_POST['have_payment'] == 'true') {
- foreach ($sfs['mode'] as $s) {
-  $payment_tuple = "VALUES ($sid";
-  foreach ($PAYMENT_FIELDS as $s) {
-    $payment_tuple .= ", '".$sfs[$s][$i] . "'";
-  }
-  $payment_tuple .= ")";
-
-  db_query_set("INSERT INTO `payment` $payment_namelist $payment_tuple");
-  $i++; 
- }
-}
 
 print($sid);
 
