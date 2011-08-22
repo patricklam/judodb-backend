@@ -52,7 +52,8 @@ for ($c = 'A'; $c < 'R'; $c++)
 
 // some manual fixes:
 $s->getColumnDimension('C')->setAutoSize(false)->setWidth(8);
-$s->getColumnDimension('D')->setAutoSize(false)->setWidth(6);
+$s->getColumnDimension('D')->setAutoSize(false)->setWidth(11);
+$s->getColumnDimension('E')->setAutoSize(false)->setWidth(5);
 $s->getColumnDimension('I')->setAutoSize(false)->setWidth(10);
 
 $r++;
