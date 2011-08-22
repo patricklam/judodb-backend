@@ -1,6 +1,7 @@
 <?
 // Thanks to http://marakana.com/blog/examples/php-implementing-secure-login-with-php-javascript-and-sessions-without-ssl.html
-// We'll later improve it with http://pajhome.org.uk/crypt/md5/auth.html
+// TODO: Improved as per http://pajhome.org.uk/crypt/md5/auth.html
+//  i.e. don't store cleartext passwords
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -30,7 +31,7 @@ function validate($challenge, $response, $password) {
  
 function authenticate() {
   if ($_SESSION[authenticated] == "yes")
-    exit();
+    return '"OK"';
 
   if (isset($_SESSION[challenge]) &&
       isset($_REQUEST[username]) &&
@@ -41,19 +42,16 @@ function authenticate() {
       $_SESSION[username] = $_REQUEST[username];;
       unset($_SESSION[challenge]);
     } else {
-      header('HTTP/1.0 403 Forbidden');
-      print('<b>Authentication failed.</b>');
-      exit;
+      return '"BAD"';
     }
   } else {
-    header('HTTP/1.0 403 Forbidden');
-    print('<b>Session expired.</b>');
-    exit;
+    return '"EXPIRED"';
   }
 }
 
 session_start();
-authenticate();
-// return 200, which signals "OK".
-exit();
+header('content-type: application/json');
+$callback = trim($_GET['callback']);
+echo $callback . '({"authenticated":' . authenticate() . '})';
+
 ?>

@@ -12,5 +12,7 @@ for ($i = 0; $i < 80; $i++) {
 }
 $_SESSION['challenge'] = $challenge;
 
-print $challenge;
+header('content-type: application/json');
+$callback = trim($_GET['callback']);
+echo $callback . '({"challenge":"'.$challenge.'"})';
 ?>
