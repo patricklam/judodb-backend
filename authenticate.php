@@ -41,6 +41,7 @@ function authenticate() {
       $_SESSION[authenticated] = "yes";
       $_SESSION[username] = $_REQUEST[username];;
       unset($_SESSION[challenge]);
+      return '"OK"';
     } else {
       return '"BAD"';
     }
