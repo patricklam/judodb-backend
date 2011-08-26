@@ -1,7 +1,7 @@
 <?php
 session_start();
-$_SESSION[authenticated] = "";
-$_SESSION[username] = "";
+$_SESSION['authenticated'] = "";
+$_SESSION['username'] = "";
 
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();

@@ -30,17 +30,17 @@ function validate($challenge, $response, $password) {
 }
  
 function authenticate() {
-  if ($_SESSION[authenticated] == "yes")
+  if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] == "yes")
     return '"OK"';
 
-  if (isset($_SESSION[challenge]) &&
-      isset($_REQUEST[username]) &&
-      isset($_REQUEST[response])) {
-    $password = getPasswordForUser($_REQUEST[username]);
-    if (validate($_SESSION[challenge], $_REQUEST[response], $password)) {
-      $_SESSION[authenticated] = "yes";
-      $_SESSION[username] = $_REQUEST[username];;
-      unset($_SESSION[challenge]);
+  if (isset($_SESSION['challenge']) &&
+      isset($_REQUEST['username']) &&
+      isset($_REQUEST['response'])) {
+    $password = getPasswordForUser($_REQUEST['username']);
+    if (validate($_SESSION['challenge'], $_REQUEST['response'], $password)) {
+      $_SESSION['authenticated'] = "yes";
+      $_SESSION['username'] = $_REQUEST['username'];;
+      unset($_SESSION['challenge']);
       return '"OK"';
     } else {
       return '"BAD"';
