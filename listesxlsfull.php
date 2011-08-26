@@ -16,7 +16,7 @@ $allCount = count($ds);
 
 $s = $objPHPExcel->getActiveSheet();
 $s->getDefaultStyle()->getFont()->setName('Arial');
-$s->setTitle($shts[$p]);
+$s->setTitle('Liste complet membres CJA');
 $s->getPageSetup()->setOrientation
 	(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT)
 	          ->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LETTER);
