@@ -51,8 +51,8 @@ $updates=substr($updates, 1);
 db_query_set("UPDATE `client` SET $updates WHERE id='$sid'");
 
 // update grade: 4D,3D,2D,1D;2009-03-22,2002-11-10,1998-11-08,1996-11-03
-$grades=explode(',', $_POST['grade']); 
-$date_grade=explode(',', $_POST['date_grade']);
+$grades=explode(',', $_POST['grades_encoded']); 
+$date_grade=explode(',', $_POST['grade_dates_encoded']);
 
 $i = 0;
 db_query_set("DELETE FROM `grades` WHERE client_id='$sid'");
