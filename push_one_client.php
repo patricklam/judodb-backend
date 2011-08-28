@@ -22,10 +22,8 @@ $ddn = db_escape($_POST['ddn']);
 //fwrite($fh, "done\n");
 
 if (isset($_POST['server_id']) && $_POST['server_id'] != '-1') {
-//fwrite($fh, "server says sid $sid\n");
   $sid = $_POST['server_id'];
 } else {
-//fwrite($fh, "INSERT INTO `client` (nom, prenom, ddn) VALUES ('$nom', '$prenom', '$ddn')\n");
     $sid = db_query_set(
       "INSERT INTO `client` (nom, prenom, ddn) VALUES ('$nom', '$prenom', '$ddn')");
     }
@@ -86,14 +84,6 @@ foreach ($sfs['date_inscription'] as $s) {
   db_query_set("INSERT INTO `services` $service_namelist $service_tuple");
   $i++; 
 }
-
-// update single-payer info; create lists
-$payment_namelist = '(client_id';
-foreach ($PAYMENT_FIELDS as $s) {
-  $sfs[$s] = explode(',', $_POST[$s]);
-  $payment_namelist .= ", $s";
-}
-$payment_namelist .= ')';
 
 db_query_set("DELETE FROM `payment` WHERE client_id='$sid'");
 
