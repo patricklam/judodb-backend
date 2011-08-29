@@ -1,9 +1,7 @@
 <?
-// Unconditionally tramples the input on the server-side DB.
-// If server_id is not -1, uses it. 
-//  Otherwise creates new row on server.
-// Returns server_id.
-// Guarantees that server_version == c.version on exit.
+// Creates a set of SQL commands to store the given POST input,
+// store it in $_SESSION and keyed with the provided guid.
+// Start the set of SQL commands with the $sid.
 
 require ('_constants.php');
 require ('_database.php');
@@ -11,33 +9,37 @@ require ('_authutils.php');
 
 require_authentication();
 
-db_connect() || die;
+$guid = $_POST['guid'];
 
+// Get a server id.
 $nom = db_escape($_POST['nom']);
 $prenom = db_escape($_POST['prenom']);
 $ddn = db_escape($_POST['ddn']);
-
-//$fh = fopen("/tmp/push", "a");
-//fwrite($fh, "pushing $prenom $nom\n");
-//fwrite($fh, "done\n");
-
-if (isset($_POST['server_id']) && $_POST['server_id'] != '-1') {
-  $sid = $_POST['server_id'];
+if (isset($_POST['sid']) && $_POST['sid'] != '-1') {
+  $sid = $_POST['sid'];
 } else {
-    $sid = db_query_set(
+  $sid = db_query_set(
       "INSERT INTO `client` (nom, prenom, ddn) VALUES ('$nom', '$prenom', '$ddn')");
-    }
 }
+$stored_cmds = array($sid);
 
+// Handle 'deleted' requests.
+// Actually, we don't generate deletes, so let's not handle them.
+/*
 if ($_POST['deleted'] == 'true') {
-  db_query_set("DELETE FROM `client` WHERE id=$sid");
-  db_query_set("DELETE FROM `grades` WHERE client_id=$sid");
-  db_query_set("DELETE FROM `services` WHERE client_id=$sid");
-  db_query_set("DELETE FROM `payment_group_members` WHERE client_id=$sid");
-  db_query_set("DELETE FROM `payment` WHERE client_id=$sid");
-  print($sid);
+  array_push($stored_cmds,"DELETE FROM `client` WHERE id=$sid");
+  array_push($stored_cmds,"DELETE FROM `grades` WHERE client_id=$sid");
+  array_push($stored_cmds,"DELETE FROM `services` WHERE client_id=$sid");
+  array_push($stored_cmds,"DELETE FROM `payment_group_members` WHERE client_id=$sid");
+  array_push($stored_cmds,"DELETE FROM `payment` WHERE client_id=$sid");
+
+  print($stored_cmds);
+  $_SESSION[$guid] = $stored_cmds;
   exit();
 }
+*/
+
+// Generate updates to client data.
 
 $updates = "";
 foreach ($ALL_FIELDS as $f) {
@@ -46,34 +48,41 @@ foreach ($ALL_FIELDS as $f) {
 }
 $updates=substr($updates, 1);
 
-db_query_set("UPDATE `client` SET $updates WHERE id='$sid'");
+array_push($stored_cmds, "UPDATE `client` SET $updates WHERE id='$sid'");
 
 // update grade: 4D,3D,2D,1D;2009-03-22,2002-11-10,1998-11-08,1996-11-03
 $grades=explode(',', $_POST['grades_encoded']); 
 $date_grade=explode(',', $_POST['grade_dates_encoded']);
 
+array_push($stored_cmds, "DELETE FROM `grades` WHERE client_id='$sid'");
 $i = 0;
-db_query_set("DELETE FROM `grades` WHERE client_id='$sid'");
 foreach ($grades as $g) {
-  $dg = $date_grade[$i];
-  db_query_set("INSERT INTO `grades` (client_id, grade, date_grade) ".
-                 "VALUES ('$sid','$g','$dg')");
+  $gg = db_escape($g);
+  $dg = db_escape($date_grade[$i]);
+  array_push($stored_cmds, 
+             "INSERT INTO `grades` (client_id, grade, date_grade) ".
+             "VALUES ('$sid','$gg','$dg')");
   $i++; 
 }
 
 // update services info; create lists
+array_push($stored_cmds, "DELETE FROM `services` WHERE client_id='$sid'");
+
 $service_namelist = '(client_id';
 foreach ($SERVICE_FIELDS as $s) {
-  $sfs[$s] = explode(',', $_POST[$s]);
+  $sfs[$s] = explode(',', $_POST[$s.'_encoded']);
   $service_namelist .= ", $s";
 }
 $service_namelist .= ')';
 
 $i = 0;
-db_query_set("DELETE FROM `services` WHERE client_id='$sid'");
 foreach ($sfs['date_inscription'] as $s) {
+  // we definitely generate an empty service at the end, skip it
+  if ($sfs['date_inscription'][$i] == '') continue;
+
   $service_tuple = "VALUES ($sid";
   foreach ($SERVICE_FIELDS as $s) {
+    // boolean fields: don't quote them.
     if ($sfs[$s][$i] == 'true' || $sfs[$s][$i] == 'false')
       $service_tuple .= ", ".$sfs[$s][$i] . "";
     else
@@ -81,15 +90,19 @@ foreach ($sfs['date_inscription'] as $s) {
   }
   $service_tuple .= ")";
 
-  db_query_set("INSERT INTO `services` $service_namelist $service_tuple");
+  array_push($stored_cmds, 
+             "INSERT INTO `services` $service_namelist $service_tuple");
   $i++; 
 }
 
-db_query_set("DELETE FROM `payment` WHERE client_id='$sid'");
+// Delete old payment info.
+array_push($stored_cmds, "DELETE FROM `payment` WHERE client_id='$sid'");
 
-print($sid);
+echo "<pre>";
+print_r($stored_cmds);
+echo "</pre>";
 
-//fclose($fh);
+$_SESSION[$guid] = $stored_cmds;
 
 ?>
 
