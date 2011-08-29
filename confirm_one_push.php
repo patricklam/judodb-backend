@@ -22,7 +22,7 @@ if (isset($_SESSION[$guid])) {
   db_query_set($sq);
  }
 
- unset($_SESSION[$guid]);
+ $_SESSION[$guid] = Array(-1);
  $result['result'] = 'OK';
 } else {
  $result['result'] = 'NOT_YET';
@@ -33,6 +33,12 @@ echo $callback;
 echo '(';
 echo json_encode($result);
 echo ');';
+
+function print_debug_info($a) {
+ $fh = fopen('/tmp/push', 'a');
+ fwrite($fh, print_r($a, true));
+ fclose($fh);
+}
 
 ?>
 

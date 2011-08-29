@@ -15,7 +15,7 @@ $guid = $_POST['guid'];
 $nom = db_escape($_POST['nom']);
 $prenom = db_escape($_POST['prenom']);
 $ddn = db_escape($_POST['ddn']);
-if (isset($_POST['sid']) && $_POST['sid'] != '-1') {
+if (isset($_POST['sid']) && $_POST['sid'] != '') {
   $sid = $_POST['sid'];
 } else {
   $sid = db_query_set(
