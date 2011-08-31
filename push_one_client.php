@@ -24,8 +24,6 @@ if (isset($_POST['sid']) && $_POST['sid'] != '') {
 $stored_cmds = array($sid);
 
 // Handle 'deleted' requests.
-// Actually, we don't generate deletes, so let's not handle them.
-/*
 if ($_POST['deleted'] == 'true') {
   array_push($stored_cmds,"DELETE FROM `client` WHERE id=$sid");
   array_push($stored_cmds,"DELETE FROM `grades` WHERE client_id=$sid");
@@ -37,7 +35,6 @@ if ($_POST['deleted'] == 'true') {
   $_SESSION[$guid] = $stored_cmds;
   exit();
 }
-*/
 
 // Generate updates to client data.
 
