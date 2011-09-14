@@ -10,27 +10,33 @@ require ('_authutils.php');
 require_authentication();
 
 $guid = $_POST['guid'];
-$session = $_POST['current_session'];
+$session = db_escape($_POST['current_session']);
 $updates = explode(';', $_POST['data_to_save']);
 
-$stored_cmds = array();
+$stored_cmds = array("-1");
 foreach ($updates as $u) {
-  $ua = explode(',', $u);
-  $cid = $ua[0];
-  $action = $ua[1];
-  $newvalue = $ua[2];
+  if ($u == "") continue;
 
-  // array_push($stored_cmds, 
-  print_debug_string("UPDATE `services` SET $action=$newvalue WHERE `client_id`=$cid AND `session` LIKE '%$session%'");
+  $ua = explode(',', $u);
+  $cid = db_escape($ua[0]);
+  $action = db_escape($ua[1]);
+  $newvalue = db_escape($ua[2]);
+
+  array_push($stored_cmds, 
+   "UPDATE `services` SET $action=\"$newvalue\" WHERE `client_id`=$cid AND `saisons` LIKE '%$session%';");
 }
+
+echo "<pre>";
+print_r ($stored_cmds);
+echo "</pre>";
+
+$_SESSION[$guid] = $stored_cmds;
 
 function print_debug_string($a) {
  $fh = fopen('/tmp/push', 'a');
  fputs($fh, $a);
  fclose($fh);
 }
-
-$_SESSION[$guid] = $stored_cmds;
 
 ?>
 
