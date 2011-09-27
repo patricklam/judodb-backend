@@ -1,8 +1,9 @@
 <?
-function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $only_selected, $grid) {
+function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $grid) {
     $allCount = count($ds);
     $notFirst = FALSE;
-    // ["Nom", "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat", "Masters", "Cours", "Cours_num"];
+    // new: ["Nom", "Prenom", "Sexe", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
+    $COURS = 11;
     $COLS = 10;
     $BOXES = 35;
     $EXTRAS = 5;
@@ -11,7 +12,7 @@ function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $only_sel
         $live = FALSE;
         for ($i = 0; $i < $allCount-1; $i++) {
             $d = explode("|", $ds[$i]);
-            if ($multi == "0" || $d[$COLS+1] == $p) {
+            if ($multi == "0" || $d[$COURS] == $p) {
     	    $live = TRUE;
     	    break;
             }
@@ -48,7 +49,6 @@ function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $only_sel
 
         for ($i = 0; $i < $allCount-1; $i++) {
             $d = explode("|", $ds[$i]);
-            if ($onlyselected && $d[0] == '') continue;
             if ($multi == "0" || $d[$COLS+1] == $p) {
                 for ($j = 0; $j < $COLS; $j++) {
                     if ($display[$j])

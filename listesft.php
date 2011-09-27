@@ -23,11 +23,11 @@ $pdf->SetFont('Times', '', 14);
 $c = explode('|', $_POST['auxdata']);
 $club = $c[0];
 $clubno = $c[1];
-// [ignore, "Nom", "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat"];
-$COLS = 10;
-$display = array(false, true, true, false, true, false, false, true, true, false);
-$x = array(0, 130, 130, 0, 130, 0, 0, 190, 50, 60, 60);
-$y = array(0, 13, 23, 0, 43, 0, 0, 43, 57, 83, 93);
+// ["Nom", "Prenom", "Sexe", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
+$COLS = 14;
+$display = array(true, true, false, true, false, false, false, false, false, false, false, false, false, true);
+$x = array(130, 130, 0, 190, 0, 0, 0, 0, 0, 0, 0, 0, 0, 130);
+$y = array(13, 23, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43);
 $INCREMENT = 93.5;
 
 $catX = array('M' => 45, 'S' => 45, 'U20' => 68, 'U17' => 45, 
@@ -50,9 +50,9 @@ for ($i = 0; $i < $allCount; $i++) {
     $effOff = ($i % 3) * $INCREMENT;
     $d = explode("|", $ds[$i]);
 
-    $d[8] = substr($d[8], 0, 4);
-    $date = str_replace("/", "      ", 
-            str_replace("-", "      ", $_POST['date']));
+    $d[9] = substr($d[4], 0, 4);
+    $date = str_replace("/", "     ", 
+            str_replace("-", "     ", $_POST['date']));
     $pdf->SetXY(130, 33 + $effOff);
     $pdf->Cell(0, 0, $club);
     $pdf->SetXY(190, 33 + $effOff);
@@ -63,15 +63,15 @@ for ($i = 0; $i < $allCount; $i++) {
     $pdf->Cell(0, 0, $date);
 
     // division
-    if (substr($d[9], -1) == 'N') $d[9] = substr($d[9], 0, -1);
-    if ($d[14] == 'M') $d[9] = 'M';
-    $pdf->SetXY($catX[$d[9]], $catY[$d[9]] + $effOff);
+    if (substr($d[5], -1) == 'N') $d[5] = substr($d[5], 0, -1);
+    if ($d[16] == 'M') $d[5] = 'M';
+    $pdf->SetXY($catX[$d[5]], $catY[$d[5]] + $effOff);
     $pdf->Cell(0, 0, 'X');
 
     $sx = 0;
-    if ($d[3] == 'M')
+    if ($d[2] == 'M')
       $sx = 30.2;
-    if ($d[3] == 'F')
+    if ($d[2] == 'F')
       $sx = 43.2;
     if ($sx > 0) {
       $pdf->SetXY(60 + $sx, 57 + $effOff);
@@ -87,8 +87,8 @@ for ($i = 0; $i < $allCount; $i++) {
 }
 $pdf->AddPage();
 
-$display = array(false, true, true, false, false, false, true, false, false, true, false);
-$w = array(0, 45, 45, -1, -1, -1, 35, -1, -1, 10);
+$w = array(45, 45, -1, 35, -1, -1, 10);
+$display = array(true, true, false, false, false, true, false, false, true, false);
 produceOutput($pdf, array($_POST['evt']), array($_POST['date']), $ds, 1, $multi, $display, $w, true, false);
 
 $pdf->Output();
