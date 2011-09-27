@@ -4,7 +4,7 @@ function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $grid) {
     $notFirst = FALSE;
     // new: ["Nom", "Prenom", "Sexe", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
     $COURS = 11;
-    $COLS = 10;
+    $COLS = 11;
     $BOXES = 35;
     $EXTRAS = 5;
     for ($p = 0; $p < $c; $p++) {
