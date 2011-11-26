@@ -19,11 +19,20 @@ foreach ($updates as $u) {
 
   $ua = explode(',', $u);
   $cid = db_escape($ua[0]);
-  $action = db_escape($ua[1]);
+  $table = $ua[1][0];
+  $action = db_escape(substr($ua[1], 1));
   $newvalue = db_escape($ua[2]);
 
-  array_push($stored_cmds, 
-   "UPDATE `services` SET $action=\"$newvalue\" WHERE `client_id`=$cid AND `saisons` LIKE '%$session%';");
+  switch ($table) {
+  case "S":
+    array_push($stored_cmds, 
+       "UPDATE `services` SET $action=\"$newvalue\" WHERE `client_id`=$cid AND `saisons` LIKE '%$session%';");
+    break;
+  case "C":
+    array_push($stored_cmds, 
+       "UPDATE `client` SET $action=\"$newvalue\" WHERE `id`=$cid;");
+    break;
+  }
 }
 
 echo "<pre>";
