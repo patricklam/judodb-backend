@@ -32,6 +32,13 @@ foreach ($updates as $u) {
     array_push($stored_cmds, 
        "UPDATE `client` SET $action=\"$newvalue\" WHERE `id`=$cid;");
     break;
+  case "G":
+    $gg = explode('|', $ua[2]);
+    $grade = db_escape($gg[0]);
+    $dg = db_escape($gg[1]);
+    array_push($stored_cmds,
+       "INSERT INTO `grades` (client_id, grade, date_grade) VALUES ($cid, $grade, $dg)");
+    break;
   }
 }
 
