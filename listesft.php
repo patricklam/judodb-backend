@@ -25,9 +25,9 @@ $club = $c[0];
 $clubno = $c[1];
 // ["Nom", "Prenom", "Sexe", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
 $COLS = 14;
-$display = array(true, true, false, true, false, false, false, false, false, false, false, false, false, true);
-$x = array(130, 130, 0, 190, 0, 0, 0, 0, 0, 0, 0, 0, 0, 130);
-$y = array(13, 23, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43);
+$display = array(true, true, false, true, true, false, false, false, false, false, false, false, false, true);
+$x = array(130, 130, 0, 190, 47, 0, 0, 0, 0, 0, 0, 0, 0, 130);
+$y = array(13, 23, 0, 43, 57, 0, 0, 0, 0, 0, 0, 0, 0, 43);
 $INCREMENT = 93.5;
 
 $catX = array('M' => 45, 'S' => 45, 'U20' => 68, 'U17' => 45, 
@@ -50,7 +50,7 @@ for ($i = 0; $i < $allCount; $i++) {
     $effOff = ($i % 3) * $INCREMENT;
     $d = explode("|", $ds[$i]);
 
-    $d[9] = substr($d[4], 0, 4);
+    $d[4] = substr($d[4], 0, 4);
     $date = str_replace("/", "     ", 
             str_replace("-", "     ", $_POST['date']));
     $pdf->SetXY(130, 33 + $effOff);
@@ -59,7 +59,7 @@ for ($i = 0; $i < $allCount; $i++) {
     $pdf->Cell(0, 0, $clubno);
     $pdf->SetXY(140, 73 + $effOff);
     $pdf->Cell(0, 0, $_POST['evt']);
-    $pdf->SetXY(43, 68 + $effOff);
+    $pdf->SetXY(44, 68 + $effOff);
     $pdf->Cell(0, 0, $date);
 
     // division
