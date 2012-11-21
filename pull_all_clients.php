@@ -3,6 +3,7 @@ require ('_authutils.php');
 
 require_authentication();
 
+ini_set('zlib.output_compression', 4096);
 header('content-type: application/json');
 
 require ('_dbconfig.php');
