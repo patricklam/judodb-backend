@@ -44,7 +44,7 @@ foreach ($updates as $u) {
     $grade = db_escape($gg[0]);
     $dg = db_escape($gg[1]);
     array_push($stored_cmds,
-       "DELETE FROM `grades` WHERE VALUES (client_id=\"$cid\", grade=\"$grade\", date_grade=\"$dg\")");
+       "DELETE FROM `grades` WHERE (client_id=\"$cid\", grade=\"$grade\", date_grade=\"$dg\")");
     break;
   }
 }
