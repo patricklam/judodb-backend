@@ -65,11 +65,6 @@ CREATE TABLE `client` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `deleted_client`;
-CREATE TABLE `deleted_client` (
-  `id` int(11)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `grades`;
 CREATE TABLE `grades` (
   `client_id` INTEGER,
@@ -102,21 +97,10 @@ CREATE TABLE `services` (
   `solde` BOOLEAN
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `last_sync`;
-CREATE TABLE `last_sync` (
-  `username` varchar(255) NOT NULL,
-  `last_sync_time` timestamp
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `payment_groups`;
 CREATE TABLE `payment_groups` (
   `id` INTEGER PRIMARY KEY auto_increment,
   `version` int(5) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `deleted_payment_groups`;
-CREATE TABLE `deleted_payment_groups` (
-  `id` int(11)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `payment_group_members`;
