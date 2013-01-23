@@ -26,14 +26,14 @@ $clubno = $c[1];
 // ["Nom", "Prenom", "Sexe", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
 $COLS = 14;
 $display = array(true, true, false, true, true, false, false, false, false, false, false, false, false, true);
-$x = array(130, 130, 0, 190, 47, 0, 0, 0, 0, 0, 0, 0, 0, 130);
-$y = array(13, 23, 0, 43, 57, 0, 0, 0, 0, 0, 0, 0, 0, 43);
-$INCREMENT = 93.5;
+$x = array(128, 128, 0, 178, 51, 0, 0, 0, 0, 0, 0, 0, 0, 128);
+$y = array(20, 27.5, 0, 42, 57, 0, 0, 0, 0, 0, 0, 0, 0, 42);
+$INCREMENT = 81.5;
 
-$catX = array('M' => 45, 'S' => 45, 'U20' => 68, 'U17' => 45, 
-      'U15' => 68, 'U13' => 45, 'U11' => 68, 'U9' => 45, 'U7' => 68);
-$catY = array('M' => 14, 'S' => 24, 'U20' => 24, 'U17' => 31.5, 
-      'U15' => 31.5, 'U13' => 40, 'U11' => 40, 'U9' => 48.5, 'U7' => 48.5);
+$catX = array('M' => 52, 'S' => 52, 'U21' => 71.5, 'U18' => 52, 
+      'U15' => 71.5, 'U13' => 52, 'U11' => 71.5, 'U9' => 52, 'U7' => 71.5);
+$catY = array('M' => 21, 'S' => 27, 'U21' => 27, 'U18' => 33.5, 
+      'U15' => 33.5, 'U13' => 41, 'U11' => 41, 'U9' => 48, 'U7' => 48);
 
 $actualCount = 0;
 $data = iconv("UTF-8", "ISO-8859-1", $_POST['data_full']);
@@ -53,13 +53,13 @@ for ($i = 0; $i < $allCount; $i++) {
     $d[4] = substr($d[4], 0, 4);
     $date = str_replace("/", "     ", 
             str_replace("-", "     ", $_POST['date']));
-    $pdf->SetXY(130, 33 + $effOff);
+    $pdf->SetXY(128, 34.5 + $effOff);
     $pdf->Cell(0, 0, $club);
-    $pdf->SetXY(190, 33 + $effOff);
+    $pdf->SetXY(175, 34.5 + $effOff);
     $pdf->Cell(0, 0, $clubno);
-    $pdf->SetXY(140, 73 + $effOff);
+    $pdf->SetXY(133, 73 + $effOff);
     $pdf->Cell(0, 0, $_POST['evt']);
-    $pdf->SetXY(44, 68 + $effOff);
+    $pdf->SetXY(48, 65 + $effOff);
     $pdf->Cell(0, 0, $date);
 
     // division
@@ -70,9 +70,9 @@ for ($i = 0; $i < $allCount; $i++) {
 
     $sx = 0;
     if ($d[2] == 'M')
-      $sx = 30.2;
+      $sx = 33.2;
     if ($d[2] == 'F')
-      $sx = 43.2;
+      $sx = 46.2;
     if ($sx > 0) {
       $pdf->SetXY(60 + $sx, 57 + $effOff);
       $pdf->Cell(0, 0, "X");
