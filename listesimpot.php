@@ -1,69 +1,58 @@
 <? 
 
-require ('PHPExcel/PHPExcel.php');
-require ('PHPExcel/PHPExcel/IOFactory.php');
+require ('fpdf/fpdf.php');
+require ('fpdi/fpdi.php');
+require ('produceoutput.php');
+setlocale(LC_TIME, 'fr_CA.iso88591');
 
 // no need for authentication on this PHP file.
 
-$objPHPExcel = new PHPExcel();
+$pdf =& new FPDI('P', 'mm', 'Letter');
 
-// to avoid the need for syncronisation before output, use POST params 
-// for the data in the list.
+$pagecount = $pdf->setSourceFile('recu-impot.pdf'); 
+$tplidx = $pdf->importPage(1, '/MediaBox'); 
+$pdf->SetAutoPageBreak(false);
 
-$data = $_POST['data_full'];
+$pdf->addPage(); 
+$pdf->useTemplate($tplidx); 
+
+$pdf->SetFont('Times', '', 14);
+
+$c = explode('|', $_POST['auxdata']);
+$club = $c[0];
+$clubno = $c[1];
+// ["cid", "Nom", "DDN", "Frais"]
+$COLS = 4;
+$x = array(170, 76, 152, 48);
+$y = array(42, 74.5, 74.5, 68);
+$INCREMENT = 133.0;
+
+$actualCount = 0;
+$data = iconv("UTF-8", "ISO-8859-1", $_POST['data_full']);
 $ds = explode("*", $data);
 $allCount = count($ds);
+for ($i = 0; $i < $allCount; $i++) {
+    if ($ds[$i] == '') continue;
 
-$s = $objPHPExcel->getActiveSheet();
-$s->getDefaultStyle()->getFont()->setName('Arial');
-$s->setTitle('Liste complet membres CJA');
-$s->getPageSetup()->setOrientation
-	(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT)
-	          ->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LETTER);
+    if (($i % 2 == 0) && ($i > 0)) {
+       $pdf->addPage(); 
+       $pdf->useTemplate($tplidx); 
+    }
 
-$s->setCellValue('A1', 'Club Judo Anjou: Liste complet des membres')
-  ->getStyle()->getAlignment()
-        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-$s->getStyle('A1')->getFont()->setSize(14);
-$s->getRowDimension('1')->setRowHeight(17);
-$s->mergeCells('A1:D1');
-$s->setCellValue('A2', (int)(25569 + time() / 86400))
-  ->getStyle()->getAlignment()
-        ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-$s->getStyle("A2")->
-            getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD);
-$s->getStyle('A2')->getFont()->setSize(14);
-$s->getRowDimension('2')->setRowHeight(17);
-$s->mergeCells('A2:D2');
-
-$r = 4;
-$COLS = 17;
-$actualCount = 0;
-for ($i = 0; $i < $allCount-1; $i++) {
+    $effOff = ($i % 2) * $INCREMENT;
     $d = explode("|", $ds[$i]);
-    for ($j = 0; $j < count($d); $j++)
-        $s->setCellValueByColumnAndRow($j, $r, $d[$j]);
 
-    $actualCount++; $r++;
+    $date = strftime("%d %b %Y");
+    $pdf->SetXY(134, 94 + $effOff);
+    $pdf->Cell(0, 0, $date);
+
+    for ($j = 0; $j < $COLS; $j++) {
+        $pdf->SetXY($x[$j], $y[$j] + $effOff);
+        $pdf->Cell(0, 0, $d[$j]);
+    }
+    $actualCount++;
 }
+$pdf->AddPage();
 
-for ($c = 'A'; $c < 'R'; $c++)
-    $s->getColumnDimension($c)->setAutoSize(true);
-
-// some manual fixes:
-$s->getColumnDimension('C')->setAutoSize(false)->setWidth(8);
-$s->getColumnDimension('D')->setAutoSize(false)->setWidth(11);
-$s->getColumnDimension('E')->setAutoSize(false)->setWidth(5);
-$s->getColumnDimension('I')->setAutoSize(false)->setWidth(10);
-
-$r++;
-$s->setCellValue("A$r", "Nombre inscrit: $actualCount");
-
-// redirect output to client browser
-header('Content-Type: application/vnd.ms-excel');
-header('Content-Disposition: attachment;filename="cours.xls"');
-header('Cache-Control: max-age=0');
-
-$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-$objWriter->save('php://output');
+$pdf->Output();
 ?>
