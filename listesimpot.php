@@ -1,4 +1,5 @@
 <? 
+// declare(encoding='ISO-8859-1');
 
 require ('fpdf/fpdf.php');
 require ('fpdi/fpdi.php');
@@ -18,39 +19,34 @@ $pdf->useTemplate($tplidx);
 
 $pdf->SetFont('Times', '', 14);
 
-$c = explode('|', $_POST['auxdata']);
-$club = $c[0];
-$clubno = $c[1];
-// ["cid", "Nom", "DDN", "Frais"]
-$COLS = 4;
-$x = array(170, 76, 152, 48);
-$y = array(42, 74.5, 74.5, 68);
-$INCREMENT = 133.0;
+function createEntry($pdf, $d, $i, $o) {
+    // ["cid", "Nom", "DDN", "Frais"]
+    $COLS = 4;
+    $x = array(170, 76, 152, 48);
+    $y = array(42, 74.5, 74.5, 68);
+    $INCREMENT = 133.0;
 
-$actualCount = 0;
+    $date = strftime("%d %b %Y");
+    $pdf->SetXY(134, 94 + $o * $INCREMENT);
+    $pdf->Cell(0, 0, $date);
+
+    for ($j = 0; $j < $COLS; $j++) {
+        $pdf->SetXY($x[$j], $y[$j] + $o * $INCREMENT);
+        $pdf->Cell(0, 0, $d[$j]);
+    }
+}
+
 $data = iconv("UTF-8", "ISO-8859-1", $_POST['data_full']);
 $ds = explode("*", $data);
 $allCount = count($ds);
 for ($i = 0; $i < $allCount; $i++) {
     if ($ds[$i] == '') continue;
+    if ($i > 0) $pdf->AddPage();
+    $pdf->useTemplate($tplidx); 
 
-    if (($i % 2 == 0) && ($i > 0)) {
-       $pdf->addPage(); 
-       $pdf->useTemplate($tplidx); 
-    }
-
-    $effOff = ($i % 2) * $INCREMENT;
     $d = explode("|", $ds[$i]);
-
-    $date = strftime("%d %b %Y");
-    $pdf->SetXY(134, 94 + $effOff);
-    $pdf->Cell(0, 0, $date);
-
-    for ($j = 0; $j < $COLS; $j++) {
-        $pdf->SetXY($x[$j], $y[$j] + $effOff);
-        $pdf->Cell(0, 0, $d[$j]);
-    }
-    $actualCount++;
+    createEntry($pdf, $d, $i, 0);
+    createEntry($pdf, $d, $i, 1);
 }
 $pdf->AddPage();
 
