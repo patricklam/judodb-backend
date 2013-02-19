@@ -8,9 +8,6 @@ require ('produceoutput.php');
 $pdf = new FPDF('P', 'mm', 'Letter');
 $pdf->AddPage();
 
-// to avoid the need for syncronisation before output, use POST params 
-// for the data in the list.
-
 $pdf->SetFont('Times', '', 14);
 
 $multi = $_POST["multi"];
