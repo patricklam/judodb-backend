@@ -46,6 +46,7 @@ class Inscription
   date date_inscription;
   string saisons;
   boolean inscription_sans_affiliation;
+  boolean affiliation_initiation;
   string cours, sessions;
   boolean frais_passeport, frais_non_anjou;
   string judogi;

@@ -80,6 +80,7 @@ CREATE TABLE `services` (
   `date_inscription` date,
   `saisons` char(10),
   `sans_affiliation` boolean,
+  `affiliation_initiation` boolean,
   `cours` char(3),
   `sessions` char(1),
   `passeport` boolean,
