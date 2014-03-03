@@ -37,7 +37,7 @@ $s->getRowDimension('2')->setRowHeight(17);
 $s->mergeCells('A2:D2');
 
 $r = 4;
-$COLS = 17;
+$COLS = 18;
 $actualCount = 0;
 for ($i = 0; $i < $allCount-1; $i++) {
     $d = explode("|", $ds[$i]);
@@ -47,14 +47,15 @@ for ($i = 0; $i < $allCount-1; $i++) {
     $actualCount++; $r++;
 }
 
-for ($c = 'A'; $c < 'R'; $c++)
+for ($c = 'A'; $c < 'S'; $c++)
     $s->getColumnDimension($c)->setAutoSize(true);
 
 // some manual fixes:
-$s->getColumnDimension('C')->setAutoSize(false)->setWidth(8);
-$s->getColumnDimension('D')->setAutoSize(false)->setWidth(11);
-$s->getColumnDimension('E')->setAutoSize(false)->setWidth(5);
-$s->getColumnDimension('I')->setAutoSize(false)->setWidth(10);
+$s->getColumnDimension('A')->setAutoSize(false)->setWidth(6);
+$s->getColumnDimension('D')->setAutoSize(false)->setWidth(8);
+$s->getColumnDimension('E')->setAutoSize(false)->setWidth(11);
+$s->getColumnDimension('F')->setAutoSize(false)->setWidth(5);
+$s->getColumnDimension('J')->setAutoSize(false)->setWidth(10);
 
 $r++;
 $s->setCellValue("A$r", "Nombre inscrit: $actualCount");
