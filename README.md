@@ -1,3 +1,8 @@
+judodb-backend
+==============
+
+PHP code for JudoDB backend.
+
 Requires PHP, some SQL database, FPDF for PDF generation, PHPExcel for XLS generation.
 
 Create a _dbconfig.php file with the following fields:
