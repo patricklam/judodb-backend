@@ -61,7 +61,7 @@ function db_connect() {
     if (!mysql_selectdb($DBI_DATABASE, $DBI_HANDLE)) {
       db_set_error(mysql_error());
       mysql_close($DBI_HANDLE);
-      $DBI_HANDLE=undef;
+      unset($DBI_HANDLE);
       return 0;
     }
   }
