@@ -1,12 +1,11 @@
-Requires PHP, some SQL database, FPDF for PDF generation.
+Requires PHP, some SQL database, FPDF for PDF generation, PHPExcel for XLS generation.
 
-Offline HTTP: you enable it by adding
+Create a _dbconfig.php file with the following fields:
 
-AddType text/cache-manifest .manifest
-ExpiresActive On
-ExpiresDefault "access"
-
-to your apache site config [http://diveintohtml5.org/offline.html]
+$DBI_DATABASE="judoanjou";
+$DBI_USERNAME="anjoudb";
+$DBI_PASSWORD="y9km3jd#m";
+$DBI_HOST="";
 
 Backup strategy: here's what I do.
 
