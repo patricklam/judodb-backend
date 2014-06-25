@@ -6,7 +6,7 @@
 // Guarantees that server_version == c.version on exit.
 
 require ('_constants.php');
-require ('_database.php');
+require_once ('_database.php');
 require ('_authutils.php');
 
 require_authentication();

@@ -37,7 +37,8 @@ CREATE TABLE `user` (
   `id` int(11) NOT NULL auto_increment,
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL, // deprecated by openid identity
+  `openid_identity` varchar(255),
   `last_update` date,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `email` (`email`)
