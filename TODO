@@ -1,14 +1,7 @@
-* add a 'saison' selector to allow browsing previous years
 * remove constants.php
-
-* create the 'edit client' page, implement push_one_client
-  * new client
-* implement the search page
-  * create the list of noms/prenoms/sessions/ids in PHP
 
 --- later:
 
-* add Cadet Noire, fix computeCategoryId to permit U17 Noire. (30 mins)
 * implement button 'copy all current-session cours to session being edited' (30 mins)
 * move to session seqno from strings in services (2 hours)
 * autosuggest for payment groups (search button) (2 hours)
@@ -17,8 +10,6 @@
 
 * comptabilite info (1 day)
    -> sort by payment date
-* support multiple sessions (1 day)
-* implement merges/conflicts (1 day)
 
 --- much later:
 

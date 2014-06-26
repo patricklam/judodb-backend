@@ -19,6 +19,7 @@ while ($client = mysql_fetch_object($rs0)) {
                     "WHERE client_id=$id");
   if (isset($rs)) {
     $first = true;
+    $client->saisons = '';
     while ($s = mysql_fetch_object($rs)) {
       if (!$first) $client->saisons .= ' ';
       $client->saisons .= $s->saisons;

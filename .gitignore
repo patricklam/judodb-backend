@@ -1,5 +1,6 @@
 .htaccess
 PHPExcel
 fpdi
+_dbconfig.php
 *~
 

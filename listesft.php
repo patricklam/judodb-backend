@@ -23,11 +23,11 @@ $pdf->SetFont('Times', '', 14);
 $c = explode('|', $_POST['auxdata']);
 $club = $c[0];
 $clubno = $c[1];
-// ["Nom", "Prenom", "Sexe", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
-$COLS = 14;
-$display = array(true, true, false, true, true, false, false, false, false, false, false, false, false, true);
-$x = array(128, 128, 0, 178, 51, 0, 0, 0, 0, 0, 0, 0, 0, 128);
-$y = array(20, 27, 0, 41, 56.5, 0, 0, 0, 0, 0, 0, 0, 0, 41);
+// ["CID", "Nom", "Prenom", "Sexe", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
+$COLS = 15;
+$display = array(false, true, true, false, true, true, false, false, false, false, false, false, false, false, true);
+$x = array(0, 128, 128, 0, 178, 51, 0, 0, 0, 0, 0, 0, 0, 0, 128);
+$y = array(0, 20, 27, 0, 41, 56.5, 0, 0, 0, 0, 0, 0, 0, 0, 41);
 $INCREMENT = 84;
 
 $catX = array('M' => 52, 'S' => 52, 'U21' => 71.5, 'U18' => 52, 
@@ -49,7 +49,7 @@ for ($i = 0; $i < $allCount; $i++) {
     $effOff = ($i % 3) * $INCREMENT;
     $d = explode("|", $ds[$i]);
 
-    $d[4] = substr($d[4], 0, 4);
+    $d[5] = substr($d[5], 0, 4);
     $date = str_replace("/", "     ", 
             str_replace("-", "     ", $_POST['date']));
     $pdf->SetXY(128, 33.5 + $effOff);
@@ -62,15 +62,15 @@ for ($i = 0; $i < $allCount; $i++) {
     $pdf->Cell(0, 0, $date);
 
     // division
-    if (substr($d[5], -1) == 'N') $d[5] = substr($d[5], 0, -1);
-    if ($d[17] == 'M') $d[5] = 'M';
-    $pdf->SetXY($catX[$d[5]], $catY[$d[5]] + $effOff);
+    if (substr($d[6], -1) == 'N') $d[6] = substr($d[5], 0, -1);
+    if ($d[18] == 'M') $d[6] = 'M';
+    $pdf->SetXY($catX[$d[6]], $catY[$d[6]] + $effOff);
     $pdf->Cell(0, 0, 'X');
 
     $sx = 0;
-    if ($d[2] == 'M')
+    if ($d[3] == 'M')
       $sx = 33.2;
-    if ($d[2] == 'F')
+    if ($d[3] == 'F')
       $sx = 46.2;
     if ($sx > 0) {
       $pdf->SetXY(60 + $sx, 55.7 + $effOff);

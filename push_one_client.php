@@ -4,7 +4,7 @@
 // Start the set of SQL commands with the $sid.
 
 require ('_constants.php');
-require ('_database.php');
+require_once ('_database.php');
 require ('_authutils.php');
 
 require_authentication();
