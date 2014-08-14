@@ -66,6 +66,30 @@ CREATE TABLE `client` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `club`;
+CREATE TABLE `club` (
+  `id` int(11) NOT NULL auto_increment,
+  `nom` varchar(255) NOT NULL,
+  `numero_club` varchar(11)
+  PRIMARY KEY  (`id`),
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `client_club`;
+CREATE TABLE `client_club` (
+  `id` int(11) NOT NULL auto_increment,
+  `client_id` int(11) NOT NULL,
+  `club_id` int(11) NOT NULL
+  PRIMARY KEY  (`id`),
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `user_club`;
+CREATE TABLE `user_club` (
+  `id` int(11) NOT NULL auto_increment,
+  `user_id` int(11) NOT NULL,
+  `club_id` int(11) NOT NULL
+  PRIMARY KEY  (`id`),
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `grades`;
 CREATE TABLE `grades` (
   `client_id` INTEGER,
@@ -96,7 +120,8 @@ CREATE TABLE `services` (
   `escompte_special` varchar(10),
   `horaire_special` varchar(50),
   `verification` BOOLEAN,
-  `solde` BOOLEAN
+  `solde` BOOLEAN,
+  `club_id` int(11)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `payment_groups`;
