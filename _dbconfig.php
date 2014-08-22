@@ -27,7 +27,7 @@
 // Customize this file to point to the database where db.sql has been setup.
 
 $DBI_DATABASE="judoanjou";
-$DBI_USERNAME="anjoudb";
-$DBI_PASSWORD="y9km3jd#m";
+$DBI_USERNAME="";
+$DBI_PASSWORD="";
 $DBI_HOST="";
 ?>

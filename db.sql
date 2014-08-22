@@ -37,7 +37,7 @@ CREATE TABLE `user` (
   `id` int(11) NOT NULL auto_increment,
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL, // deprecated by plus_identity
+  `password` varchar(255) NOT NULL, -- deprecated by plus_identity
   `plus_identity` varchar(255),
   `last_update` date,
   PRIMARY KEY  (`id`),
@@ -63,6 +63,30 @@ CREATE TABLE `client` (
   `RAMQ` varchar(20),
   `sexe` char(1),
   `version` int(5) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `club`;
+CREATE TABLE `club` (
+  `id` int(11) NOT NULL auto_increment,
+  `nom` varchar(255) NOT NULL,
+  `numero_club` varchar(11),
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `client_club`;
+CREATE TABLE `client_club` (
+  `id` int(11) NOT NULL auto_increment,
+  `client_id` int(11) NOT NULL,
+  `club_id` int(11) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `user_club`;
+CREATE TABLE `user_club` (
+  `id` int(11) NOT NULL auto_increment,
+  `user_id` int(11) NOT NULL,
+  `club_id` int(11) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -96,7 +120,8 @@ CREATE TABLE `services` (
   `escompte_special` varchar(10),
   `horaire_special` varchar(50),
   `verification` BOOLEAN,
-  `solde` BOOLEAN
+  `solde` BOOLEAN,
+  `club_id` int(11)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `payment_groups`;

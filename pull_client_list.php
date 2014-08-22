@@ -3,6 +3,8 @@ require ('_authutils.php');
 
 require_authentication();
 
+require ('_userutils.php');
+
 header('content-type: application/json');
 
 require ('_dbconfig.php');
@@ -10,13 +12,26 @@ require ('_dbconfig.php');
 $link = mysql_connect($DBI_HOST, $DBI_USERNAME, $DBI_PASSWORD) || die("could not connect to db");
 mysql_select_db($DBI_DATABASE) || die("could not select db");
 
-$rs0 = mysql_query("SELECT id,nom,prenom FROM `client`");
-$clients = array();
-while ($client = mysql_fetch_object($rs0)) {
-  $id = $client->id;
+$auth_clubs = get_club_list(); 
 
+$tmpclients = array();
+$rs0 = mysql_query("SELECT * FROM `client_club` JOIN `client` " .
+  		   "ON client_club.client_id=client.id");
+if (isset($rs0)) {
+  while($c = mysql_fetch_object($rs0)) {
+    if (in_array($c->club_id, $auth_clubs)) {
+      $rs1 = mysql_query("SELECT * FROM `client` WHERE id=" . $c->client_id);
+      if (isset($rs1)) {
+	$tmpclients[] = mysql_fetch_object($rs1);
+      }
+    }
+  }
+}
+
+$clients = array();
+foreach ($tmpclients as $client) { 
   $rs = mysql_query("SELECT saisons FROM `services` " .
-                    "WHERE client_id=$id");
+                    "WHERE client_id=$client->id");
   if (isset($rs)) {
     $first = true;
     $client->saisons = '';
@@ -27,6 +42,10 @@ while ($client = mysql_fetch_object($rs0)) {
     }
   }
   $clients[] = $client;
+}
+
+foreach ($clients as $c) {
+  utf8_encode_deep($c);
 }
 
 $callback = trim($_GET['callback']);
