@@ -166,6 +166,28 @@ CREATE TABLE `global_configuration` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 INSERT INTO `global_configuration` VALUES (0, '', '', '', '', '', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00');
 
+DROP TABLE IF EXISTS `club_configuration`;
+CREATE TABLE `club_configuration` (
+  `id` INTEGER PRIMARY KEY auto_increment,
+  `club_id` INTEGER,
+  `nom` varchar(255),		-- same value as in table 'club'
+  `numero_affiliation` char(30),
+  `prefix_codepostale` char(7),
+  `indicatif_regional` char(4),
+  `debut_session` DATE,
+  `fin_session` DATE
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `club_cours`;
+CREATE TABLE `club_cours` (
+  `id` INTEGER PRIMARY KEY auto_increment,
+  `club_id` INTEGER,
+  `seq_no` char(30),       -- same value as in table 'cours'
+  `short_desc` char(30),  -- same value as in table 'cours'
+  `debut_session` DATE,    -- same value as in table 'club_configuration'
+  `fin_session` DATE       -- same value as in table 'club_configuration'
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `session`;
 CREATE TABLE `session` (
   `seqno` INTEGER PRIMARY KEY, /* A09 = 0, advance from there; use as real primary key. */
