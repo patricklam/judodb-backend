@@ -20,12 +20,12 @@ function get_club_list() {
     return null;
   }
   $rs0 = mysql_query("SELECT * FROM `user_club` WHERE user_id=$user_id");
-  $all_clubs = array();
+  $clubs = array();
   while ($user_club = mysql_fetch_object($rs0)) {
     $club_id = $user_club->club_id;
-    $all_clubs[] = $club_id;
+    $clubs[] = $club_id;
   }
-  return $all_clubs;
+  return $clubs;
 }
 
 function utf8_encode_deep(&$input) {
