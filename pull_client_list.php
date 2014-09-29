@@ -15,14 +15,21 @@ mysql_select_db($DBI_DATABASE) || die("could not select db");
 $auth_clubs = get_club_list(); 
 
 $tmpclients = array();
+$seen_clients = array();
 $rs0 = mysql_query("SELECT * FROM `client_club` JOIN `client` " .
   		   "ON client_club.client_id=client.id");
 if (isset($rs0)) {
   while($c = mysql_fetch_object($rs0)) {
     if (in_array($c->club_id, $auth_clubs)) {
       $rs1 = mysql_query("SELECT * FROM `client` WHERE id=" . $c->client_id);
+
+      // deduplicate
+      if (in_array($c->client_id, $seen_clients))
+        continue;
+      $seen_clients[] = $c->client_id;
+      
       if (isset($rs1)) {
-	$tmpclients[] = mysql_fetch_object($rs1);
+      	$tmpclients[] = mysql_fetch_object($rs1);
       }
     }
   }
