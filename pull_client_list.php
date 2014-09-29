@@ -24,12 +24,19 @@ if (isset($rs0)) {
       $rs1 = mysql_query("SELECT * FROM `client` WHERE id=" . $c->client_id);
 
       // deduplicate
-      if (in_array($c->client_id, $seen_clients))
+      if (in_array($c->client_id, $seen_clients)) {
+        foreach ($tmpclients as $cl) {
+          if ($cl->id == $c->client_id)
+            $cl->clubs[] = $c->club_id;
+        }
         continue;
+      }
       $seen_clients[] = $c->client_id;
       
       if (isset($rs1)) {
-      	$tmpclients[] = mysql_fetch_object($rs1);
+        $client = mysql_fetch_object($rs1);
+        $client->clubs[] = $c->club_id;
+        $tmpclients[] = $client;
       }
     }
   }
