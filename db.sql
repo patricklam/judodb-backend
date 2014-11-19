@@ -148,25 +148,6 @@ CREATE TABLE `payment` (
   `montant` char(10)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-/* Configuration data follows. */
-
-DROP TABLE IF EXISTS `global_configuration`;
-CREATE TABLE `global_configuration` (
-  `version` INTEGER,
-  `nom_club` char(30),
-  `numero_club` char(30),
-  `age_masters` char(10),
-  `frais_passeport_judoqc` char(10),
-  `frais_nonresident_anjou` char(10),
-  `date_versement_1` DATE,
-  `date_versement_2` DATE,
-  `date_versement_3` DATE,
-  `date_versement_4` DATE,
-  `date_versement_5` DATE,
-  `date_versement_6` DATE
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-INSERT INTO `global_configuration` VALUES (0, '', '', '', '', '', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00');
-
 DROP TABLE IF EXISTS `club_configuration`;
 CREATE TABLE `club_configuration` (
   `id` INTEGER PRIMARY KEY auto_increment,
