@@ -3,7 +3,7 @@
 
 require ('fpdf/fpdf.php');
 require ('fpdi/fpdi.php');
-require ('_produce_output.php');
+require ('_produce_fpdi_output.php');
 setlocale(LC_TIME, 'fr_CA.iso88591');
 
 // no need for authentication on this PHP file.
