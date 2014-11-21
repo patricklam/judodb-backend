@@ -66,14 +66,6 @@ CREATE TABLE `client` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `club`;
-CREATE TABLE `club` (
-  `id` int(11) NOT NULL auto_increment,
-  `nom` varchar(255) NOT NULL,
-  `numero_club` varchar(11),
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `client_club`;
 CREATE TABLE `client_club` (
   `id` int(11) NOT NULL auto_increment,
@@ -148,12 +140,12 @@ CREATE TABLE `payment` (
   `montant` char(10)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `club_configuration`;
-CREATE TABLE `club_configuration` (
+DROP TABLE IF EXISTS `club`;
+CREATE TABLE `club` (
   `id` INTEGER PRIMARY KEY auto_increment,
   `club_id` INTEGER,
-  `nom` varchar(255),		-- same value as in table 'club'
-  `numero_affiliation` char(30),
+  `nom` varchar(255),
+  `numero_club` char(30),
   `prefix_codepostale` char(7),
   `indicatif_regional` char(4),
   `debut_session` DATE,
