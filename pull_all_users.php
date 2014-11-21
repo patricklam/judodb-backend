@@ -11,6 +11,7 @@ $rs = db_query_get("SELECT * FROM `user`");
 $users = array();
 if (isset($rs)) {
  foreach ($rs as $r) {
+  $user = new stdClass();
   $user->id = $r['id'];
   $user->username = $r['username'];
   $user->email = $r['email'];
