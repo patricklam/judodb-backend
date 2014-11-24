@@ -195,18 +195,18 @@ CREATE TABLE `cours_session` (
   `session_seqno` INTEGER
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `categorie`;
-CREATE TABLE `categorie` (
+DROP TABLE IF EXISTS `division`;
+CREATE TABLE `division` (
   `name` varchar(25),
   `abbrev` char(6),
   `years_ago` INTEGER,
   `noire` boolean
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `categorie_session`;
-CREATE TABLE `categorie_session` (
+DROP TABLE IF EXISTS `division_session`;
+CREATE TABLE `division_session` (
   `session_seqno` INTEGER,
-  `categorie_abbrev` char(6),
+  `division_abbrev` char(6),
   `frais_1_session` char(10),
   `frais_2_session` char(10), /* for session_seqno and session_seqno+1 */
   `frais_judo_qc` char(10)
@@ -218,3 +218,6 @@ CREATE TABLE `escompte` (
   `name` varchar(25),
   `amount` char(6) /* in percent */
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+/* populate divisions with the defaults as of 2014 */
+INSERT INTO `division` (`name`, `abbrev`, `years_ago`, `noire`) VALUES ("Mini-Poussin", "U8", 8, false), ("Poussin", "U10", 10, false), ("Benjamin", "U12", 12, false), ("Minime", "U14", 14, false), ("Juvénile", "U16", 16, false), ("Cadet", "U18", 18, false), ("Junior", "U21", 21, false), ("Senior", "S", 0, false), ("Cadet Noire", "U18N", 18, true), ("Junior Noire", "U21N", 21, true), ("Senior Noire", "SN", 0, true);
