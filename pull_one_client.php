@@ -27,25 +27,25 @@ $rs = mysql_query("SELECT * FROM `client` WHERE id=$id");
 $client = mysql_fetch_object($rs);
 
 $rs = mysql_query("SELECT * FROM `grades` " .
-  "WHERE client_id=$id ORDER BY date_grade ASC");
+           "WHERE client_id=$id ORDER BY date_grade ASC");
 
 if (isset($rs)) {
-  $client->grades = array();
-  while ($g = mysql_fetch_object($rs)) {
-    unset($g->client_id);
-    unset($g->id);
-    $client->grades[] = $g;
-  }
+ $client->grades = array();
+ while ($g = mysql_fetch_object($rs)) {
+  unset($g->client_id);
+  unset($g->id);
+  $client->grades[] = $g;
+ }
 }
 
 $rs = mysql_query("SELECT * FROM `services` " .
            "WHERE client_id=$id AND club_id=$club ORDER BY date_inscription ASC");
 if (isset($rs)) {
-  $client->services = array();
-  while ($s = mysql_fetch_object($rs)) {
-    unset($s->client_id);
-    $client->services[] = $s;
-  }
+ $client->services = array();
+ while ($s = mysql_fetch_object($rs)) {
+  unset($s->client_id);
+  $client->services[] = $s;
+ }
 }
 
 $callback = trim($_GET['callback']);
