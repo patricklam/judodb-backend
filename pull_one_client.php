@@ -17,9 +17,9 @@ mysql_select_db($DBI_DATABASE) || die("could not select db");
 
 $userid = get_user_id();
 $authok = db_query_get("SELECT * from `services`, `user_club` WHERE " .
-                       "services.client_id=$id " .
-		       "AND services.club_id=user_club.club_id " .
-		       "AND user_club.user_id=$userid");
+  "services.client_id=$id " .
+  "AND services.club_id=user_club.club_id " .
+  "AND user_club.user_id=$userid");
 
 if(!isset($authok)) die;
 
