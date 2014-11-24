@@ -44,6 +44,16 @@ CREATE TABLE `user` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+/** A user has access to a club if a user_club entry exists for 
+ *  that user/club combination. */
+DROP TABLE IF EXISTS `user_club`;
+CREATE TABLE `user_club` (
+  `id` int(11) NOT NULL auto_increment,
+  `user_id` int(11) NOT NULL,
+  `club_id` int(11) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `client`;
 CREATE TABLE `client` (
   `id` int(11) NOT NULL auto_increment,
@@ -66,26 +76,12 @@ CREATE TABLE `client` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `club`;
-CREATE TABLE `club` (
-  `id` int(11) NOT NULL auto_increment,
-  `nom` varchar(255) NOT NULL,
-  `numero_club` varchar(11),
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
+/** Invariant: there exists a client_club entry iff
+ * there exists a services for that client with the given club_id. */
 DROP TABLE IF EXISTS `client_club`;
 CREATE TABLE `client_club` (
   `id` int(11) NOT NULL auto_increment,
   `client_id` int(11) NOT NULL,
-  `club_id` int(11) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `user_club`;
-CREATE TABLE `user_club` (
-  `id` int(11) NOT NULL auto_increment,
-  `user_id` int(11) NOT NULL,
   `club_id` int(11) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -125,6 +121,7 @@ CREATE TABLE `services` (
   `club_id` int(11)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+/** Payments not currently implemented. */
 DROP TABLE IF EXISTS `payment_groups`;
 CREATE TABLE `payment_groups` (
   `id` INTEGER PRIMARY KEY auto_increment,
@@ -148,47 +145,7 @@ CREATE TABLE `payment` (
   `montant` char(10)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-/* Configuration data follows. */
-
-DROP TABLE IF EXISTS `global_configuration`;
-CREATE TABLE `global_configuration` (
-  `version` INTEGER,
-  `nom_club` char(30),
-  `numero_club` char(30),
-  `age_masters` char(10),
-  `frais_passeport_judoqc` char(10),
-  `frais_nonresident_anjou` char(10),
-  `date_versement_1` DATE,
-  `date_versement_2` DATE,
-  `date_versement_3` DATE,
-  `date_versement_4` DATE,
-  `date_versement_5` DATE,
-  `date_versement_6` DATE
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-INSERT INTO `global_configuration` VALUES (0, '', '', '', '', '', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00', '0000-00-00');
-
-DROP TABLE IF EXISTS `club_configuration`;
-CREATE TABLE `club_configuration` (
-  `id` INTEGER PRIMARY KEY auto_increment,
-  `club_id` INTEGER,
-  `nom` varchar(255),		-- same value as in table 'club'
-  `numero_affiliation` char(30),
-  `prefix_codepostale` char(7),
-  `indicatif_regional` char(4),
-  `debut_session` DATE,
-  `fin_session` DATE
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `club_cours`;
-CREATE TABLE `club_cours` (
-  `id` INTEGER PRIMARY KEY auto_increment,
-  `club_id` INTEGER,
-  `seq_no` char(30),       -- same value as in table 'cours'
-  `short_desc` char(30),  -- same value as in table 'cours'
-  `debut_session` DATE,    -- same value as in table 'club_configuration'
-  `fin_session` DATE       -- same value as in table 'club_configuration'
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
+/** Config information. */
 DROP TABLE IF EXISTS `session`;
 CREATE TABLE `session` (
   `seqno` INTEGER PRIMARY KEY, /* A09 = 0, advance from there; use as real primary key. */
@@ -201,12 +158,35 @@ CREATE TABLE `session` (
   `last_signup_date` DATE
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+/** Club information. */
+DROP TABLE IF EXISTS `club`;
+CREATE TABLE `club` (
+  `id` INTEGER PRIMARY KEY auto_increment,
+  `club_id` INTEGER,
+  `nom` varchar(255),
+  `numero_club` char(30),
+  `prefix_codepostale` char(7),
+  `indicatif_regional` char(4),
+  `debut_session` DATE,
+  `fin_session` DATE
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `cours`;
 CREATE TABLE `cours` (
   `seqno` INTEGER PRIMARY KEY,
   `name` varchar(60),
   `short_desc` varchar(20),
   `entraineur` varchar(30)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `club_cours`;
+CREATE TABLE `club_cours` (
+  `id` INTEGER PRIMARY KEY auto_increment,
+  `club_id` INTEGER,
+  `seq_no` char(30),       -- same value as in table 'cours'
+  `short_desc` char(30),  -- same value as in table 'cours'
+  `debut_session` DATE,    -- same value as in table 'club_configuration'
+  `fin_session` DATE       -- same value as in table 'club_configuration'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `cours_session`;

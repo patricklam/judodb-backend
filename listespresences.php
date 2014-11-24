@@ -1,7 +1,7 @@
 <? 
 
 require ('fpdf/fpdf.php');
-require ('produceoutput.php');
+require ('_produce_fpdi_output.php');
 
 // no need for authentication on this PHP file.
 
