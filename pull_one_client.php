@@ -17,35 +17,33 @@ mysql_select_db($DBI_DATABASE) || die("could not select db");
 
 $userid = get_user_id();
 $authok = db_query_get("SELECT * from `services`, `user_club` WHERE " .
-  	    "services.client_id=$id " .
-            "AND services.club_id=user_club.club_id " .
-	    "AND user_club.user_id=$userid");
+                       "services.client_id=$id " .
+		       "AND services.club_id=user_club.club_id " .
+		       "AND user_club.user_id=$userid");
 
 if(!isset($authok)) die;
 
 $rs = mysql_query("SELECT * FROM `client` WHERE id=$id");
 $client = mysql_fetch_object($rs);
 
-if (isset($authok)) {
-  $rs = mysql_query("SELECT * FROM `services` " .
-                    "WHERE client_id=$id AND club_id=$club ORDER BY date_inscription ASC");
-  if (isset($rs)) {
-    $client->services = array();
-    while ($s = mysql_fetch_object($rs)) {
-      unset($s->client_id);
-      $client->services[] = $s;
-    }
+$rs = mysql_query("SELECT * FROM `grades` " .
+                  "WHERE client_id=$id ORDER BY date_grade ASC");
+if (isset($rs)) {
+  $client->grades = array();
+  while ($g = mysql_fetch_object($rs)) {
+    unset($g->client_id);
+    unset($g->id);
+    $client->grades[] = $g;
   }
+}
 
-  $rs = mysql_query("SELECT * FROM `grades` " .
-             "WHERE client_id=$id ORDER BY date_grade ASC");
-  if (isset($rs)) {
-    $client->grades = array();
-    while ($g = mysql_fetch_object($rs)) {
-      unset($g->client_id);
-      unset($g->id);
-      $client->grades[] = $g;
-    }
+$rs = mysql_query("SELECT * FROM `services` " .
+                  "WHERE client_id=$id AND club_id=$club ORDER BY date_inscription ASC");
+if (isset($rs)) {
+  $client->services = array();
+  while ($s = mysql_fetch_object($rs)) {
+    unset($s->client_id);
+    $client->services[] = $s;
   }
 }
 
