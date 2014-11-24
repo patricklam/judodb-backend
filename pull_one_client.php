@@ -4,8 +4,6 @@ require ('_userutils.php');
 
 require_authentication();
 
-require ('_userutils.php');
-
 $id = $_GET["id"];
 if (!isset ($id)) die;
 
@@ -22,7 +20,8 @@ $authok = mysql_query("SELECT * from `services`, `user_club` " .
                       "AND services.club_id=user_club.club_id " .
                       "AND user_club.user_id=$userid");
 
-if(!isset($authok)) die;
+if(!$authok) die;
+if(0 == mysql_num_rows($authok)) die;
 
 $rs = mysql_query("SELECT * FROM `client` WHERE id=$id");
 $client = mysql_fetch_object($rs);
