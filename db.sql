@@ -171,28 +171,12 @@ CREATE TABLE `club` (
   `fin_session` DATE
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `cours`;
-CREATE TABLE `cours` (
-  `seqno` INTEGER PRIMARY KEY,
-  `name` varchar(60),
-  `short_desc` varchar(20),
-  `entraineur` varchar(30)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `club_cours`;
 CREATE TABLE `club_cours` (
   `id` INTEGER PRIMARY KEY auto_increment,
   `club_id` INTEGER,
-  `seq_no` char(30),       -- same value as in table 'cours'
-  `short_desc` char(30),  -- same value as in table 'cours'
-  `debut_session` DATE,    -- same value as in table 'club_configuration'
-  `fin_session` DATE       -- same value as in table 'club_configuration'
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `cours_session`;
-CREATE TABLE `cours_session` (
-  `cours_seqno` INTEGER,
-  `session_seqno` INTEGER
+  `seq_no` char(30),
+  `short_desc` char(30)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `division`;
@@ -203,8 +187,9 @@ CREATE TABLE `division` (
   `noire` boolean
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `division_session`;
-CREATE TABLE `division_session` (
+DROP TABLE IF EXISTS `club_division_session`;
+CREATE TABLE `club_division_session` (
+  `club_id` INTEGER,
   `session_seqno` INTEGER,
   `division_abbrev` char(6),
   `frais_1_session` char(10),
