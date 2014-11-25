@@ -76,16 +76,6 @@ CREATE TABLE `client` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-/** Invariant: there exists a client_club entry iff
- * there exists a services for that client with the given club_id. */
-DROP TABLE IF EXISTS `client_club`;
-CREATE TABLE `client_club` (
-  `id` int(11) NOT NULL auto_increment,
-  `client_id` int(11) NOT NULL,
-  `club_id` int(11) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `grades`;
 CREATE TABLE `grades` (
   `client_id` INTEGER,
