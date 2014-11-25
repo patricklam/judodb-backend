@@ -37,9 +37,9 @@ CREATE TABLE `user` (
   `id` int(11) NOT NULL auto_increment,
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL, -- deprecated by plus_identity
   `plus_identity` varchar(255),
   `last_update` date,
+  `is_admin` boolean,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -165,6 +165,7 @@ CREATE TABLE `club` (
   `club_id` INTEGER,
   `nom` varchar(255),
   `numero_club` char(30),
+  `ville` char(50),
   `prefix_codepostale` char(7),
   `indicatif_regional` char(4),
   `debut_session` DATE,
