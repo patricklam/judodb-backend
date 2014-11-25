@@ -16,26 +16,30 @@ $auth_clubs = get_club_list();
 
 $tmpclients = array();
 $seen_clients = array();
-$rs0 = mysql_query("SELECT * FROM `client_club` JOIN `client` " .
-  		   "ON client_club.client_id=client.id");
+
+$userid = get_user_id();
+$rs0 = mysql_query("SELECT * from `services` LEFT JOIN `user_club`" .
+  "ON services.club_id=user_club.club_id " .
+  "WHERE user_club.user_id=$userid");
+
 if (isset($rs0)) {
-  while($c = mysql_fetch_object($rs0)) {
-    if (in_array($c->club_id, $auth_clubs)) {
-      $rs1 = mysql_query("SELECT * FROM `client` WHERE id=" . $c->client_id);
+  while($s = mysql_fetch_object($rs0)) {
+    if (in_array($s->club_id, $auth_clubs)) {
+      $rs1 = mysql_query("SELECT * FROM `client` WHERE id=" . $s->client_id);
 
       // deduplicate
-      if (in_array($c->client_id, $seen_clients)) {
+      if (in_array($s->client_id, $seen_clients)) {
         foreach ($tmpclients as $cl) {
-          if ($cl->id == $c->client_id)
-            $cl->clubs[] = $c->club_id;
+          if ($cl->id == $s->client_id)
+            $cl->clubs[] = $s->club_id;
         }
         continue;
       }
-      $seen_clients[] = $c->client_id;
+      $seen_clients[] = $s->client_id;
       
       if (isset($rs1)) {
         $client = mysql_fetch_object($rs1);
-        $client->clubs[] = $c->club_id;
+        $client->clubs[] = $s->club_id;
         $tmpclients[] = $client;
       }
     }
