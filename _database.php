@@ -57,6 +57,7 @@ function db_connect() {
       db_set_error(mysql_error());
       return 0;
     }
+    mysql_set_charset('utf8', $DBI_HANDLE);
 
     if (!mysql_selectdb($DBI_DATABASE, $DBI_HANDLE)) {
       db_set_error(mysql_error());
