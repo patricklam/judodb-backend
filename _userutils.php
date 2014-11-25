@@ -13,13 +13,24 @@ function get_user_id() {
   return -1;
 }
 
+function is_admin($user_id) {
+  $rs0 = db_query_get("SELECT `is_admin` FROM `user` WHERE id=$user_id");
+  if (isset($rs0)) {
+    return $rs0[0]['is_admin'];
+  }
+  return 0;
+}
+
 function get_club_list() {
   $user_id = get_user_id();
   if (-1 == $user_id) {
     echo 'Please authenticate yourself!';
     return null;
   }
-  $rs0 = mysql_query("SELECT * FROM `user_club` WHERE user_id=$user_id");
+  if (is_admin($user_id))
+    $rs0 = mysql_query("SELECT `club_id` FROM `club`");
+  else
+    $rs0 = mysql_query("SELECT * FROM `user_club` WHERE user_id=$user_id");
   $clubs = array();
   while ($user_club = mysql_fetch_object($rs0)) {
     $club_id = $user_club->club_id;
