@@ -17,12 +17,18 @@ $auth_clubs = get_club_list();
 $tmpclients = array();
 $seen_clients = array();
 
+$rs0 = NULL;
 $userid = get_user_id();
-$rs0 = mysql_query("SELECT * from `services` LEFT JOIN `user_club`" .
-  "ON services.club_id=user_club.club_id " .
-  "WHERE user_club.user_id=$userid");
+if (is_admin($userid)) {
+  $rs0 = mysql_query("SELECT * from `services`");
+}
+else {
+  $rs0 = mysql_query("SELECT * from `services` LEFT JOIN `user_club`" .
+    "ON services.club_id=user_club.club_id " .
+    "WHERE user_club.user_id=$userid");
+}
 
-if (isset($rs0)) {
+if (isset($rs0) && NULL != $rs0) {
   while($s = mysql_fetch_object($rs0)) {
     if (in_array($s->club_id, $auth_clubs)) {
       $rs1 = mysql_query("SELECT * FROM `client` WHERE id=" . $s->client_id);
