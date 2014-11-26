@@ -37,9 +37,9 @@ CREATE TABLE `user` (
   `id` int(11) NOT NULL auto_increment,
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL, -- deprecated by plus_identity
   `plus_identity` varchar(255),
   `last_update` date,
+  `is_admin` boolean,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -73,16 +73,6 @@ CREATE TABLE `client` (
   `RAMQ` varchar(20),
   `sexe` char(1),
   `version` int(5) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-/** Invariant: there exists a client_club entry iff
- * there exists a services for that client with the given club_id. */
-DROP TABLE IF EXISTS `client_club`;
-CREATE TABLE `client_club` (
-  `id` int(11) NOT NULL auto_increment,
-  `client_id` int(11) NOT NULL,
-  `club_id` int(11) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -165,48 +155,34 @@ CREATE TABLE `club` (
   `club_id` INTEGER,
   `nom` varchar(255),
   `numero_club` char(30),
+  `ville` char(50),
   `prefix_codepostale` char(7),
   `indicatif_regional` char(4),
   `debut_session` DATE,
   `fin_session` DATE
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `cours`;
-CREATE TABLE `cours` (
-  `seqno` INTEGER PRIMARY KEY,
-  `name` varchar(60),
-  `short_desc` varchar(20),
-  `entraineur` varchar(30)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
 DROP TABLE IF EXISTS `club_cours`;
 CREATE TABLE `club_cours` (
   `id` INTEGER PRIMARY KEY auto_increment,
   `club_id` INTEGER,
-  `seq_no` char(30),       -- same value as in table 'cours'
-  `short_desc` char(30),  -- same value as in table 'cours'
-  `debut_session` DATE,    -- same value as in table 'club_configuration'
-  `fin_session` DATE       -- same value as in table 'club_configuration'
+  `seq_no` char(30),
+  `short_desc` char(30)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `cours_session`;
-CREATE TABLE `cours_session` (
-  `cours_seqno` INTEGER,
-  `session_seqno` INTEGER
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `categorie`;
-CREATE TABLE `categorie` (
+DROP TABLE IF EXISTS `division`;
+CREATE TABLE `division` (
   `name` varchar(25),
   `abbrev` char(6),
   `years_ago` INTEGER,
   `noire` boolean
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `categorie_session`;
-CREATE TABLE `categorie_session` (
+DROP TABLE IF EXISTS `club_division_session`;
+CREATE TABLE `club_division_session` (
+  `club_id` INTEGER,
   `session_seqno` INTEGER,
-  `categorie_abbrev` char(6),
+  `division_abbrev` char(6),
   `frais_1_session` char(10),
   `frais_2_session` char(10), /* for session_seqno and session_seqno+1 */
   `frais_judo_qc` char(10)
@@ -218,3 +194,6 @@ CREATE TABLE `escompte` (
   `name` varchar(25),
   `amount` char(6) /* in percent */
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+/* populate divisions with the defaults as of 2014 */
+INSERT INTO `division` (`name`, `abbrev`, `years_ago`, `noire`) VALUES ("Mini-Poussin", "U8", 8, false), ("Poussin", "U10", 10, false), ("Benjamin", "U12", 12, false), ("Minime", "U14", 14, false), ("Juvénile", "U16", 16, false), ("Cadet", "U18", 18, false), ("Junior", "U21", 21, false), ("Senior", "S", 0, false), ("Cadet Noire", "U18N", 18, true), ("Junior Noire", "U21N", 21, true), ("Senior Noire", "SN", 0, true);
