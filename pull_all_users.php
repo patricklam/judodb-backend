@@ -2,6 +2,7 @@
 require ('_constants.php');
 require ('_database.php');
 require ('_authutils.php');
+require ('_userutils.php');
 
 require_authentication();
 
@@ -14,7 +15,7 @@ if (isset($rs)) {
   $user = new stdClass();
   $user->id = $r['id'];
   $user->username = $r['username'];
-  $user->email = $r['email'];
+  if (is_admin()) $user->email = $r['email'];
   $user->last_update = $r['last_update'];
   $users[] = $user;
  }
