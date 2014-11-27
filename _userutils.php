@@ -13,7 +13,9 @@ function get_user_id() {
   return -1;
 }
 
-function is_admin($user_id) {
+function is_admin($user_id = -1) {
+  if (-1 == $user_id)
+    $user_id = get_user_id();
   $rs0 = db_query_get("SELECT `is_admin` FROM `user` WHERE id=$user_id");
   if (isset($rs0)) {
     return $rs0[0]['is_admin'];
