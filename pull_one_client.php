@@ -12,8 +12,8 @@ header('content-type: application/json');
 
 $db = pdo_db_connect();
 
-$userid = get_user_id();
-if (!is_admin($userid)) {
+$userid = get_user_id($db);
+if (!is_admin($db, $userid)) {
   $auth_query = $db->prepare('SELECT * FROM `services`, `user_club` '.
                               'WHERE services.client_id=:id '.
                                 'AND services.club_id=user_club.club_id '.
