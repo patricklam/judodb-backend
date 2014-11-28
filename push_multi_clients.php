@@ -24,7 +24,8 @@ foreach ($updates as $u) {
   $ua = explode(',', $u);
   $cid = $db->quote($ua[0]);
   $table = $ua[1][0];
-  $action = substr($ua[1], 1); // XXX should check that $action is in the appropriate _constants
+  $action = substr($ua[1], 1);
+  if (!preg_match('/[A-Za-z0-9_]*/', $action)) die;
   $newvalue = $db->quote($ua[2]);
 
   switch ($table) {
