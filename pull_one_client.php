@@ -39,7 +39,7 @@ if (isset($rs)) {
 }
 
 $rs = mysql_query("SELECT * FROM `services` " .
-           "WHERE client_id=$id AND club_id=$club ORDER BY date_inscription ASC");
+           "WHERE client_id=$id ORDER BY date_inscription ASC");
 if (isset($rs)) {
  $client->services = array();
  while ($s = mysql_fetch_object($rs)) {
