@@ -15,13 +15,14 @@ $link = mysql_connect($DBI_HOST, $DBI_USERNAME, $DBI_PASSWORD) || die("could not
 mysql_select_db($DBI_DATABASE) || die("could not select db");
 
 $userid = get_user_id();
-$authok = mysql_query("SELECT * from `services`, `user_club` " .
-                      "WHERE services.client_id=$id " .
-                      "AND services.club_id=user_club.club_id " .
-                      "AND user_club.user_id=$userid");
-
-if(!$authok) die;
-if(0 == mysql_num_rows($authok)) die;
+if (!is_admin($userid)) {
+  $authok = mysql_query("SELECT * from `services`, `user_club` " .
+    			"WHERE services.client_id=$id " .
+			"AND services.club_id=user_club.club_id " .
+			"AND user_club.user_id=$userid");
+  if(!$authok) die;
+  if(0 == mysql_num_rows($authok)) die;
+}
 
 $rs = mysql_query("SELECT * FROM `client` WHERE id=$id");
 $client = mysql_fetch_object($rs);
