@@ -21,20 +21,32 @@ function is_admin($user_id) {
   return 0;
 }
 
+function can_access_club($user_id, $club_id) {
+  if (is_admin($user_id)) return TRUE;
+  $rs0 = db_query_get("SELECT * FROM `user_club` WHERE `user_id`=$user_id AND `club_id`=$club_id");
+  return count($rs0) > 0;
+}
+
 function get_club_list() {
   $user_id = get_user_id();
   if (-1 == $user_id) {
     echo 'Please authenticate yourself!';
     return null;
   }
-  if (is_admin($user_id))
-    $rs0 = mysql_query("SELECT `club_id` FROM `club`");
-  else
-    $rs0 = mysql_query("SELECT * FROM `user_club` WHERE user_id=$user_id");
   $clubs = array();
-  while ($user_club = mysql_fetch_object($rs0)) {
-    $club_id = $user_club->club_id;
-    $clubs[] = $club_id;
+  if (is_admin($user_id)) {
+    $rs0 = mysql_query("SELECT `id` FROM `club`");
+    while ($user_club = mysql_fetch_object($rs0)) {
+      $club_id = $user_club->id;
+      $clubs[] = $club_id;
+    }
+  }
+  else {
+    $rs0 = mysql_query("SELECT * FROM `user_club` WHERE user_id=$user_id");
+    while ($user_club = mysql_fetch_object($rs0)) {
+      $club_id = $user_club->club_id;
+      $clubs[] = $club_id;
+    }
   }
   return $clubs;
 }
