@@ -1,27 +1,30 @@
 <?php
-require_once ('_database.php');
+require_once ('_pdo.php');
 
 session_start();
-function is_authenticated() {
+function is_authenticated($db) {
  if (!isset($_SESSION["authenticated"]) && $_SESSION["authenticated"] == "yes") return false;
 
  $pid = $_SESSION['plus_identity'];
  $email = $_SESSION['email'];
  // if the openid identity matches something in the db, that's us. 
 
- $rs = db_query_get("SELECT `username` FROM `user` WHERE plus_identity='$pid'");
- if (count($rs) > 0) return true;
+ $pi_query = $db->prepare('SELECT `username` FROM `user` WHERE plus_identity=?');
+ $pi_query->execute(array($pid));
+ if ($pi_query->rowCount() > 0) return true;
 
  // otherwise, match on email and set the identity
- $rs = db_query_get("SELECT `id` FROM `user` WHERE email='$email' AND `plus_identity` IS NULL");
- if (count($rs) == 0) return false;
- $id = $rs[0]['id'];
+ $email_query = $db->prepare('SELECT `id` FROM `user` WHERE email=? AND `plus_identity` IS NULL');
+ $email_query->execute(array($email));
+ if ($email_query->rowCount() == 0) return false;
+ $id = $email_query->fetch(PDO::FETCH_NUM)[0];
 
- db_query_set("UPDATE `user` SET `plus_identity` = $pid WHERE `id` = $id");
+ $update_query = $db->prepare('UPDATE `user` SET `plus_identity` = :pid, `last_update` = curdate() WHERE `id` = :id');
+ $update_query->execute(array('pid' => $pid, 'id' => $id));
  return true;
 }
-function require_authentication() {
- if (!is_authenticated()) {
+function require_authentication($db) {
+ if (!is_authenticated($db)) {
   header('HTTP/1.0 403 Forbidden');
   print('You must login to access this page.');
   exit;
