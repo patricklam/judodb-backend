@@ -1,54 +1,49 @@
 <?php
 
-function get_user_id() {
-  $pid = $_SESSION['plus_identity'];
+function get_user_id($db) {
   $email = $_SESSION['email'];
+  $pid = $_SESSION['plus_identity'];
   if (isset($_SESSION["authenticated"]) && $_SESSION["authenticated"] == "yes") {
-    $rsId = db_query_get("SELECT `id` FROM `user` WHERE email='$email' AND `plus_identity`=$pid");
-    if (0 == count($rsId)) return -1;
+    $id_query = $db->prepare('SELECT `id` FROM `user` WHERE `email`=? AND `plus_identity`=?');
+    $id_query->execute(array($email, $pid));
+    if ($id_query->rowCount() == 0) return -1;
     else {
-      return $rsId[0]['id'];
+      return $id_query->fetch(PDO::FETCH_OBJ)->id;
     }
   }
   return -1;
 }
 
-function is_admin($user_id = -1) {
-  if (-1 == $user_id)
-    $user_id = get_user_id();
-  $rs0 = db_query_get("SELECT `is_admin` FROM `user` WHERE id=$user_id");
-  if (isset($rs0)) {
-    return $rs0[0]['is_admin'];
-  }
+function is_admin($db, $user_id) {
+  $admin_query = $db->prepare('SELECT `is_admin` FROM `user` WHERE id=?');
+  $admin_query->execute(array($user_id));
+  if ($admin_query->rowCount() > 0)
+    return $admin_query->fetch(PDO::FETCH_OBJ)->is_admin;
   return 0;
 }
 
-function can_access_club($user_id, $club_id) {
-  if (is_admin($user_id)) return TRUE;
-  $rs0 = db_query_get("SELECT * FROM `user_club` WHERE `user_id`=$user_id AND `club_id`=$club_id");
-  return count($rs0) > 0;
+function can_access_club($db, $user_id, $club_id) {
+  if (is_admin($db, $user_id)) return TRUE;
+  $has_access_query = $db->prepare('SELECT * FROM `user_club` WHERE `user_id`=? AND `club_id`=?');
+  $has_access_query->execute(array($user_id, $club_id));
+  return $has_access_query->rowCount() > 0;
 }
 
-function get_club_list() {
-  $user_id = get_user_id();
+function get_club_list($db) {
+  $user_id = get_user_id($db);
   if (-1 == $user_id) {
     echo 'Please authenticate yourself!';
-    return null;
+    die;
   }
   $clubs = array();
-  if (is_admin($user_id)) {
-    $rs0 = mysql_query("SELECT `id` FROM `club`");
-    while ($user_club = mysql_fetch_object($rs0)) {
-      $club_id = $user_club->id;
-      $clubs[] = $club_id;
-    }
-  }
-  else {
-    $rs0 = mysql_query("SELECT * FROM `user_club` WHERE user_id=$user_id");
-    while ($user_club = mysql_fetch_object($rs0)) {
-      $club_id = $user_club->club_id;
-      $clubs[] = $club_id;
-    }
+  if (is_admin($db, $user_id))
+    $id_query = $db->prepare('SELECT `id` FROM `club`');
+  else
+    $id_query = $db->prepare('SELECT `club_id` FROM `user_club` WHERE user_id=?');
+  $id_query->execute(array($user_id));
+  foreach ($id_query->fetchAll(PDO::FETCH_NUM) as $user_club) {
+    $club_id = $user_club[0];
+    $clubs[] = $club_id;
   }
   return $clubs;
 }

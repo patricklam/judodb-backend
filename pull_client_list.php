@@ -1,4 +1,5 @@
 <?
+require ('_pdo.php');
 require ('_authutils.php');
 
 require_authentication();
@@ -7,59 +8,55 @@ require ('_userutils.php');
 
 header('content-type: application/json');
 
-require ('_dbconfig.php');
+$db = pdo_db_connect();
 
-$link = mysql_connect($DBI_HOST, $DBI_USERNAME, $DBI_PASSWORD) || die("could not connect to db");
-mysql_select_db($DBI_DATABASE) || die("could not select db");
-
-$auth_clubs = get_club_list(); 
+$auth_clubs = get_club_list($db); 
 
 $tmpclients = array();
 $seen_clients = array();
 
 $rs0 = NULL;
-$userid = get_user_id();
-if (is_admin($userid)) {
-  $rs0 = mysql_query("SELECT * from `services`");
+$userid = get_user_id($db);
+$client_query = $db->prepare('SELECT * from `client` WHERE id=?');
+$saisons_query = $db->prepare('SELECT saisons FROM `services` ' .
+                               'WHERE client_id=?');
+
+if (is_admin($db, $userid)) {
+  $services_query = $db->prepare('SELECT * from `services`');
 }
 else {
-  $rs0 = mysql_query("SELECT * from `services` LEFT JOIN `user_club`" .
-    "ON services.club_id=user_club.club_id " .
-    "WHERE user_club.user_id=$userid");
+  $services_query = $db->prepare('SELECT * from `services` LEFT JOIN `user_club` ' .
+                                                           'ON services.club_id=user_club.club_id ' .
+                                     'WHERE user_club.user_id=?');
 }
+$services_query->execute(array($userid));
 
-if (isset($rs0) && NULL != $rs0) {
-  while($s = mysql_fetch_object($rs0)) {
-    if (in_array($s->club_id, $auth_clubs)) {
-      $rs1 = mysql_query("SELECT * FROM `client` WHERE id=" . $s->client_id);
-
-      // deduplicate
-      if (in_array($s->client_id, $seen_clients)) {
-        foreach ($tmpclients as $cl) {
-          if ($cl->id == $s->client_id)
-            $cl->clubs[] = $s->club_id;
-        }
-        continue;
+foreach ($services_query->fetchAll(PDO::FETCH_OBJ) as $s) {
+  if (in_array($s->club_id, $auth_clubs)) {
+    // deduplicate
+    if (in_array($s->client_id, $seen_clients)) {
+      foreach ($tmpclients as $cl) {
+        if ($cl->id == $s->client_id)
+          $cl->clubs[] = $s->club_id;
       }
-      $seen_clients[] = $s->client_id;
-      
-      if (isset($rs1)) {
-        $client = mysql_fetch_object($rs1);
-        $client->clubs[] = $s->club_id;
-        $tmpclients[] = $client;
-      }
+      continue;
     }
+    $seen_clients[] = $s->client_id;
+
+    $client_query->execute(array($s->client_id));
+    $client = $client_query->fetch(PDO::FETCH_OBJ);
+    $client->clubs[] = $s->club_id;
+    $tmpclients[] = $client;
   }
 }
 
 $clients = array();
 foreach ($tmpclients as $client) { 
-  $rs = mysql_query("SELECT saisons FROM `services` " .
-                    "WHERE client_id=$client->id");
-  if (isset($rs)) {
+  $saisons_query->execute(array($client->id));
+  if ($saisons_query->rowCount() > 0) {
     $first = true;
     $client->saisons = '';
-    while ($s = mysql_fetch_object($rs)) {
+    foreach ($saisons_query->fetchAll(PDO::FETCH_OBJ) as $s) {
       if (!$first) $client->saisons .= ' ';
       $client->saisons .= $s->saisons;
       $first = false;

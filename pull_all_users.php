@@ -1,5 +1,4 @@
 <?
-require ('_constants.php');
 require ('_pdo.php');
 require ('_authutils.php');
 require ('_userutils.php');
@@ -13,7 +12,7 @@ foreach ($db->query('SELECT * FROM `user`') as $r) {
   $user = new stdClass();
   $user->id = $r['id'];
   $user->username = $r['username'];
-  if (is_admin()) $user->email = $r['email'];
+  if (is_admin($db, get_user_id($db))) $user->email = $r['email'];
   $user->last_update = $r['last_update'];
   $users[] = $user;
 }
