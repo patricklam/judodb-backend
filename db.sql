@@ -152,7 +152,6 @@ CREATE TABLE `session` (
 DROP TABLE IF EXISTS `club`;
 CREATE TABLE `club` (
   `id` INTEGER PRIMARY KEY auto_increment,
-  `club_id` INTEGER,
   `nom` varchar(255),
   `numero_club` char(30),
   `ville` char(50),
@@ -180,6 +179,7 @@ CREATE TABLE `division` (
 
 DROP TABLE IF EXISTS `club_division_session`;
 CREATE TABLE `club_division_session` (
+  `id` INTEGER PRIMARY KEY auto_increment,
   `club_id` INTEGER,
   `session_seqno` INTEGER,
   `division_abbrev` char(6),
