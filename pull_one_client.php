@@ -1,16 +1,16 @@
-<?
-require ('_pdo.php');
-require ('_authutils.php');
-require ('_userutils.php');
+<?php
+require_once ('_pdo.php');
+require_once ('_authutils.php');
+require_once ('_userutils.php');
 
 require_authentication();
-
-$id = $_GET["id"];
-if (!isset ($id)) die;
 
 header('content-type: application/json');
 
 $db = pdo_db_connect();
+
+$id = $_GET["id"];
+if (!isset ($id)) die;
 
 $userid = get_user_id($db);
 if (!is_admin($db, $userid)) {
