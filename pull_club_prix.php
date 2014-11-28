@@ -3,11 +3,10 @@ require_once ('_pdo.php');
 require_once ('_authutils.php');
 require_once ('_userutils.php');
 
-require_authentication();
-
 header('content-type: application/json');
 
 $db = pdo_db_connect();
+require_authentication($db);
 
 $numero_club = $_GET["numero_club"];
 $session_seqno = $_GET["session_seqno"];
