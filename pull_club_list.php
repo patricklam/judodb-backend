@@ -1,7 +1,7 @@
-<?
-require ('_pdo.php');
+<?php
+require_once ('_pdo.php');
 require_once ('_authutils.php');
-require ('_userutils.php');
+require_once ('_userutils.php');
 
 require_authentication();
 
