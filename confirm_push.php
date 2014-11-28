@@ -1,17 +1,12 @@
-<?
-// Unconditionally tramples the input on the server-side DB.
-// If server_id is not -1, uses it. 
-//  Otherwise creates new row on server.
-// Returns server_id.
-// Guarantees that server_version == c.version on exit.
+<?php
+require_once ('_pdo.php');
+require_once ('_authutils.php');
+require_once ('_userutils.php');
 
-require ('_constants.php');
-require_once ('_database.php');
-require ('_authutils.php');
+header('content-type: application/json');
 
-require_authentication();
-
-db_connect() || die;
+$db = pdo_db_connect();
+require_authentication($db);
 
 $guid = $_GET['guid'];
 
@@ -19,7 +14,8 @@ if (isset($_SESSION[$guid])) {
  $result['sid'] = array_shift($_SESSION[$guid]);
 
  foreach ($_SESSION[$guid] as $sq) {
-  db_query_set($sq);
+  $stmt = $db->prepare($sq);
+  $stmt->execute();
  }
 
  $_SESSION[$guid] = Array(-1);
@@ -35,8 +31,9 @@ echo json_encode($result);
 echo ');';
 
 function print_debug_info($a) {
+ // print diagnostic information...
  $fh = fopen('/tmp/push', 'a');
- fwrite($fh, print_r($a, true));
+ fwrite($fh, $a . '\n');
  fclose($fh);
 }
 
