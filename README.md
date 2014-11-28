@@ -70,6 +70,8 @@ POST arguments.
 * `push_multi_clients.php`: Push a number of updates to the database
   in a single request. Used in the list front-end widget.
 * `push_one_client.php`: Push client data for a single client to the database.
+* `confirm_push.php`: Actually carries out the requested write. Must be
+  called after push_*.php.
 
 Binary output scripts
 ---------------------
@@ -99,7 +101,7 @@ Prefix: `_*.php`
 
 * `_authutils.php`: rely on $_SESSION to read off the current user info.
 * `_constants.php`: defines lists of db columns to be used when writing to the database.
-* `_database.php`: mysql DB helper functions.
+* `_pdo.php`: pdo DB helper functions.
 * `_dbconfig.php`: DB configuration.
 * `_produce_fpdi_output.php`: helper function for producing PDF output with fpdi.
-* `_userutils.php`: helper functions to get the user ID, clubs list, UTF encoding, JSON errors.
+* `_userutils.php`: helper functions for access control; also UTF encoding.
