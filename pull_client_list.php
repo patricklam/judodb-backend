@@ -67,10 +67,6 @@ foreach ($clients as $c) {
   utf8_encode_deep($c);
 }
 
-$callback = trim($_GET['callback']);
-echo $callback;
-echo '(';
 echo json_encode($clients);
-echo ');';
 
 ?>

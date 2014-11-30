@@ -18,10 +18,6 @@ foreach ($clublist_ids as $id) {
   }
 }
 
-$callback = trim($_GET['callback']);
-echo $callback;
-echo '(';
 echo json_encode($clublist);
-echo ');';
 
 ?>
