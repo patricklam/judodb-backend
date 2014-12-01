@@ -41,10 +41,6 @@ foreach ($db->query('SELECT * FROM `client`',PDO::FETCH_OBJ) as $client) {
     $clients[] = $client;
 }
 
-$callback = trim($_GET['callback']);
-echo $callback;
-echo '(';
 echo json_encode($clients);
-echo ');';
 
 ?>
