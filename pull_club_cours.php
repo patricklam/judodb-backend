@@ -35,10 +35,6 @@ if ($club_query->rowCount() > 0) {
   }
 }
 
-$callback = trim($_GET['callback']);
-echo $callback;
-echo '(';
 echo json_encode($courslist);
-echo ');';
 
 ?>
