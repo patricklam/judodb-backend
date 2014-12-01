@@ -8,16 +8,15 @@ header('content-type: application/json');
 $db = pdo_db_connect();
 require_authentication($db);
 
-$numero_club = $_GET["numero_club"];
+if (!isset($_GET["session_seqno"])) die;
 $session_seqno = $_GET["session_seqno"];
-if (!isset($session_seqno)) die;
 
-if (!isset($numero_club)) {
+if (!isset($_GET["numero_club"])) {
   $club_query = $db->prepare('SELECT `id` FROM `club`');
   $club_query->execute();
 } else {
   $club_query = $db->prepare('SELECT `id` FROM `club` WHERE `numero_club`=?');
-  $club_query->execute(array($numero_club));
+  $club_query->execute(array($_GET["numero_club"]));
 }
 
 if ($club_query->rowCount() > 0) {
