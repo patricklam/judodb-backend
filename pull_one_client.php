@@ -1,56 +1,52 @@
-<?
-require ('_authutils.php');
-require ('_userutils.php');
+<?php
+require_once ('_pdo.php');
+require_once ('_authutils.php');
+require_once ('_userutils.php');
 
-require_authentication();
+header('content-type: application/json');
+
+$db = pdo_db_connect();
+require_authentication($db);
 
 $id = $_GET["id"];
 if (!isset ($id)) die;
 
-header('content-type: application/json');
+$userid = get_user_id($db);
+if (!is_admin($db, $userid)) {
+  $auth_query = $db->prepare('SELECT * FROM `services`, `user_club` '.
+                              'WHERE services.client_id=:id '.
+                                'AND services.club_id=user_club.club_id '.
+                                'AND user_club.user_id=:userid');
+  $aparams=array(':id' => $id, ':userid' => $userid);
+  $auth_query->execute($aparams);
+  if ($auth_query->rowCount() == 0) die;
+}
 
-require ('_dbconfig.php');
+$client_query = $db->prepare('SELECT * FROM `client` WHERE id=?');
+$client_query->execute(array($id));
+if ($client_query->rowCount() == 0) die;
 
-$link = mysql_connect($DBI_HOST, $DBI_USERNAME, $DBI_PASSWORD) || die("could not connect to db");
-mysql_select_db($DBI_DATABASE) || die("could not select db");
+$client = $client_query->fetch(PDO::FETCH_OBJ);
 
-$userid = get_user_id();
-$authok = mysql_query("SELECT * from `services`, `user_club` " .
-                      "WHERE services.client_id=$id " .
-                      "AND services.club_id=user_club.club_id " .
-                      "AND user_club.user_id=$userid");
-
-if(!$authok) die;
-if(0 == mysql_num_rows($authok)) die;
-
-$rs = mysql_query("SELECT * FROM `client` WHERE id=$id");
-$client = mysql_fetch_object($rs);
-
-$rs = mysql_query("SELECT * FROM `grades` " .
-           "WHERE client_id=$id ORDER BY date_grade ASC");
-if (isset($rs)) {
- $client->grades = array();
- while ($g = mysql_fetch_object($rs)) {
+$grades_query = $db->prepare('SELECT * FROM `grades` '.
+                              'WHERE client_id=? ORDER BY date_grade ASC');
+$grades_query->execute(array($id));
+$client->grades = array();
+foreach ($grades_query->fetchAll(PDO::FETCH_OBJ) as $g) {
   unset($g->client_id);
   unset($g->id);
   $client->grades[] = $g;
- }
 }
 
-$rs = mysql_query("SELECT * FROM `services` " .
-           "WHERE client_id=$id AND club_id=$club ORDER BY date_inscription ASC");
-if (isset($rs)) {
- $client->services = array();
- while ($s = mysql_fetch_object($rs)) {
+$services_query = $db->prepare('SELECT * FROM `services` '.
+                               'WHERE client_id=? ORDER BY date_inscription ASC');
+$services_query->execute(array($id));
+$client->services = array();
+foreach ($services_query->fetchAll(PDO::FETCH_OBJ) as $s) {
   unset($s->client_id);
   $client->services[] = $s;
- }
 }
 
-$callback = trim($_GET['callback']);
-echo $callback;
-echo '(';
 echo json_encode($client);
-echo ');';
 
 ?>

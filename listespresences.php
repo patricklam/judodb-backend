@@ -8,8 +8,7 @@ require ('_produce_fpdi_output.php');
 $pdf = new FPDF('L', 'mm', 'Letter');
 $pdf->AddPage();
 
-// to avoid the need for syncronisation before output, use POST params 
-// for the data in the list.
+// to avoid need for backend smarts, use POST params for the data in the list.
 
 $pdf->SetFont('Times', '', 14);
 

@@ -42,7 +42,7 @@ CREATE TABLE `user` (
   `is_admin` boolean,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /** A user has access to a club if a user_club entry exists for 
  *  that user/club combination. */
@@ -52,7 +52,7 @@ CREATE TABLE `user_club` (
   `user_id` int(11) NOT NULL,
   `club_id` int(11) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `client`;
 CREATE TABLE `client` (
@@ -71,10 +71,9 @@ CREATE TABLE `client` (
   `nom_contact_urgence` varchar(255),
   `tel_contact_urgence` varchar(255),
   `RAMQ` varchar(20),
-  `sexe` char(1),
-  `version` int(5) NOT NULL,
+  `sexe` char(1)
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `grades`;
 CREATE TABLE `grades` (
@@ -82,7 +81,7 @@ CREATE TABLE `grades` (
   `id` INTEGER PRIMARY KEY auto_increment, 
   `grade` varchar(10),
   `date_grade` date
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `services`;
 CREATE TABLE `services` (
@@ -109,20 +108,20 @@ CREATE TABLE `services` (
   `verification` BOOLEAN,
   `solde` BOOLEAN,
   `club_id` int(11)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /** Payments not currently implemented. */
 DROP TABLE IF EXISTS `payment_groups`;
 CREATE TABLE `payment_groups` (
   `id` INTEGER PRIMARY KEY auto_increment,
   `version` int(5) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `payment_group_members`;
 CREATE TABLE `payment_group_members` (
   `group_id` INTEGER,
   `client_id` INTEGER
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `payment`;
 CREATE TABLE `payment` (
@@ -133,7 +132,7 @@ CREATE TABLE `payment` (
   `chqno` INTEGER,
   `date` DATE,
   `montant` char(10)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /** Config information. */
 DROP TABLE IF EXISTS `session`;
@@ -146,13 +145,12 @@ CREATE TABLE `session` (
   `first_signup_date` DATE,
   `last_class_date` DATE,
   `last_signup_date` DATE
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /** Club information. */
 DROP TABLE IF EXISTS `club`;
 CREATE TABLE `club` (
   `id` INTEGER PRIMARY KEY auto_increment,
-  `club_id` INTEGER,
   `nom` varchar(255),
   `numero_club` char(30),
   `ville` char(50),
@@ -160,15 +158,15 @@ CREATE TABLE `club` (
   `indicatif_regional` char(4),
   `debut_session` DATE,
   `fin_session` DATE
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `club_cours`;
 CREATE TABLE `club_cours` (
   `id` INTEGER PRIMARY KEY auto_increment,
   `club_id` INTEGER,
-  `seq_no` char(30),
+  `session_seqno` char(30),
   `short_desc` char(30)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `division`;
 CREATE TABLE `division` (
@@ -176,24 +174,25 @@ CREATE TABLE `division` (
   `abbrev` char(6),
   `years_ago` INTEGER,
   `noire` boolean
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `club_division_session`;
 CREATE TABLE `club_division_session` (
+  `id` INTEGER PRIMARY KEY auto_increment,
   `club_id` INTEGER,
   `session_seqno` INTEGER,
   `division_abbrev` char(6),
   `frais_1_session` char(10),
   `frais_2_session` char(10), /* for session_seqno and session_seqno+1 */
   `frais_judo_qc` char(10)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `escompte`;
 CREATE TABLE `escompte` (
   `seqno` INTEGER,
   `name` varchar(25),
   `amount` char(6) /* in percent */
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /* populate divisions with the defaults as of 2014 */
 INSERT INTO `division` (`name`, `abbrev`, `years_ago`, `noire`) VALUES ("Mini-Poussin", "U8", 8, false), ("Poussin", "U10", 10, false), ("Benjamin", "U12", 12, false), ("Minime", "U14", 14, false), ("Juvénile", "U16", 16, false), ("Cadet", "U18", 18, false), ("Junior", "U21", 21, false), ("Senior", "S", 0, false), ("Cadet Noire", "U18N", 18, true), ("Junior Noire", "U21N", 21, true), ("Senior Noire", "SN", 0, true);

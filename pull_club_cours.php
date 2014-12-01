@@ -1,31 +1,39 @@
-<?
+<?php
+require_once ('_pdo.php');
 require_once ('_authutils.php');
-
-require_authentication();
+require_once ('_userutils.php');
 
 header('content-type: application/json');
 
-require ('_dbconfig.php');
+$db = pdo_db_connect();
+require_authentication($db);
 
-$link = mysql_connect($DBI_HOST, $DBI_USERNAME, $DBI_PASSWORD) || die("could not connect to db");
-mysql_select_db($DBI_DATABASE) || die("could not select db");
+if (!isset($_GET["session_seqno"])) die;
+$session_seqno = $_GET["session_seqno"];
 
-$numero_club = $_GET["club_id"];
-if (!isset ($numero_club)) die;
-
-$courslist = array();
-$rs0 = mysql_query("SELECT `club_cours`.* FROM `club_cours` JOIN `club` ON `club_cours`.club_id=`club`.club_id WHERE numero_club='$numero_club'");
-
-if(isset($rs0)) {
-  while ($club_cours = mysql_fetch_object($rs0)) {
-    $courslist[] = $club_cours;
-  } 
+if (!isset($_GET["numero_club"])) {
+  $club_query = $db->prepare('SELECT `id` FROM `club`');
+  $club_query->execute();
+} else {
+  $club_query = $db->prepare('SELECT `id` FROM `club` WHERE `numero_club`=?');
+  $club_query->execute(array($_GET["numero_club"]));
 }
 
-$callback = trim($_GET['callback']);
-echo $callback;
-echo '(';
+if ($club_query->rowCount() > 0) {
+  $courslist = array();
+  $cc_query = $db->prepare('SELECT * FROM `club_cours` WHERE `club_id`=? AND `session_seqno`=?');
+
+  foreach ($club_query->fetchAll(PDO::FETCH_OBJ) as $c) {
+    $club_id = $c->id;
+    if (!can_access_club($db, get_user_id($db), $club_id)) continue;
+
+    $cc_query->execute(array($club_id, $session_seqno));
+    foreach ($cc_query->fetchAll(PDO::FETCH_OBJ) as $club_cours) {
+      $courslist[] = $club_cours;
+    }
+  }
+}
+
 echo json_encode($courslist);
-echo ');';
 
 ?>

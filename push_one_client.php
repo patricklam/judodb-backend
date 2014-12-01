@@ -1,25 +1,30 @@
-<?
+<?php
+require_once ('_pdo.php');
+require_once ('_authutils.php');
+require_once ('_userutils.php');
+
+$db = pdo_db_connect();
+require_authentication($db);
+
+require ('_constants.php');
+
 // Creates a set of SQL commands to store the given POST input,
 // store it in $_SESSION and keyed with the provided guid.
 // Start the set of SQL commands with the $sid.
-
-require ('_constants.php');
-require_once ('_database.php');
-require ('_authutils.php');
-
-require_authentication();
+// TODO: check that logged-in user gets to modify this client.
 
 $guid = $_POST['guid'];
 
 // Get a server id.
-$nom = db_escape($_POST['nom']);
-$prenom = db_escape($_POST['prenom']);
-$ddn = db_escape($_POST['ddn']);
+$nom = $db->quote($_POST['nom']);
+$prenom = $db->quote($_POST['prenom']);
+$ddn = $db->quote($_POST['ddn']);
 if (isset($_POST['sid']) && $_POST['sid'] != '') {
-  $sid = $_POST['sid'];
+  $sid = $db->quote($_POST['sid']);
 } else {
-  $sid = db_query_set(
-      "INSERT INTO `client` (nom, prenom, ddn) VALUES ('$nom', '$prenom', '$ddn')");
+  $squery = $db->prepare('INSERT INTO `client` (nom, prenom, ddn) VALUES (:nom, :prenom, :ddn)');
+  $squery->execute(array('nom' => $nom, 'prenom' => $prenom, 'ddn' => $ddn));
+  $sid = $db->lastInsertId();
 }
 $stored_cmds = array($sid);
 
@@ -40,30 +45,30 @@ if ($_POST['deleted'] == 'true') {
 
 $updates = "";
 foreach ($ALL_FIELDS as $f) {
-  $v = db_escape($_POST[$f]);
-  $updates .= ", $f='$v'";
+  $v = $db->quote($_POST[$f]);
+  $updates .= ", $f=$v";
 }
 $updates=substr($updates, 1);
 
-array_push($stored_cmds, "UPDATE `client` SET $updates WHERE id='$sid'");
+array_push($stored_cmds, "UPDATE `client` SET $updates WHERE id=$sid");
 
 // update grade: 4D,3D,2D,1D;2009-03-22,2002-11-10,1998-11-08,1996-11-03
 $grades=explode(',', $_POST['grades_encoded']); 
 $date_grade=explode(',', $_POST['grade_dates_encoded']);
 
-array_push($stored_cmds, "DELETE FROM `grades` WHERE client_id='$sid'");
+array_push($stored_cmds, "DELETE FROM `grades` WHERE client_id=$sid");
 $i = 0;
 foreach ($grades as $g) {
-  $gg = db_escape($g);
-  $dg = db_escape($date_grade[$i]);
+  $gg = $db->quote($g);
+  $dg = $db->quote($date_grade[$i]);
   array_push($stored_cmds, 
              "INSERT INTO `grades` (client_id, grade, date_grade) ".
-             "VALUES ('$sid','$gg','$dg')");
+             "VALUES ($sid,$gg,$dg)");
   $i++; 
 }
 
 // update services info; create lists
-array_push($stored_cmds, "DELETE FROM `services` WHERE client_id='$sid'");
+array_push($stored_cmds, "DELETE FROM `services` WHERE client_id=$sid");
 
 $service_namelist = '(client_id';
 foreach ($SERVICE_FIELDS as $s) {
@@ -83,7 +88,7 @@ foreach ($sfs['date_inscription'] as $s) {
     if ($sfs[$s][$i] == 'true' || $sfs[$s][$i] == 'false')
       $service_tuple .= ", ".$sfs[$s][$i] . "";
     else
-      $service_tuple .= ", '".$sfs[$s][$i] . "'";
+      $service_tuple .= ", ".$db->quote($sfs[$s][$i]) . "";
   }
   $service_tuple .= ")";
 
@@ -93,7 +98,7 @@ foreach ($sfs['date_inscription'] as $s) {
 }
 
 // Delete old payment info.
-array_push($stored_cmds, "DELETE FROM `payment` WHERE client_id='$sid'");
+array_push($stored_cmds, "DELETE FROM `payment` WHERE client_id=$sid");
 
 echo "<pre>";
 print_r($stored_cmds);

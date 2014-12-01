@@ -1,29 +1,23 @@
-<?
-require ('_constants.php');
-require ('_database.php');
-require ('_authutils.php');
+<?php
+require_once ('_pdo.php');
+require_once ('_authutils.php');
+require_once ('_userutils.php');
 
-require_authentication();
+header('content-type: application/json');
 
-db_connect() || die;
+$db = pdo_db_connect();
+require_authentication($db);
 
-$rs = db_query_get("SELECT * FROM `user`");
 $users = array();
-if (isset($rs)) {
- foreach ($rs as $r) {
+foreach ($db->query('SELECT * FROM `user`') as $r) {
   $user = new stdClass();
   $user->id = $r['id'];
   $user->username = $r['username'];
-  $user->email = $r['email'];
+  if (is_admin($db, get_user_id($db))) $user->email = $r['email'];
   $user->last_update = $r['last_update'];
   $users[] = $user;
- }
 }
 
-$callback = trim($_GET['callback']);
-echo $callback;
-echo '(';
 echo json_encode($users);
-echo ')';
 
 ?>
