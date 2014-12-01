@@ -24,11 +24,7 @@ if (isset($_SESSION[$guid])) {
  $result['result'] = 'NOT_YET';
 }
 
-$callback = trim($_GET['callback']);
-echo $callback;
-echo '(';
 echo json_encode($result);
-echo ');';
 
 function print_debug_info($a) {
  // print diagnostic information...
