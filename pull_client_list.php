@@ -63,10 +63,6 @@ foreach ($tmpclients as $client) {
   $clients[] = $client;
 }
 
-foreach ($clients as $c) {
-  utf8_encode_deep($c);
-}
-
 echo json_encode($clients);
 
 ?>
