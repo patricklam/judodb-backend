@@ -18,10 +18,6 @@ foreach ($db->query('SELECT * FROM `user`') as $r) {
   $users[] = $user;
 }
 
-$callback = trim($_GET['callback']);
-echo $callback;
-echo '(';
 echo json_encode($users);
-echo ')';
 
 ?>
