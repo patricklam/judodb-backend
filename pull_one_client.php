@@ -47,10 +47,6 @@ foreach ($services_query->fetchAll(PDO::FETCH_OBJ) as $s) {
   $client->services[] = $s;
 }
 
-$callback = trim($_GET['callback']);
-echo $callback;
-echo '(';
 echo json_encode($client);
-echo ');';
 
 ?>

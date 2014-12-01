@@ -8,10 +8,6 @@ header('content-type: application/json');
 $db = pdo_db_connect();
 require_authentication($db);
 
-$callback = trim($_GET['callback']);
-echo $callback;
-echo '(';
 // TODO
-echo ');';
 
 ?>

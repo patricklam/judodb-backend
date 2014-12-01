@@ -27,10 +27,6 @@ foreach ($prix_query->fetchAll(PDO::FETCH_OBJ) as $prix) {
   $prixlist[] = $prix;
 }
 
-$callback = trim($_GET['callback']);
-echo $callback;
-echo '(';
 echo json_encode($prixlist);
-echo ');';
 
 ?>
