@@ -19,7 +19,8 @@ $client_query = $db->prepare('SELECT * from `client` WHERE id=?');
 $saisons_query = $db->prepare('SELECT saisons FROM `services` ' .
                                'WHERE client_id=?');
 
-if (is_admin($db, $userid)) {
+$user_is_admin = is_admin($db, $userid);
+if ($user_is_admin) {
   $services_query = $db->prepare('SELECT * from `services`');
 }
 else {
@@ -30,7 +31,7 @@ else {
 $services_query->execute(array($userid));
 
 foreach ($services_query->fetchAll(PDO::FETCH_OBJ) as $s) {
-  if (in_array($s->club_id, $auth_clubs)) {
+  if ($user_is_admin or in_array($s->club_id, $auth_clubs)) {
     // deduplicate
     if (in_array($s->client_id, $seen_clients)) {
       foreach ($tmpclients as $cl) {
