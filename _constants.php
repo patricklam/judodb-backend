@@ -1,4 +1,4 @@
-<?
+<?php
 // See also constants.js for another definition of GLOBAL_FIELDS.
 $GLOBAL_FIELDS = array("nom", "prenom", "ddn", "courriel", "adresse", "ville", "code_postal", "tel", "affiliation", "carte_resident", "nom_recu_impot", "tel_contact_urgence", "sexe");
 $ALL_FIELDS = $GLOBAL_FIELDS;
