@@ -1,4 +1,4 @@
-<?
+<?php
 function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $grid) {
     $allCount = count($ds);
     $notFirst = FALSE;

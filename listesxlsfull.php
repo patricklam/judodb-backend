@@ -1,4 +1,4 @@
-<? 
+<?php
 
 require ('PHPExcel/PHPExcel.php');
 require ('PHPExcel/PHPExcel/IOFactory.php');

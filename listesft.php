@@ -1,4 +1,4 @@
-<? 
+<?php
 
 require ('fpdf/fpdf.php');
 require ('fpdi/fpdi.php');
