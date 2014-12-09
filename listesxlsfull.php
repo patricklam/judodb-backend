@@ -20,7 +20,7 @@ $s->getPageSetup()->setOrientation
 	(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT)
 	          ->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LETTER);
 
-$s->setCellValue('A1', 'Club Judo Anjou: Liste complet des membres')
+$s->setCellValue('A1', 'Liste complet des membres')
   ->getStyle()->getAlignment()
         ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $s->getStyle('A1')->getFont()->setSize(14);
