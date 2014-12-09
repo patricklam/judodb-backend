@@ -3,7 +3,7 @@ function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $grid) {
     $allCount = count($ds);
     $notFirst = FALSE;
     // new: ["Nom", "Prenom", "Sexe", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
-    $COURS = 11;
+    $COURS = 12;
     $COLS = 11;
     $BOXES = 35;
     $EXTRAS = 5;
@@ -25,7 +25,7 @@ function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $grid) {
         $notFirst = TRUE;
 
         $pdf->Cell(0, 6, $ts[$p], 0, 1, 'C');
-        $pdf->Cell(0, 6, $sts[$p], 0, 1, 'C');
+        // $pdf->Cell(0, 6, $sts[$p], 0, 1, 'C');
         $pdf->Ln();
 
         $pdf->SetFillColor(224, 235, 255);
@@ -49,7 +49,7 @@ function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $grid) {
 
         for ($i = 0; $i < $allCount-1; $i++) {
             $d = explode("|", $ds[$i]);
-            if ($multi == "0" || $d[$COLS+1] == $p) {
+            if ($multi == "0" || $d[$COURS] == $p) {
                 for ($j = 0; $j < $COLS; $j++) {
                     if ($display[$j])
                         $pdf->Cell($w[$j], 6, $d[$j], '', 0, 'L', $fill);
