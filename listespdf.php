@@ -13,10 +13,12 @@ $pdf->SetFont('Times', '', 14);
 $multi = $_POST["multi"];
 if ($multi == "1") {
     $ts = explode("|", iconv("UTF-8", "ISO-8859-1", $_POST['short_title']));
+    $sts = "";
     // $sts = explode("|", iconv("UTF-8", "ISO-8859-1", $_POST['title']));
     $c = count($ts);
 } else {
     $ts = array(iconv("UTF-8", "ISO-8859-1", $_POST['short_title']));
+    $sts = "";
     // $sts = array(iconv("UTF-8", "ISO-8859-1", $_POST['title']));
     $c = 1;
 }
