@@ -13,7 +13,7 @@ if ($_POST["multi"] == "1") {
     $ts = explode("|", $_POST["title"]);
     $sts = explode("|", $_POST["subtitle"]);
     $shts = explode("|", $_POST["short_title"]);
-    $c = count($ts);
+    $c = count($shts);
 } else {
     $ts = array($_POST["title"]);
     $sts = array($_POST["subtitle"]);
@@ -25,6 +25,7 @@ $sheetNum = 0;
 // [*cb*, "Nom", "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat", "Cours", "Cours_id"];
 $COURS = 12;
 
+$nonEmpty = FALSE;
 for ($p = 0; $p < $c; $p++) {
     $data = $_POST['data'];
     $ds = explode("*", $data);
@@ -51,16 +52,16 @@ for ($p = 0; $p < $c; $p++) {
 	(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT)
 	          ->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LETTER);
 
-    $s->setCellValue('A1', $ts[$p])
+    $s->setCellValue('A1', $shts[$p])
       ->getStyle()->getAlignment()
             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
     $s->getStyle('A1')->getFont()->setSize(14);
     $s->getRowDimension('1')->setRowHeight(17);
     $s->mergeCells('A1:D1');
-    $s->setCellValue('A2', $sts[$p]);
-    $s->getStyle('A2')->getFont()->setSize(14);
-    $s->getRowDimension('2')->setRowHeight(17);
-    $s->mergeCells('A2:D2');
+    // $s->setCellValue('A2', $sts[$p]);
+    // $s->getStyle('A2')->getFont()->setSize(14);
+    // $s->getRowDimension('2')->setRowHeight(17);
+    // $s->mergeCells('A2:D2');
 
     $r = 4;
     $actualCount = 0;
@@ -78,9 +79,9 @@ for ($p = 0; $p < $c; $p++) {
             $s->setCellValue("G$r", $d[8]); // judoQC
 	    $dd = (int)(25569 + (strtotime("$d[9] 12:00:00") / 86400));
             $s->setCellValue("H$r", $dd); // ddn
-	    $s->getStyle("I$r")->
+	    $s->getStyle("H$r")->
                 getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD);
-            $s->setCellValue("J$r", $d[10]); // cat
+            $s->setCellValue("I$r", $d[10]); // cat
             $actualCount++; $r++;
 	}
     }
@@ -90,15 +91,21 @@ for ($p = 0; $p < $c; $p++) {
     $s->getColumnDimension('D')->setWidth(5);
     $s->getColumnDimension('E')->setWidth(5);
     $s->getColumnDimension('F')->setWidth(16);
-    $s->getColumnDimension('G')->setWidth(14);
+    $s->getColumnDimension('G')->setWidth(10);
     $s->getColumnDimension('H')->setWidth(10);
     $s->getColumnDimension('I')->setWidth(5);
 
     $r++;
     $s->setCellValue("A$r", "Nombre inscrit: $actualCount");
+    $nonEmpty = TRUE;
 }
-$objPHPExcel->removeSheetByIndex(0);
-$objPHPExcel->setActiveSheetIndex(0);
+if ($nonEmpty) {
+  $objPHPExcel->removeSheetByIndex(0);
+  $objPHPExcel->setActiveSheetIndex(0);
+} else {
+  $s = $objPHPExcel->getActiveSheet();
+  $s->setCellValue('A1', 'aucun judoka trouve');
+}
 
 // redirect output to client browser
 header('Content-Type: application/vnd.ms-excel');
