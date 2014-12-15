@@ -152,6 +152,7 @@ DROP TABLE IF EXISTS `club`;
 CREATE TABLE `club` (
   `id` INTEGER PRIMARY KEY auto_increment,
   `nom` varchar(255),
+  `nom_short` varchar(15),
   `numero_club` char(30),
   `ville` char(50),
   `prefix_codepostale` char(7),
