@@ -20,7 +20,7 @@ $pdf->useTemplate($tplidx);
 
 $pdf->SetFont('Times', '', 14);
 
-$c = explode('|', $_POST['auxdata']);
+$c = explode('|', iconv("UTF-8", "ISO-8859-1", $_POST['auxdata']));
 $club = $c[0];
 $clubno = $c[1];
 // ["CID", "Nom", "Prenom", "Sexe", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
