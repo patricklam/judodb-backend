@@ -1,4 +1,4 @@
-<?php
+<? 
 // declare(encoding='ISO-8859-1');
 
 require ('fpdf/fpdf.php');
@@ -22,13 +22,21 @@ $pdf->SetFont('Times', '', 14);
 function createEntry($pdf, $d, $i, $o) {
     // ["cid", "Nom", "DDN", "Frais"]
     $COLS = 4;
-    $x = array(170, 76, 152, 48);
-    $y = array(42, 74.5, 74.5, 68);
-    $INCREMENT = 133.0;
+    $x = array(170, 78, 172, 48);
+    $y = array(39, 72, 72, 66);
+    $INCREMENT = 140.5;
+
+    $yr = "2014/2015";
+    $pdf->SetXY(175, 25.5 + $o * $INCREMENT);
+    $pdf->Cell(0, 0, $yr);
 
     $date = strftime("%d %b %Y");
-    $pdf->SetXY(134, 94 + $o * $INCREMENT);
+    $pdf->SetXY(134, 92 + $o * $INCREMENT);
     $pdf->Cell(0, 0, $date);
+
+    $tresorier = "Bernard Stawarz";
+    $pdf->setXY(12, 99 + $o * $INCREMENT);
+    $pdf->Cell(0, 0, $tresorier);
 
     for ($j = 0; $j < $COLS; $j++) {
         $pdf->SetXY($x[$j], $y[$j] + $o * $INCREMENT);
