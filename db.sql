@@ -138,14 +138,23 @@ CREATE TABLE `payment` (
 DROP TABLE IF EXISTS `session`;
 CREATE TABLE `session` (
   `seqno` INTEGER PRIMARY KEY, /* A09 = 0, advance from there; use as real primary key. */
+  `linked_seqno` INTEGER, /* e.g. A09 is linked with H10 */
   `name` char(15),
   `year` char(4), /* for category calculations, so that H10 is 2009. */
   `abbrev` char(4),
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `session_club`;
+CREATE TABLE `session_club` (
+  `id` INTEGER PRIMARY KEY auto_increment,
+  `seqno` INTEGER,
+  `club` INTEGER,
   `first_class_date` DATE,
   `first_signup_date` DATE,
   `last_class_date` DATE,
   `last_signup_date` DATE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 
 /** Club information. */
 DROP TABLE IF EXISTS `club`;
