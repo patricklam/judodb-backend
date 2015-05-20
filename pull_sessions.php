@@ -11,10 +11,18 @@ require_authentication($db);
 $club = $_GET["club"];
 if (!isset ($club)) die;
 
-$query = $db->prepare('SELECT * FROM `session`, `session_club` WHERE `club` = ? AND `session`.`seqno` = `session_club`.`seqno`');
-$query->execute(array($club));
-foreach ($query->fetchAll(PDO::FETCH_OBJ) as $session) {
-  $sessionlist[] = $session;
+if ($club == "0") {
+  $query = $db->prepare('SELECT `seqno`, `linked_seqno`, `name`, `year`, `abbrev`, -1 AS `id`, 0 AS `club`, "-" AS `first_class_date`, "-" AS `first_signup_date`, "-" AS `last_class_date`, "-" AS `last_signup_date` FROM `session`');
+  $query->execute(array($club));
+  foreach ($query->fetchAll(PDO::FETCH_OBJ) as $session) {
+    $sessionlist[] = $session;
+  }
+} else {
+  $query = $db->prepare('SELECT * FROM `session`, `session_club` WHERE `club` = ? AND `session`.`seqno` = `session_club`.`seqno`');
+  $query->execute(array($club));
+  foreach ($query->fetchAll(PDO::FETCH_OBJ) as $session) {
+    $sessionlist[] = $session;
+  }
 }
 
 echo json_encode($sessionlist);
