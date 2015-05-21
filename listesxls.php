@@ -35,14 +35,13 @@ for ($p = 0; $p < $c; $p++) {
     $live = FALSE;
     for ($i = 0; $i < $allCount-1; $i++) {
         $d = explode("|", $ds[$i]);
-        if ($d[$COURS] == $p) {
+        if ($c == 1 || $d[$COURS] == $p) {
 	    $live = TRUE;
 	    break;
         }
     }
     
     if (!$live) continue;
-
     $objPHPExcel->createSheet();
     $objPHPExcel->setActiveSheetIndex(++$sheetNum);
     $s = $objPHPExcel->getActiveSheet();
@@ -68,7 +67,7 @@ for ($p = 0; $p < $c; $p++) {
     for ($i = 0; $i < $allCount-1; $i++) {
         $d = explode("|", $ds[$i]);
 
-        if ($d[$COURS] == $p) {
+        if ($c == 1 || $d[$COURS] == $p) {
             $s->setCellValue("A$r", $d[1]); // id number
             $s->setCellValue("B$r", $d[2]); // nom
             $s->setCellValue("C$r", $d[3]); // prenom
