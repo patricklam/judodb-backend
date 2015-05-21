@@ -5,6 +5,7 @@ require_once ('_userutils.php');
 
 $db = pdo_db_connect();
 require_authentication($db);
+$userid = get_user_id($db);
 
 require ('_constants.php');
 
@@ -49,7 +50,14 @@ foreach ($updates as $u) {
     $grade = $db->quote($gg[0]);
     $dg = $db->quote($gg[1]);
     array_push($stored_cmds,
-       "DELETE FROM `grades` WHERE client_id=$cid AND grade=$grade AND date_grade=$dg");
+       "DELETE FROM `grades` WHERE `client_id`=$cid AND `grade`=$grade AND `date_grade`=$dg");
+    break;
+  case "e":
+    if (!is_admin($db, $userid))
+       break;
+    $seqno = $db->quote($ua[3]);
+    array_push($stored_cmds,
+       "UPDATE `session` SET $action=$newvalue WHERE `seqno`=$seqno;");
     break;
   }
 }
