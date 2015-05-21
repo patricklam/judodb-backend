@@ -59,6 +59,13 @@ foreach ($updates as $u) {
     array_push($stored_cmds,
        "UPDATE `session` SET $action=$newvalue WHERE `seqno`=$seqno;");
     break;
+  case "E":
+    if (!is_admin($db, $userid))
+       break;
+    $seqno = $db->quote($ua[3]);
+    array_push($stored_cmds,
+       "INSERT INTO `session` (seqno, name) VALUES ($seqno, $newvalue);");
+    break;
   }
 }
 
