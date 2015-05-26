@@ -59,6 +59,22 @@ foreach ($updates as $u) {
     array_push($stored_cmds,
        "UPDATE `session` SET $action=$newvalue WHERE `seqno`=$seqno;");
     break;
+  case "f":
+    $club_id = $db->quote($ua[3]);
+    $id = $db->quote($ua[4]);
+    if (!can_access_club($db, $userid, $club_id))
+       break;
+    array_push($stored_cmds,
+       "UPDATE `session_club` SET $action=$newvalue WHERE `id`=$id AND `club`=$club_id;");
+    break;
+  case "F":
+    $club_id = $db->quote($ua[3]);
+    $seqno = $db->quote($ua[4]);
+    if (!can_access_club($db, $userid, $club_id))
+       break;
+    array_push($stored_cmds,
+       "INSERT INTO `session_club` (`seqno`, `club`, `$action`) VALUES ($seqno, $club_id, $newvalue);");
+    break;
   case "E":
     if (!is_admin($db, $userid))
        break;
