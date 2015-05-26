@@ -5,7 +5,9 @@
 // Start the set of SQL commands with the $sid.
 // TODO: check that logged-in user gets to modify this client.
 
-function generate_cmds($args) {
+function generate_cmds($db, $args) {
+  global $GLOBAL_FIELDS, $ALL_FIELDS, $GRADES_FIELDS, $SERVICE_FIELDS, $SESSION_FIELDS, $COURS_FIELDS, $CATEGORIES_FIELDS, $CATEGORIE_SESSION_FIELDS, $ESCOMPTE_FIELDS, $MISC_FIELDS;
+
   $guid = $args['guid'];
 
   // Get a server id.
