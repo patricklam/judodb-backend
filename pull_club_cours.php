@@ -8,8 +8,13 @@ header('content-type: application/json');
 $db = pdo_db_connect();
 require_authentication($db);
 
-if (!isset($_GET["session_seqno"])) die;
-$session_seqno = $_GET["session_seqno"];
+if (isset($_GET["session_seqno"])) {
+  $ss_sql_frag = 'AND `session_seqno`=?';
+  $session_seqno = $_GET["session_seqno"];
+} else {
+  $ss_sql_frag = 'AND (`session_seqno`=? OR TRUE)';
+  $session_seqno = '';
+}
 
 if (!isset($_GET["numero_club"])) {
   $club_query = $db->prepare('SELECT `id` FROM `club`');
@@ -21,7 +26,7 @@ if (!isset($_GET["numero_club"])) {
 
 if ($club_query->rowCount() > 0) {
   $courslist = array();
-  $cc_query = $db->prepare('SELECT * FROM `club_cours` WHERE `club_id`=? AND `session_seqno`=?');
+  $cc_query = $db->prepare('SELECT * FROM `club_cours` WHERE `club_id`=? ' . $ss_sql_frag);
 
   foreach ($club_query->fetchAll(PDO::FETCH_OBJ) as $c) {
     $club_id = $c->id;
