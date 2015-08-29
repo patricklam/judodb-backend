@@ -71,7 +71,7 @@ CREATE TABLE `client` (
   `nom_contact_urgence` varchar(255),
   `tel_contact_urgence` varchar(255),
   `RAMQ` varchar(20),
-  `sexe` char(1)
+  `sexe` char(1),
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
