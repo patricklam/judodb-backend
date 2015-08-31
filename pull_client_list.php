@@ -15,16 +15,16 @@ $seen_clients = array();
 
 $rs0 = NULL;
 $userid = get_user_id($db);
-$client_query = $db->prepare('SELECT * from `client` WHERE id=?');
+$client_query = $db->prepare('SELECT * from `client` WHERE id=? ORDER BY `nom` ASC, `prenom` ASC');
 $saisons_query = $db->prepare('SELECT saisons FROM `services` ' .
                                'WHERE client_id=?');
 
 if (is_admin($db, $userid)) {
-  $services_query = $db->prepare('SELECT * from `services`');
+  $services_query = $db->prepare('SELECT * from `services` ORDER BY `date_inscription` DESC');
 }
 else {
-  $services_query = $db->prepare('SELECT * from `services` LEFT JOIN `user_club` ' .
-                                                           'ON services.club_id=user_club.club_id ' .
+  $services_query = $db->prepare('SELECT * from `services` ORDER BY `date_inscription` DESC'.
+                                     'LEFT JOIN `user_club` ON services.club_id=user_club.club_id ' .
                                      'WHERE user_club.user_id=?');
 }
 $services_query->execute(array($userid));
