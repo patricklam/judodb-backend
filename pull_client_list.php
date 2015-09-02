@@ -23,7 +23,7 @@ if (is_admin($db, $userid)) {
   $services_query = $db->prepare('SELECT * from `services` ORDER BY `date_inscription` DESC');
 }
 else {
-  $services_query = $db->prepare('SELECT * from `services` ORDER BY `date_inscription` DESC'.
+  $services_query = $db->prepare('SELECT * from `services` ORDER BY `date_inscription` DESC '.
                                      'LEFT JOIN `user_club` ON services.club_id=user_club.club_id ' .
                                      'WHERE user_club.user_id=?');
 }
