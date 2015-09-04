@@ -165,9 +165,8 @@ CREATE TABLE `club` (
   `numero_club` char(30),
   `ville` char(50),
   `prefix_codepostale` char(7),
+  `escompte_resident` char(7),
   `indicatif_regional` char(4),
-  `debut_session` DATE,
-  `fin_session` DATE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `club_cours`;
