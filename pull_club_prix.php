@@ -29,7 +29,6 @@ $prix_query = $db->prepare('SELECT * FROM `club_division_session` WHERE `club_id
 $prix_query->execute(array(':club_id' => $club_id, ':seqno' => $session_seqno));
 foreach ($prix_query->fetchAll(PDO::FETCH_OBJ) as $prix) {
   unset($prix->club_id);
-  unset($prix->session_seqno);
   $prixlist[] = $prix;
 }
 
