@@ -96,6 +96,7 @@ CREATE TABLE `services` (
   `no_sessions` char(1),
   `passeport` boolean,
   `resident` boolean,
+  `paypal` boolean,
   `judogi` char(3),
   `escompte` char(3),
   `categorie_frais` char(10),
