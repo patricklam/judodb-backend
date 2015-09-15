@@ -83,9 +83,9 @@ foreach ($updates as $u) {
        "UPDATE `session_club` SET $action=$newvalue WHERE `id`=$id AND `club`=$club_id;");
     break;
   case "R": // new cours
-    $club_id = $db->quote($ua[4]);
     $session_seqno = $db->quote($ua[2]);
     $short_desc = $db->quote($ua[3]);
+    $club_id = $db->quote($ua[4]);
     if (!can_access_club($db, $userid, $club_id))
        break;
     array_push($stored_cmds,
@@ -107,6 +107,18 @@ foreach ($updates as $u) {
        break;
     array_push($stored_cmds,
        "DELETE FROM `club_cours` WHERE `id`=$id AND `club_id`=$club_id;");
+    break;
+  case "P": // new prix
+    $session_seqno = $db->quote($ua[2]);
+    $division_abbrev = $db->quote($ua[3]);
+    $frais_1_session = $db->quote($ua[4]);
+    $frais_2_session = $db->quote($ua[5]);
+    $frais_judo_qc = $db->quote($ua[6]);
+    $club_id = $db->quote($ua[7]);
+    if (!can_access_club($db, $userid, $club_id))
+       break;
+    array_push($stored_cmds,
+       "INSERT INTO `club_division_session` (`club_id`, `session_seqno`, `division_abbrev`, `frais_1_session`, `frais_2_session`, `frais_judo_qc`) VALUES ($club_id, $session_seqno, $division_abbrev, $frais_1_session, $frais_2_session, $frais_judo_qc);");
     break;
   case "p": // update prix
     $id = $db->quote($ua[2]);
