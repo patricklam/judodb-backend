@@ -52,22 +52,21 @@ foreach ($updates as $u) {
     array_push($stored_cmds,
        "DELETE FROM `grades` WHERE `client_id`=$cid AND `grade`=$grade AND `date_grade`=$dg");
     break;
-  case "e":
+  case "E": // new global session
+    if (!is_admin($db, $userid))
+       break;
+    $seqno = $db->quote($ua[3]);
+    array_push($stored_cmds,
+       "INSERT INTO `session` (seqno, name) VALUES ($seqno, $newvalue);");
+    break;
+  case "e": // update global session info
     if (!is_admin($db, $userid))
        break;
     $seqno = $db->quote($ua[3]);
     array_push($stored_cmds,
        "UPDATE `session` SET $action=$newvalue WHERE `seqno`=$seqno;");
     break;
-  case "f":
-    $club_id = $db->quote($ua[3]);
-    $id = $db->quote($ua[4]);
-    if (!can_access_club($db, $userid, $club_id))
-       break;
-    array_push($stored_cmds,
-       "UPDATE `session_club` SET $action=$newvalue WHERE `id`=$id AND `club`=$club_id;");
-    break;
-  case "F":
+  case "F": // new per-club session info
     $club_id = $db->quote($ua[3]);
     $seqno = $db->quote($ua[4]);
     if (!can_access_club($db, $userid, $club_id))
@@ -75,12 +74,39 @@ foreach ($updates as $u) {
     array_push($stored_cmds,
        "INSERT INTO `session_club` (`seqno`, `club`, `$action`) VALUES ($seqno, $club_id, $newvalue);");
     break;
-  case "E":
-    if (!is_admin($db, $userid))
+  case "f": // update per-club session info
+    $club_id = $db->quote($ua[3]);
+    $id = $db->quote($ua[4]);
+    if (!can_access_club($db, $userid, $club_id))
        break;
-    $seqno = $db->quote($ua[3]);
     array_push($stored_cmds,
-       "INSERT INTO `session` (seqno, name) VALUES ($seqno, $newvalue);");
+       "UPDATE `session_club` SET $action=$newvalue WHERE `id`=$id AND `club`=$club_id;");
+    break;
+  case "O": // new cours
+    $club_id = $db->quote($ua[4]);
+    $session_seqno = $db->quote($ua[2]);
+    $short_desc = $db->quote($ua[3]);
+    if (!can_access_club($db, $userid, $club_id))
+       break;
+    array_push($stored_cmds,
+       "INSERT INTO `club_cours` (`club_id`, `session_seqno`, `short_desc`) VALUES ($club_id, $session_seqno, $short_desc);");
+    break;
+  case "o":
+    $newvalue = $db->quote($ua[3]);
+    $club_id = $db->quote($ua[4]);
+    $id = $db->quote($ua[2]);
+    if (!can_access_club($db, $userid, $club_id))
+       break;
+    array_push($stored_cmds,
+       "UPDATE `club_cours` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$club_id;");
+    break;
+  case "P": // delete cours
+    $club_id = $db->quote($ua[4]);
+    $id = $db->quote($ua[2]);
+    if (!can_access_club($db, $userid, $club_id))
+       break;
+    array_push($stored_cmds,
+       "DELETE FROM `club_cours` WHERE `id`=$id AND `club_id`=$club_id;");
     break;
   }
 }
