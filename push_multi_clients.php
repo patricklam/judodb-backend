@@ -92,9 +92,9 @@ foreach ($updates as $u) {
        "INSERT INTO `club_cours` (`club_id`, `session_seqno`, `short_desc`) VALUES ($club_id, $session_seqno, $short_desc);");
     break;
   case "r":
+    $id = $db->quote($ua[2]);
     $newvalue = $db->quote($ua[3]);
     $club_id = $db->quote($ua[4]);
-    $id = $db->quote($ua[2]);
     if (!can_access_club($db, $userid, $club_id))
        break;
     array_push($stored_cmds,
@@ -107,6 +107,15 @@ foreach ($updates as $u) {
        break;
     array_push($stored_cmds,
        "DELETE FROM `club_cours` WHERE `id`=$id AND `club_id`=$club_id;");
+    break;
+  case "p": // update prix
+    $id = $db->quote($ua[2]);
+    $newvalue = $db->quote($ua[3]);
+    $club_id = $db->quote($ua[4]);
+    if (!can_access_club($db, $userid, $club_id))
+       break;
+    array_push($stored_cmds,
+       "UPDATE `club_division_session` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$club_id;");
     break;
   }
 }
