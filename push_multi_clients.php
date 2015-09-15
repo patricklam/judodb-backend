@@ -30,6 +30,7 @@ foreach ($updates as $u) {
   $newvalue = $db->quote($ua[2]);
 
   switch ($table) {
+  // client info:
   case "S":
     array_push($stored_cmds, 
        "UPDATE `services` SET $action=$newvalue WHERE `client_id`=$cid AND `saisons` LIKE '%$session%';");
@@ -51,6 +52,16 @@ foreach ($updates as $u) {
     $dg = $db->quote($gg[1]);
     array_push($stored_cmds,
        "DELETE FROM `grades` WHERE `client_id`=$cid AND `grade`=$grade AND `date_grade`=$dg");
+    break;
+
+  // config info:
+  case "c": // update per-club info
+    $id = $db->quote($ua[3]);
+    if (!can_access_club($db, $userid, $club_id))
+       break;
+    array_push($stored_cmds,
+       "UPDATE `club` SET $action=$newvalue WHERE `id`=$id;");
+    break;
     break;
   case "E": // new global session
     if (!is_admin($db, $userid))
