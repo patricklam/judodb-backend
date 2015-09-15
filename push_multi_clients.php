@@ -82,7 +82,7 @@ foreach ($updates as $u) {
     array_push($stored_cmds,
        "UPDATE `session_club` SET $action=$newvalue WHERE `id`=$id AND `club`=$club_id;");
     break;
-  case "O": // new cours
+  case "R": // new cours
     $club_id = $db->quote($ua[4]);
     $session_seqno = $db->quote($ua[2]);
     $short_desc = $db->quote($ua[3]);
@@ -91,7 +91,7 @@ foreach ($updates as $u) {
     array_push($stored_cmds,
        "INSERT INTO `club_cours` (`club_id`, `session_seqno`, `short_desc`) VALUES ($club_id, $session_seqno, $short_desc);");
     break;
-  case "o":
+  case "r":
     $newvalue = $db->quote($ua[3]);
     $club_id = $db->quote($ua[4]);
     $id = $db->quote($ua[2]);
@@ -100,7 +100,7 @@ foreach ($updates as $u) {
     array_push($stored_cmds,
        "UPDATE `club_cours` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$club_id;");
     break;
-  case "P": // delete cours
+  case "O": // delete cours
     $club_id = $db->quote($ua[4]);
     $id = $db->quote($ua[2]);
     if (!can_access_club($db, $userid, $club_id))
