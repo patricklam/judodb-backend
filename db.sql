@@ -199,9 +199,11 @@ CREATE TABLE `club_division_session` (
 
 DROP TABLE IF EXISTS `escompte`;
 CREATE TABLE `escompte` (
-  `seqno` INTEGER,
+  `id` INTEGER,
+  `club_id` INTEGER,
   `name` varchar(25),
-  `amount` char(6) /* in percent */
+  `amount_percent` char(6),
+  `amount_absolute` char(6)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /* populate divisions with the defaults as of 2014 */
