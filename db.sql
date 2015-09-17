@@ -201,7 +201,7 @@ DROP TABLE IF EXISTS `escompte`;
 CREATE TABLE `escompte` (
   `id` INTEGER,
   `club_id` INTEGER,
-  `name` varchar(25),
+  `nom` varchar(25),
   `amount_percent` char(6),
   `amount_absolute` char(6)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

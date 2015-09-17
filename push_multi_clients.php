@@ -148,6 +148,26 @@ foreach ($updates as $u) {
     array_push($stored_cmds,
        "DELETE FROM `club_division_session` WHERE `id`=$id AND `club_id`=$club_id;");
     break;
+  case "Z": // new escompte
+    $id = $db->quote($ua[2]);
+    $nom = $db->quote($ua[3]);
+    $amount_percent = $db->quote($ua[4]);
+    $amount_absolute = $db->quote($ua[5]);
+    $club_id = $db->quote($ua[6]);
+    if (!can_access_club($db, $userid, $club_id))
+       break;
+    array_push($stored_cmds,
+       "INSERT INTO `escompte` (`id`, `club_id`, `nom`, `amount_percent`, `amount_absolute`) VALUES ($id, $club_id, $nom, $amount_percent, $amount_absolute);");
+    break;
+  case "z": // update escompte
+    $id = $db->quote($ua[2]);
+    $newvalue = $db->quote($ua[3]);
+    $club_id = $db->quote($ua[4]);
+    if (!can_access_club($db, $userid, $club_id))
+       break;
+    array_push($stored_cmds,
+       "UPDATE `escompte` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$club_id;");
+    break;
   }
 }
 
