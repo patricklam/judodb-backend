@@ -168,6 +168,8 @@ CREATE TABLE `club` (
   `prefix_codepostale` char(7),
   `escompte_resident` char(7),
   `indicatif_regional` char(4),
+  `afficher_paypal` char(1),
+  `supplement_prorata` char(3),
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `club_cours`;
