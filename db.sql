@@ -208,5 +208,13 @@ CREATE TABLE `escompte` (
   `amount_absolute` char(6)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `produit`;
+CREATE TABLE `produit` (
+  `id` INTEGER,
+  `club_id` INTEGER,
+  `nom` varchar(25),
+  `montant` char(6)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 /* populate divisions with the defaults as of 2014 */
 INSERT INTO `division` (`name`, `abbrev`, `years_ago`, `noire`) VALUES ("Mini-Poussin", "U8", 8, false), ("Poussin", "U10", 10, false), ("Benjamin", "U12", 12, false), ("Minime", "U14", 14, false), ("Juvénile", "U16", 16, false), ("Cadet", "U18", 18, false), ("Junior", "U21", 21, false), ("Senior", "S", 0, false), ("Cadet Noire", "U18N", 18, true), ("Junior Noire", "U21N", 21, true), ("Senior Noire", "SN", 0, true);

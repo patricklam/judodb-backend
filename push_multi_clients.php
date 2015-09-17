@@ -168,6 +168,25 @@ foreach ($updates as $u) {
     array_push($stored_cmds,
        "UPDATE `escompte` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$club_id;");
     break;
+  case "J": // new produit
+    $id = $db->quote($ua[2]);
+    $nom = $db->quote($ua[3]);
+    $montant = $db->quote($ua[4]);
+    $club_id = $db->quote($ua[5]);
+    if (!can_access_club($db, $userid, $club_id))
+       break;
+    array_push($stored_cmds,
+       "INSERT INTO `produit` (`id`, `club_id`, `nom`, `montant`) VALUES ($id, $club_id, $nom, $montant);");
+    break;
+  case "j": // update produit
+    $id = $db->quote($ua[2]);
+    $newvalue = $db->quote($ua[3]);
+    $club_id = $db->quote($ua[4]);
+    if (!can_access_club($db, $userid, $club_id))
+       break;
+    array_push($stored_cmds,
+       "UPDATE `produit` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$club_id;");
+    break;
   }
 }
 
