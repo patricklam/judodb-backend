@@ -177,7 +177,8 @@ CREATE TABLE `club_cours` (
   `id` INTEGER PRIMARY KEY auto_increment,
   `club_id` INTEGER,
   `session_seqno` char(30),
-  `short_desc` char(30)
+  `short_desc` char(30),
+  `supplement_cours` char(6)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `division`;

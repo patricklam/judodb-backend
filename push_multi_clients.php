@@ -96,11 +96,12 @@ foreach ($updates as $u) {
   case "R": // new cours
     $session_seqno = $db->quote($ua[2]);
     $short_desc = $db->quote($ua[3]);
-    $club_id = $db->quote($ua[4]);
+    $supplement = $db->quote($ua[4]);
+    $club_id = $db->quote($ua[5]);
     if (!can_access_club($db, $userid, $club_id))
        break;
     array_push($stored_cmds,
-       "INSERT INTO `club_cours` (`club_id`, `session_seqno`, `short_desc`) VALUES ($club_id, $session_seqno, $short_desc);");
+       "INSERT INTO `club_cours` (`club_id`, `session_seqno`, `short_desc`, `supplement_cours`) VALUES ($club_id, $session_seqno, $supplement, $short_desc);");
     break;
   case "r":
     $id = $db->quote($ua[2]);
