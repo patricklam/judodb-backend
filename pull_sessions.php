@@ -8,10 +8,10 @@ header('content-type: application/json');
 $db = pdo_db_connect();
 require_authentication($db);
 
-$club = $_GET["club"];
-if (!isset ($club)) die;
+$club_id = $_GET["club_id"];
+if (!isset($club_id)) die;
 
-if ($club == "0") {
+if ($club_id == "0") {
   // sessions only, no dates
   $query = $db->prepare('SELECT `seqno`, `linked_seqno`, `name`, `year`, `abbrev`, -1 AS `id`, 0 AS `club`, "-" AS `first_class_date`, "-" AS `first_signup_date`, "-" AS `last_class_date`, "-" AS `last_signup_date` FROM `session`');
   $query->execute(array($club));
@@ -20,13 +20,14 @@ if ($club == "0") {
   }
 } else {
   // sessions which do exist for this club: include signup dates
+
   $query = $db->prepare('SELECT * FROM `session`, `session_club` WHERE `club` = ? AND `session`.`seqno` = `session_club`.`seqno`');
-  $query->execute(array($club));
+  $query->execute(array($club_id));
   foreach ($query->fetchAll(PDO::FETCH_OBJ) as $session) {
     $sessionlist[] = $session;
   }
   // sessions which do not exist
-  $query = $db->prepare("SELECT `seqno`, `linked_seqno`, `name`, `year`, `abbrev`, -1 AS `id`, 0 AS `club`, '-' AS `first_class_date`, '-' AS `first_signup_date`, '-' AS `last_class_date`, '-' AS `last_signup_date` from `session` WHERE NOT EXISTS (SELECT `session`.`seqno` FROM `session_club` WHERE `session`.`seqno` = `session_club`.`seqno` AND `session_club`.`club` = $club);");
+  $query = $db->prepare("SELECT `seqno`, `linked_seqno`, `name`, `year`, `abbrev`, -1 AS `id`, 0 AS `club`, '-' AS `first_class_date`, '-' AS `first_signup_date`, '-' AS `last_class_date`, '-' AS `last_signup_date` from `session` WHERE NOT EXISTS (SELECT `session`.`seqno` FROM `session_club` WHERE `session`.`seqno` = `session_club`.`seqno` AND `session_club`.`club` = $club_id);");
   $query->execute(array($club));
   foreach ($query->fetchAll(PDO::FETCH_OBJ) as $session) {
     $sessionlist[] = $session;
