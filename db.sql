@@ -170,6 +170,7 @@ CREATE TABLE `club` (
   `indicatif_regional` char(4),
   `afficher_paypal` char(1),
   `supplement_prorata` char(3),
+  `pro_rata` tinyint(1),
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `club_cours`;
