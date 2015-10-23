@@ -20,6 +20,9 @@ $pdf->useTemplate($tplidx);
 
 $pdf->SetFont('Times', '', 14);
 
+$evt = iconv("UTF-8", "ISO-8859-1", $_POST['evt']);
+$date = str_replace("/", "     ", str_replace("-", "     ",
+                    iconv("UTF-8", "ISO-8859-1", $_POST['date'])));
 $c = explode('|', iconv("UTF-8", "ISO-8859-1", $_POST['auxdata']));
 $club = $c[0];
 $clubno = $c[1];
@@ -50,19 +53,17 @@ for ($i = 0; $i < $allCount; $i++) {
     $d = explode("|", $ds[$i]);
 
     $d[5] = substr($d[5], 0, 4);
-    $date = str_replace("/", "     ", 
-            str_replace("-", "     ", $_POST['date']));
     $pdf->SetXY(128, 33.5 + $effOff);
     $pdf->Cell(0, 0, $club);
     $pdf->SetXY(175, 33.5 + $effOff);
     $pdf->Cell(0, 0, $clubno);
     $pdf->SetXY(133, 72.5 + $effOff);
-    $pdf->Cell(0, 0, $_POST['evt']);
+    $pdf->Cell(0, 0, $evt);
     $pdf->SetXY(48, 65 + $effOff);
     $pdf->Cell(0, 0, $date);
 
     // division
-    if (substr($d[6], -1) == 'N') $d[6] = substr($d[5], 0, -1);
+    if (substr($d[6], -1) == 'N') $d[6] = substr($d[6], 0, -1);
     if ($d[18] == 'M') $d[6] = 'M';
     $pdf->SetXY($catX[$d[6]], $catY[$d[6]] + $effOff);
     $pdf->Cell(0, 0, 'X');
@@ -88,7 +89,7 @@ $pdf->AddPage();
 
 $w = array(45, 45, -1, -1, -1, 35, -1, -1, -1, -1, 30);
 $display = array(true, true, false, false, false, true, false, false, false, false, true);
-produceOutput($pdf, array($_POST['evt']), array($_POST['date']), $ds, 1, false, $display, $w, false);
+produceOutput($pdf, array($evt), array($date), $ds, 1, false, $display, $w, false);
 
 $pdf->Output();
 ?>
