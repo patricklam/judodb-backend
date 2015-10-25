@@ -101,7 +101,7 @@ foreach ($updates as $u) {
     if (!can_access_club($db, $userid, $club_id))
        break;
     array_push($stored_cmds,
-       "INSERT INTO `club_cours` (`club_id`, `session_seqno`, `short_desc`, `supplement_cours`) VALUES ($club_id, $session_seqno, $supplement, $short_desc);");
+       "INSERT INTO `club_cours` (`club_id`, `session_seqno`, `short_desc`, `supplement_cours`) VALUES ($club_id, $session_seqno, $short_desc, $supplement);");
     break;
   case "r":
     $id = $db->quote($ua[2]);
