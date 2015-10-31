@@ -64,7 +64,7 @@ for ($i = 0; $i < $allCount; $i++) {
 
     // division
     if (substr($d[6], -1) == 'N') $d[6] = substr($d[6], 0, -1);
-    if ($d[18] == 'M') $d[6] = 'M';
+    if (substr($d[18], 0, 1) == 'M') $d[6] = 'M';
     $pdf->SetXY($catX[$d[6]], $catY[$d[6]] + $effOff);
     $pdf->Cell(0, 0, 'X');
 
