@@ -8,14 +8,14 @@ require ('_produce_fpdi_output.php');
 
 $pdf =& new FPDI('P', 'mm', 'Letter');
 
-$pagecount = $pdf->setSourceFile('ft303version2013.pdf'); 
-$tplidx = $pdf->importPage(1, '/MediaBox'); 
+$pagecount = $pdf->setSourceFile('ft303version2013.pdf');
+$tplidx = $pdf->importPage(1, '/MediaBox');
 $pdf->SetAutoPageBreak(false);
 
-$pdf->addPage(); 
-$pdf->useTemplate($tplidx); 
+$pdf->addPage();
+$pdf->useTemplate($tplidx);
 
-// to avoid the need for syncronisation before output, use POST params 
+// to avoid the need for syncronisation before output, use POST params
 // for the data in the list.
 
 $pdf->SetFont('Times', '', 14);
@@ -33,9 +33,9 @@ $x = array(0, 128, 128, 0, 178, 51, 0, 0, 0, 0, 0, 0, 0, 0, 128);
 $y = array(0, 20, 27, 0, 41, 56.5, 0, 0, 0, 0, 0, 0, 0, 0, 41);
 $INCREMENT = 84;
 
-$catX = array('M' => 52, 'S' => 52, 'U21' => 71.5, 'U18' => 52, 
+$catX = array('M' => 52, 'S' => 52, 'U21' => 71.5, 'U18' => 52,
       'U16' => 71.5, 'U14' => 52, 'U12' => 71.5, 'U10' => 52, 'U8' => 71.5);
-$catY = array('M' => 21, 'S' => 27, 'U21' => 27, 'U18' => 33.5, 
+$catY = array('M' => 21, 'S' => 27, 'U21' => 27, 'U18' => 33.5,
       'U16' => 33.5, 'U14' => 41, 'U12' => 41, 'U10' => 47, 'U8' => 47);
 
 $actualCount = 0;
@@ -45,8 +45,8 @@ $allCount = count($ds);
 for ($i = 0; $i < $allCount; $i++) {
     if ($ds[$i] == '') continue;
     if (($i % 3 == 0) && ($i > 0)) {
-       $pdf->addPage(); 
-       $pdf->useTemplate($tplidx); 
+       $pdf->addPage();
+       $pdf->useTemplate($tplidx);
     }
 
     $effOff = ($i % 3) * $INCREMENT;
