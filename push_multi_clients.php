@@ -15,7 +15,7 @@ require ('_constants.php');
 
 $guid = $_POST['guid'];
 $session = $_POST['current_session'];
-if (!preg_match('/[AH][0-9][0-9]/', $session)) die;
+if ($session != "" && !preg_match('/[AH][0-9][0-9]/', $session)) die;
 $updates = explode(';', $_POST['data_to_save']);
 
 $stored_cmds = array("-1");
