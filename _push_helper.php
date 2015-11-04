@@ -16,12 +16,30 @@ function generate_cmds($db, $args) {
   $ddn = $db->quote($args['ddn']);
   if (isset($args['sid']) && $args['sid'] != '') {
     $sid = $db->quote($args['sid']);
+    $new_client = FALSE;
   } else {
     $squery = $db->prepare('INSERT INTO `client` (nom, prenom, ddn) VALUES (:nom, :prenom, :ddn)');
     $squery->execute(array('nom' => $nom, 'prenom' => $prenom, 'ddn' => $ddn));
     $sid = $db->lastInsertId();
+    $new_client = TRUE;
   }
   $stored_cmds = array($sid);
+
+  // for existing clients, check that user had permission to access previously
+  // consequence: only an admin can add a client to a new club
+  if (!$new_client) {
+    $userid = get_user_id($db);
+    if (!is_admin($db, $userid)) {
+      $auth_query = $db->prepare('SELECT COUNT(*) FROM `services`, `user_club` '.
+                                  'WHERE services.client_id=:id '.
+                                   'AND services.club_id=user_club.club_id '.
+                                   'AND user_club.user_id=:userid');
+      // NOTE: id must be unquoted: execute already quotes
+      $aparams=array(':id' => $args['sid'], ':userid' => $userid);
+      $auth_query->execute($aparams);
+      if ($auth_query->fetchColumn() == 0) return array();
+    }
+  }
 
   // Handle 'deleted' requests.
   if ($args['deleted'] == 'true') {
