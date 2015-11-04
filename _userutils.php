@@ -8,7 +8,9 @@ function get_user_id($db) {
     $id_query->execute(array($email, $pid));
     if ($id_query->fetchColumn() == 0) return -1;
     else {
-      return $id_query->fetch(PDO::FETCH_OBJ)->id;
+      $real_id_query = $db->prepare('SELECT `id` FROM `user` WHERE `email`=? AND `plus_identity`=?');
+      $real_id_query->execute(array($email, $pid));
+      return $real_id_query->fetch(PDO::FETCH_OBJ)->id;
     }
   }
   return -1;

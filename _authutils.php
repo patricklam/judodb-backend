@@ -17,7 +17,10 @@ function is_authenticated($db) {
  $email_query = $db->prepare('SELECT COUNT(`id`) FROM `user` WHERE email=? AND `plus_identity` IS NULL');
  $email_query->execute(array($email));
  if ($email_query->fetchColumn() == 0) return false;
- $id = $email_query->fetch(PDO::FETCH_NUM)[0];
+
+ $real_email_query = $db->prepare('SELECT `id` FROM `user` WHERE email=? AND `plus_identity` IS NULL');
+ $real_email_query->execute(array($email));
+ $id = $real_email_query->fetch(PDO::FETCH_NUM)[0];
 
  $update_query = $db->prepare('UPDATE `user` SET `plus_identity` = :pid, `last_update` = curdate() WHERE `id` = :id');
  $update_query->execute(array('pid' => $pid, 'id' => $id));
