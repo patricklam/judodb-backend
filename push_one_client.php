@@ -11,9 +11,12 @@ require ('_push_helper.php');
 
 $stored_cmds = generate_cmds($db, $_POST);
 
-echo "<pre>";
+/*echo "<pre>";
 print_r($stored_cmds);
-echo "</pre>";
+echo "</pre>";*/
+
+/* https://code.google.com/p/google-web-toolkit/issues/detail?id=624 */
+http_response_code(204);
 
 $guid = $_POST['guid'];
 $_SESSION[$guid] = $stored_cmds;
