@@ -32,14 +32,20 @@ foreach ($updates as $u) {
   switch ($table) {
   // client info:
   case "S":
+    if (!can_access_client($db, $userid, $cid))
+       break;
     array_push($stored_cmds, 
        "UPDATE `services` SET $action=$newvalue WHERE `client_id`=$cid AND `saisons` LIKE '%$session%';");
     break;
   case "C":
+    if (!can_access_client($db, $userid, $cid))
+       break;
     array_push($stored_cmds, 
        "UPDATE `client` SET $action=$newvalue WHERE `id`=$cid;");
     break;
   case "G":
+    if (!can_access_client($db, $userid, $cid))
+       break;
     $gg = explode('|', $ua[2]);
     $grade = $db->quote($gg[0]);
     $dg = $db->quote($gg[1]);
@@ -47,6 +53,8 @@ foreach ($updates as $u) {
        "INSERT INTO `grades` (client_id, grade, date_grade) VALUES ($cid, $grade, $dg)");
     break;
   case "!":
+    if (!can_access_client($db, $userid, $cid))
+       break;
     $gg = explode('|', $ua[2]);
     $grade = $db->quote($gg[0]);
     $dg = $db->quote($gg[1]);
