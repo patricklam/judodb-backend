@@ -9,14 +9,14 @@ function is_authenticated($db) {
  $email = $_SESSION['email'];
  // if the openid identity matches something in the db, that's us. 
 
- $pi_query = $db->prepare('SELECT `username` FROM `user` WHERE plus_identity=?');
+ $pi_query = $db->prepare('SELECT COUNT(`username`) FROM `user` WHERE plus_identity=?');
  $pi_query->execute(array($pid));
- if ($pi_query->rowCount() > 0) return true;
+ if ($pi_query->fetchColumn() > 0) return true;
 
  // otherwise, match on email and set the identity
- $email_query = $db->prepare('SELECT `id` FROM `user` WHERE email=? AND `plus_identity` IS NULL');
+ $email_query = $db->prepare('SELECT COUNT(`id`) FROM `user` WHERE email=? AND `plus_identity` IS NULL');
  $email_query->execute(array($email));
- if ($email_query->rowCount() == 0) return false;
+ if ($email_query->fetchColumn() == 0) return false;
  $id = $email_query->fetch(PDO::FETCH_NUM)[0];
 
  $update_query = $db->prepare('UPDATE `user` SET `plus_identity` = :pid, `last_update` = curdate() WHERE `id` = :id');
