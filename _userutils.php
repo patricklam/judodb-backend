@@ -15,10 +15,13 @@ function get_user_id($db) {
 }
 
 function is_admin($db, $user_id) {
-  $admin_query = $db->prepare('SELECT SUM(`is_admin`) FROM `user` WHERE id=?');
+  $admin_query = $db->prepare('SELECT COUNT(`is_admin`) FROM `user` WHERE id=?');
   $admin_query->execute(array($user_id));
-  if ($admin_query->fetchColumn() != 0)
-    return $admin_query->fetch(PDO::FETCH_OBJ)->is_admin;
+  if ($admin_query->fetchColumn() > 0) {
+    $real_admin_query = $db->prepare('SELECT `is_admin` FROM `user` WHERE id=?');
+    $real_admin_query->execute(array($user_id));
+    return $real_admin_query->fetch(PDO::FETCH_OBJ)->is_admin;
+  }
   return 0;
 }
 
