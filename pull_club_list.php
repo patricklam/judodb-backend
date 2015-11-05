@@ -18,6 +18,10 @@ foreach ($clublist_ids as $id) {
   }
 }
 
+if (is_admin($db, get_user_id($db))) {
+  $clublist[] = array("id" => "-1", "nom" => "admin");
+}
+
 echo json_encode($clublist);
 
 ?>
