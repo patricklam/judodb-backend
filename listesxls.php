@@ -22,7 +22,7 @@ if ($_POST["multi"] == "1") {
 }
 
 $sheetNum = 0;
-// [*cb*, "Nom", "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Cat", "Cours", "Cours_id"];
+// [*cb*, "Nom", "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Div", "Cours", "Cours_id"];
 $COURS = 12;
 
 $nonEmpty = FALSE;
