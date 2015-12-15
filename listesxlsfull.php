@@ -15,7 +15,7 @@ $allCount = count($ds);
 
 $s = $objPHPExcel->getActiveSheet();
 $s->getDefaultStyle()->getFont()->setName('Arial');
-$s->setTitle('Liste complet membres CJA');
+$s->setTitle('Liste complet membres');
 $s->getPageSetup()->setOrientation
 	(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT)
 	          ->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LETTER);
@@ -51,9 +51,9 @@ for ($c = 'A'; $c < 'S'; $c++)
 
 // some manual fixes:
 $s->getColumnDimension('A')->setAutoSize(false)->setWidth(6);
-$s->getColumnDimension('D')->setAutoSize(false)->setWidth(8);
+$s->getColumnDimension('D')->setAutoSize(false)->setWidth(6);
 $s->getColumnDimension('E')->setAutoSize(false)->setWidth(11);
-$s->getColumnDimension('F')->setAutoSize(false)->setWidth(5);
+$s->getColumnDimension('F')->setAutoSize(false)->setWidth(11);
 $s->getColumnDimension('J')->setAutoSize(false)->setWidth(10);
 
 $r++;
