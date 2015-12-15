@@ -43,6 +43,8 @@ for ($i = 0; $i < $allCount-1; $i++) {
     for ($j = 0; $j < count($d); $j++)
         $s->setCellValueByColumnAndRow($j, $r, $d[$j]);
 
+    $s->getStyleByColumnAndRow(12, $r)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+    $s->getStyleByColumnAndRow(17, $r)->getNumberFormat()->setFormatCode('#,##0.00_-"$"');
     $actualCount++; $r++;
 }
 
