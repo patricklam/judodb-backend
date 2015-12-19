@@ -13,8 +13,8 @@ function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $grid) {
         for ($i = 0; $i < $allCount-1; $i++) {
             $d = explode("|", $ds[$i]);
             if ($multi == "0" || $d[$COURS] == $p) {
-    	    $live = TRUE;
-    	    break;
+               $live = TRUE;
+               break;
             }
         }
         
