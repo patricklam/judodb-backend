@@ -64,11 +64,12 @@ foreach ($updates as $u) {
 
   // config info:
   case "c": // update per-club info
-    $id = $db->quote($ua[3]);
+    $club_id = $ua[3];
+    $quoted_club_id = $db->quote($ua[3]);
     if (!can_access_club($db, $userid, $club_id))
        break;
     array_push($stored_cmds,
-       "UPDATE `club` SET $action=$newvalue WHERE `id`=$id;");
+       "UPDATE `club` SET $action=$newvalue WHERE `id`=$quoted_club_id;");
     break;
     break;
   case "E": // new global session
@@ -86,47 +87,52 @@ foreach ($updates as $u) {
        "UPDATE `session` SET $action=$newvalue WHERE `seqno`=$seqno;");
     break;
   case "F": // new per-club session info
-    $club_id = $db->quote($ua[3]);
+    $club_id = $ua[3];
     $seqno = $db->quote($ua[4]);
     if (!can_access_club($db, $userid, $club_id))
        break;
+    $quoted_club_id = $db->quote($ua[3]);
     array_push($stored_cmds,
-       "INSERT INTO `session_club` (`seqno`, `club`, `$action`) VALUES ($seqno, $club_id, $newvalue);");
+       "INSERT INTO `session_club` (`seqno`, `club`, `$action`) VALUES ($seqno, $quoted_club_id, $newvalue);");
     break;
   case "f": // update per-club session info
-    $club_id = $db->quote($ua[3]);
+    $club_id = $ua[3];
     $id = $db->quote($ua[4]);
     if (!can_access_club($db, $userid, $club_id))
        break;
+    $quoted_club_id = $db->quote($ua[3]);
     array_push($stored_cmds,
-       "UPDATE `session_club` SET $action=$newvalue WHERE `id`=$id AND `club`=$club_id;");
+       "UPDATE `session_club` SET $action=$newvalue WHERE `id`=$id AND `club`=$quoted_club_id;");
     break;
   case "R": // new cours
     $session_seqno = $db->quote($ua[2]);
     $short_desc = $db->quote($ua[3]);
     $supplement = $db->quote($ua[4]);
-    $club_id = $db->quote($ua[5]);
+    $club_id = $ua[5];
     if (!can_access_club($db, $userid, $club_id))
        break;
+    $quoted_club_id = $db->quote($ua[5]);
     array_push($stored_cmds,
        "INSERT INTO `club_cours` (`club_id`, `session_seqno`, `short_desc`, `supplement_cours`) VALUES ($club_id, $session_seqno, $short_desc, $supplement);");
     break;
   case "r":
     $id = $db->quote($ua[2]);
     $newvalue = $db->quote($ua[3]);
-    $club_id = $db->quote($ua[4]);
+    $club_id = $ua[4];
     if (!can_access_club($db, $userid, $club_id))
        break;
+    $quoted_club_id = $db->quote($ua[4]);
     array_push($stored_cmds,
-       "UPDATE `club_cours` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$club_id;");
+       "UPDATE `club_cours` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$quoted_club_id;");
     break;
   case "O": // delete cours
     $id = $db->quote($ua[2]);
-    $club_id = $db->quote($ua[4]);
+    $club_id = $ua[4];
     if (!can_access_club($db, $userid, $club_id))
        break;
+    $quoted_club_id = $db->quote($ua[4]);
     array_push($stored_cmds,
-       "DELETE FROM `club_cours` WHERE `id`=$id AND `club_id`=$club_id;");
+       "DELETE FROM `club_cours` WHERE `id`=$id AND `club_id`=$quoted_club_id;");
     break;
   case "P": // new prix
     $session_seqno = $db->quote($ua[2]);
@@ -134,67 +140,74 @@ foreach ($updates as $u) {
     $frais_1_session = $db->quote($ua[4]);
     $frais_2_session = $db->quote($ua[5]);
     $frais_judo_qc = $db->quote($ua[6]);
-    $club_id = $db->quote($ua[7]);
+    $club_id = $ua[7];
     if (!can_access_club($db, $userid, $club_id))
        break;
+    $quoted_club_id = $db->quote($ua[7]);
     array_push($stored_cmds,
-       "INSERT INTO `club_division_session` (`club_id`, `session_seqno`, `division_abbrev`, `frais_1_session`, `frais_2_session`, `frais_judo_qc`) VALUES ($club_id, $session_seqno, $division_abbrev, $frais_1_session, $frais_2_session, $frais_judo_qc);");
+       "INSERT INTO `club_division_session` (`club_id`, `session_seqno`, `division_abbrev`, `frais_1_session`, `frais_2_session`, `frais_judo_qc`) VALUES ($quoted_club_id, $session_seqno, $division_abbrev, $frais_1_session, $frais_2_session, $frais_judo_qc);");
     break;
   case "p": // update prix
     $id = $db->quote($ua[2]);
     $newvalue = $db->quote($ua[3]);
-    $club_id = $db->quote($ua[4]);
+    $club_id = $ua[4];
     if (!can_access_club($db, $userid, $club_id))
        break;
+    $quoted_club_id = $db->quote($ua[4]);
     array_push($stored_cmds,
-       "UPDATE `club_division_session` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$club_id;");
+       "UPDATE `club_division_session` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$quoted_club_id;");
     break;
   case "Q": // delete prix
     $id = $db->quote($ua[2]);
-    $club_id = $db->quote($ua[4]);
+    $club_id = $ua[4];
     if (!can_access_club($db, $userid, $club_id))
        break;
+    $quoted_club_id = $db->quote($ua[4]);
     array_push($stored_cmds,
-       "DELETE FROM `club_division_session` WHERE `id`=$id AND `club_id`=$club_id;");
+       "DELETE FROM `club_division_session` WHERE `id`=$id AND `club_id`=$quoted_club_id;");
     break;
   case "Z": // new escompte
     $id = $db->quote($ua[2]);
     $nom = $db->quote($ua[3]);
     $amount_percent = $db->quote($ua[4]);
     $amount_absolute = $db->quote($ua[5]);
-    $club_id = $db->quote($ua[6]);
+    $club_id = $ua[6];
     if (!can_access_club($db, $userid, $club_id))
        break;
+    $quoted_club_id = $db->quote($ua[6]);
     array_push($stored_cmds,
-       "INSERT INTO `escompte` (`id`, `club_id`, `nom`, `amount_percent`, `amount_absolute`) VALUES ($id, $club_id, $nom, $amount_percent, $amount_absolute);");
+       "INSERT INTO `escompte` (`id`, `club_id`, `nom`, `amount_percent`, `amount_absolute`) VALUES ($id, $quoted_club_id, $nom, $amount_percent, $amount_absolute);");
     break;
   case "z": // update escompte
     $id = $db->quote($ua[2]);
     $newvalue = $db->quote($ua[3]);
-    $club_id = $db->quote($ua[4]);
+    $club_id = $ua[4];
     if (!can_access_club($db, $userid, $club_id))
        break;
+    $quoted_club_id = $db->quote($ua[4]);
     array_push($stored_cmds,
-       "UPDATE `escompte` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$club_id;");
+       "UPDATE `escompte` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$quoted_club_id;");
     break;
   case "J": // new produit
     $id = $db->quote($ua[2]);
     $nom = $db->quote($ua[3]);
     $montant = $db->quote($ua[4]);
-    $club_id = $db->quote($ua[5]);
+    $club_id = $ua[5];
     if (!can_access_club($db, $userid, $club_id))
        break;
+    $quoted_club_id = $db->quote($ua[5]);
     array_push($stored_cmds,
-       "INSERT INTO `produit` (`id`, `club_id`, `nom`, `montant`) VALUES ($id, $club_id, $nom, $montant);");
+       "INSERT INTO `produit` (`id`, `club_id`, `nom`, `montant`) VALUES ($id, $quoted_club_id, $nom, $montant);");
     break;
   case "j": // update produit
     $id = $db->quote($ua[2]);
     $newvalue = $db->quote($ua[3]);
-    $club_id = $db->quote($ua[4]);
+    $club_id = $ua[4];
     if (!can_access_club($db, $userid, $club_id))
        break;
+    $quoted_club_id = $db->quote($ua[4]);
     array_push($stored_cmds,
-       "UPDATE `produit` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$club_id;");
+       "UPDATE `produit` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$quoted_club_id;");
     break;
   }
 }
