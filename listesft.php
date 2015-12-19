@@ -87,8 +87,8 @@ for ($i = 0; $i < $allCount; $i++) {
 }
 $pdf->AddPage();
 
-$w = array(45, 45, -1, -1, -1, 35, -1, -1, -1, -1, 30);
-$display = array(true, true, false, false, false, true, false, false, false, false, true);
+$w = array(-1, 45, 45, -1, -1, -1, 35, -1, -1, -1, -1, 30);
+$display = array(false, true, true, false, false, false, true, false, false, false, false, true);
 produceOutput($pdf, array($evt), array($date), $ds, 1, false, $display, $w, false);
 
 $pdf->Output();
