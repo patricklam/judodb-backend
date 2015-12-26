@@ -92,7 +92,7 @@ CREATE TABLE `services` (
   `sans_affiliation` boolean,
   `affiliation_initiation` boolean,
   `affiliation_ecole` boolean,
-  `cours` char(3),
+  `cours` char(6),
   `no_sessions` char(1),
   `passeport` boolean,
   `resident` boolean,
