@@ -107,13 +107,12 @@ foreach ($updates as $u) {
   case "R": // new cours
     $session_seqno = $db->quote($ua[2]);
     $short_desc = $db->quote($ua[3]);
-    $supplement = $db->quote($ua[4]);
-    $club_id = $ua[5];
+    $club_id = $ua[4];
     if (!can_access_club($db, $userid, $club_id))
        break;
-    $quoted_club_id = $db->quote($ua[5]);
+    $quoted_club_id = $db->quote($ua[4]);
     array_push($stored_cmds,
-       "INSERT INTO `club_cours` (`club_id`, `session_seqno`, `short_desc`, `supplement_cours`) VALUES ($club_id, $session_seqno, $short_desc, $supplement);");
+       "INSERT INTO `club_cours` (`club_id`, `session_seqno`, `short_desc`) VALUES ($club_id, $session_seqno, $short_desc);");
     break;
   case "r":
     $id = $db->quote($ua[2]);
@@ -135,27 +134,39 @@ foreach ($updates as $u) {
        "DELETE FROM `club_cours` WHERE `id`=$id AND `club_id`=$quoted_club_id;");
     break;
   case "P": // new prix
-    $session_seqno = $db->quote($ua[2]);
-    $division_abbrev = $db->quote($ua[3]);
-    $frais_1_session = $db->quote($ua[4]);
-    $frais_2_session = $db->quote($ua[5]);
-    $frais_judo_qc = $db->quote($ua[6]);
-    $club_id = $ua[7];
+    $newvalue = $db->quote($ua[2]); // frais
+    $club_id = $ua[3];
+    $quoted_club_id = $db->quote($ua[3]);
+    if ($quoted_club_id == "'null'") {
+       $quoted_club_id = 'NULL';
+    }
+    $session_seqno = $db->quote($ua[4]);
+    $division_abbrev = $db->quote($ua[5]);
+    $cours_id = $db->quote($ua[6]);
+
     if (!can_access_club($db, $userid, $club_id))
        break;
-    $quoted_club_id = $db->quote($ua[7]);
     array_push($stored_cmds,
-       "INSERT INTO `club_division_session` (`club_id`, `session_seqno`, `division_abbrev`, `frais_1_session`, `frais_2_session`, `frais_judo_qc`) VALUES ($quoted_club_id, $session_seqno, $division_abbrev, $frais_1_session, $frais_2_session, $frais_judo_qc);");
+       "INSERT INTO `prix` (`frais`, `club_id`, `session_seqno`, `division_abbrev`, `cours_id`) VALUES ($newvalue, $quoted_club_id, $session_seqno, $division_abbrev, $cours_id);");
     break;
   case "p": // update prix
     $id = $db->quote($ua[2]);
-    $newvalue = $db->quote($ua[3]);
+    $newvalue = $db->quote($ua[3]); // frais
     $club_id = $ua[4];
+    $quoted_club_id = $db->quote($ua[4]);
+    if ($quoted_club_id == "'null'") {
+       $club_id_frag = 'IS NULL';
+    } else {
+       $club_id_frag = '= ' . $quoted_club_id;
+    }
+    $session_seqno = $db->quote($ua[5]);
+    $division_abbrev = $db->quote($ua[6]);
+    $cours_id = $db->quote($ua[7]);
+
     if (!can_access_club($db, $userid, $club_id))
        break;
-    $quoted_club_id = $db->quote($ua[4]);
     array_push($stored_cmds,
-       "UPDATE `club_division_session` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$quoted_club_id;");
+       "UPDATE `prix` SET frais=$newvalue WHERE `id`=$id AND `club_id` $club_id_frag AND `session_seqno`=$session_seqno AND `division_abbrev`=$division_abbrev AND `cours_id` = $cours_id;");
     break;
   case "Q": // delete prix
     $id = $db->quote($ua[2]);
