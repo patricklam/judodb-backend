@@ -174,8 +174,7 @@ foreach ($updates as $u) {
     if (!can_access_club($db, $userid, $club_id))
        break;
     $quoted_club_id = $db->quote($ua[4]);
-    array_push($stored_cmds,
-       "DELETE FROM `club_division_session` WHERE `id`=$id AND `club_id`=$quoted_club_id;");
+    // never used, not implemented
     break;
   case "Z": // new escompte
     $id = $db->quote($ua[2]);
