@@ -8,8 +8,14 @@ header('content-type: application/json');
 $db = pdo_db_connect();
 require_authentication($db);
 
+<<<<<<< HEAD
 $club_id = $db->quote($_GET["club_id"]);
 if (!isset($club_id)) die;
+=======
+$club_id = $_GET["club_id"];
+$quoted_club_id = $db->quote($_GET["club_id"]);
+if (!isset($_GET["club_id"])) die;
+>>>>>>> 464ea8a725f0f841bd69eddd57629620b3595c41
 
 if ($club_id == "0") {
   // sessions only, no dates

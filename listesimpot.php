@@ -10,7 +10,11 @@ setlocale(LC_TIME, 'fr_CA.iso88591');
 
 $pdf =& new FPDI('P', 'mm', 'Letter');
 
-$pagecount = $pdf->setSourceFile('recu-impot.pdf'); 
+$numero_club = $_GET["numero_club"];
+preg_match("/^C\d*$/", $numero_club, $output_array);
+$numero_club_sanitized = $output_array[0];
+
+$pagecount = $pdf->setSourceFile("files/recu-impot-$numero_club_sanitized.pdf");
 $tplidx = $pdf->importPage(1, '/MediaBox'); 
 $pdf->SetAutoPageBreak(false);
 
@@ -20,26 +24,21 @@ $pdf->useTemplate($tplidx);
 $pdf->SetFont('Times', '', 14);
 
 function createEntry($pdf, $d, $i, $o) {
-    // ["cid", "Nom", "DDN", "Frais"]
-    $COLS = 4;
-    $x = array(170, 78, 172, 48);
-    $y = array(39, 72, 72, 66);
+    // ["cid", "Nom", "nom impot", "DDN", "Frais", "Saison"]
+    $coords = json_decode(str_replace('_', '.', $_POST['coords']));
+    $COLS = sizeof($coords);
     $INCREMENT = 140.5;
-
-    $yr = "2014/2015";
-    $pdf->SetXY(175, 25.5 + $o * $INCREMENT);
-    $pdf->Cell(0, 0, $yr);
 
     $date = strftime("%d %b %Y");
     $pdf->SetXY(134, 92 + $o * $INCREMENT);
     $pdf->Cell(0, 0, $date);
 
-    $tresorier = "Bernard Stawarz";
+    $tresorier = $_POST["tresorier"];
     $pdf->setXY(12, 99 + $o * $INCREMENT);
     $pdf->Cell(0, 0, $tresorier);
 
     for ($j = 0; $j < $COLS; $j++) {
-        $pdf->SetXY($x[$j], $y[$j] + $o * $INCREMENT);
+        $pdf->SetXY($coords[$j][0], $coords[$j][1] + $o * $INCREMENT);
         $pdf->Cell(0, 0, $d[$j]);
     }
 }
