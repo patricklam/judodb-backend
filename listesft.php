@@ -8,7 +8,7 @@ require ('_produce_fpdi_output.php');
 
 $pdf =& new FPDI('P', 'mm', 'Letter');
 
-$pagecount = $pdf->setSourceFile('ft303version2013.pdf');
+$pagecount = $pdf->setSourceFile('files/ft303version2013.pdf');
 $tplidx = $pdf->importPage(1, '/MediaBox');
 $pdf->SetAutoPageBreak(false);
 

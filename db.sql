@@ -172,7 +172,9 @@ CREATE TABLE `club` (
   `supplement_prorata` char(3),
   `pro_rata` tinyint(1),
   `ajustable_cours` tinyint(1),
-  `ajustable_division` tinyint(1)
+  `ajustable_division` tinyint(1),
+  `tresorier` char(30),
+  `coords` char(30)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `club_cours`;
