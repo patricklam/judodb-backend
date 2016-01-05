@@ -10,6 +10,7 @@ $db = pdo_db_connect();
 require_authentication($db);
 
 $guid = $_GET['guid'];
+$result['executed'] = 0;
 
 if (isset($_SESSION[$guid])) {
  $result['sid'] = array_shift($_SESSION[$guid]);
@@ -17,6 +18,7 @@ if (isset($_SESSION[$guid])) {
  print_debug_timestamp();
  foreach ($_SESSION[$guid] as $sq) {
   $stmt = $db->prepare($sq);
+  $result['executed']++;
   $stmt->execute();
   print_debug_info($sq);
  }

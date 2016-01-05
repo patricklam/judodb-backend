@@ -29,7 +29,7 @@ function generate_cmds($db, $args) {
   // consequence: only an admin can add a client to a new club
   if (!$new_client) {
     $userid = get_user_id($db);
-    if (!can_access_client($db, $userid, $args['sid']))
+    if (!can_write_client($db, $userid, $args['sid']))
       return array();
   }
 

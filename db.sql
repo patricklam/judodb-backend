@@ -51,6 +51,7 @@ CREATE TABLE `user_club` (
   `id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL,
   `club_id` int(11) NOT NULL,
+  `can_write` tinyint(1)
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

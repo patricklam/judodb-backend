@@ -41,9 +41,31 @@ function can_access_client($db, $userid, $cid) {
     return true;
 }
 
+function can_write_client($db, $userid, $cid) {
+    if (!is_admin($db, $userid)) {
+      $auth_query = $db->prepare('SELECT COUNT(*) FROM `services`, `user_club` '.
+                                  'WHERE services.client_id=:id '.
+                                   'AND services.club_id=user_club.club_id '.
+                                   'AND user_club.user_id=:userid '.
+                                   'AND user_club.can_write=1');
+      // NOTE: id must be unquoted: execute already quotes its args
+      $aparams=array(':id' => $cid, ':userid' => $userid);
+      $auth_query->execute($aparams);
+      if ($auth_query->fetchColumn() == 0) return false;
+    }
+    return true;
+}
+
 function can_access_club($db, $user_id, $club_id) {
   if (is_admin($db, $user_id)) return TRUE;
   $has_access_query = $db->prepare('SELECT COUNT(*) FROM `user_club` WHERE `user_id`=? AND `club_id`=?');
+  $has_access_query->execute(array($user_id, $club_id));
+  return $has_access_query->fetchColumn() > 0;
+}
+
+function can_write_club($db, $user_id, $club_id) {
+  if (is_admin($db, $user_id)) return TRUE;
+  $has_access_query = $db->prepare('SELECT COUNT(*) FROM `user_club` WHERE `user_id`=? AND `club_id`=? AND can_write=1');
   $has_access_query->execute(array($user_id, $club_id));
   return $has_access_query->fetchColumn() > 0;
 }
