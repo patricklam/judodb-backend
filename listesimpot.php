@@ -27,14 +27,14 @@ function createEntry($pdf, $d, $i, $o) {
     // ["cid", "Nom", "nom impot", "DDN", "Frais", "Saison"]
     $coords = json_decode(str_replace('_', '.', $_POST['coords']));
     $COLS = sizeof($coords);
-    $INCREMENT = 140.5;
+    $INCREMENT = 148;
 
     $date = strftime("%d %b %Y");
-    $pdf->SetXY(134, 92 + $o * $INCREMENT);
+    $pdf->SetXY(134, 85 + $o * $INCREMENT);
     $pdf->Cell(0, 0, $date);
 
-    $tresorier = $_POST["tresorier"];
-    $pdf->setXY(12, 99 + $o * $INCREMENT);
+    $tresorier = iconv("UTF-8", "ISO-8859-1", $_POST["tresorier"]);
+    $pdf->setXY(14, 98 + $o * $INCREMENT);
     $pdf->Cell(0, 0, $tresorier);
 
     for ($j = 0; $j < $COLS; $j++) {
