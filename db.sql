@@ -65,7 +65,7 @@ CREATE TABLE `client` (
   `adresse` varchar(255),
   `ville` varchar(50),
   `code_postal` varchar(8),
-  `tel` varchar(20),
+  `tel` varchar(80),
   `affiliation` varchar(20),
   `carte_resident` varchar(20),
   `nom_recu_impot` varchar(255),
