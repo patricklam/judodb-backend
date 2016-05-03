@@ -80,7 +80,7 @@ function get_club_list($db) {
   if (is_admin($db, $user_id))
     $id_query = $db->prepare('SELECT `id` FROM `club`');
   else
-    $id_query = $db->prepare('SELECT `club_id` FROM `user_club` WHERE user_id=?');
+    $id_query = $db->prepare('SELECT DISTINCT `club_id` FROM `user_club` WHERE user_id=?');
   $id_query->execute(array($user_id));
   foreach ($id_query->fetchAll(PDO::FETCH_NUM) as $user_club) {
     $club_id = $user_club[0];
