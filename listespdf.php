@@ -27,9 +27,9 @@ $data = iconv("UTF-8", "ISO-8859-1", $_POST['data']);
 $ds = explode("*", $data);
 
 
-// [blank, id, nom, prenom, sexe, grade, dategrade, tel, JudoQC, ddn, div, cours-short-desc, cours-id, ?, ?
-$display = array(false, false, true, true, false, true, false, true, false, false, false, false, false, false);
-$w = array(-1, -1, 45, 45, -1, 18, -1, 35, -1, -1, -1, -1, 70);
+// [blank, id, nom, prenom, courriel, sexe, grade, dategrade, tel, JudoQC, ddn, div, cours-short-desc, cours-id, ?, ?
+$display = array(false, false, true, true, false, false, true, false, true, false, false, false, false, false, false);
+$w = array(-1, -1, 45, 45, -1, -1, 18, -1, 35, -1, -1, -1, -1, 70);
 produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, false);
 $pdf->Output();
 ?>

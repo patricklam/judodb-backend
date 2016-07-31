@@ -22,8 +22,8 @@ if ($_POST["multi"] == "1") {
 }
 
 $sheetNum = 0;
-// [*cb*, "Nom", "Prenom", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Div", "Cours", "Cours_id"];
-$COURS = 12;
+// [*cb*, "Nom", "Prenom", "Courriel", "Sexe", "Grade", "DateGrade", "Tel", "JudoQC", "DDN", "Div", "Cours", "Cours_id"];
+$COURS = 13;
 
 $nonEmpty = FALSE;
 for ($p = 0; $p < $c; $p++) {
@@ -71,16 +71,17 @@ for ($p = 0; $p < $c; $p++) {
             $s->setCellValue("A$r", $d[1]); // id number
             $s->setCellValue("B$r", $d[2]); // nom
             $s->setCellValue("C$r", $d[3]); // prenom
-            $s->setCellValue("D$r", $d[4]); // sexe
-            $s->setCellValue("E$r", $d[5]); // grade
-            $s->getCell("F$r")->setValueExplicit($d[7], 
+            $s->setCellValue("D$r", $d[5]); // sexe
+            $s->setCellValue("E$r", $d[6]); // grade
+            $s->getCell("F$r")->setValueExplicit($d[8], 
 	      	  PHPExcel_Cell_DataType::TYPE_STRING); // tel
-            $s->setCellValue("G$r", $d[8]); // judoQC
-	    $dd = (int)(25569 + (strtotime("$d[9] 12:00:00") / 86400));
-            $s->setCellValue("H$r", $dd); // ddn
-	    $s->getStyle("H$r")->
+            $s->setCellValue("G$r", $d[4]); // courriel
+            $s->setCellValue("H$r", $d[9]); // judoQC
+	    $dd = (int)(25569 + (strtotime("$d[10] 12:00:00") / 86400));
+            $s->setCellValue("I$r", $dd); // ddn
+	    $s->getStyle("I$r")->
                 getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD);
-            $s->setCellValue("I$r", $d[10]); // cat
+            $s->setCellValue("J$r", $d[11]); // cat
             $actualCount++; $r++;
 	}
     }
@@ -88,11 +89,12 @@ for ($p = 0; $p < $c; $p++) {
     $s->getColumnDimension('B')->setWidth(20);
     $s->getColumnDimension('C')->setWidth(20);
     $s->getColumnDimension('D')->setWidth(5);
-    $s->getColumnDimension('E')->setWidth(5);
+    $s->getColumnDimension('E')->setWidth(7);
     $s->getColumnDimension('F')->setWidth(16);
-    $s->getColumnDimension('G')->setWidth(10);
+    $s->getColumnDimension('G')->setWidth(20);
     $s->getColumnDimension('H')->setWidth(10);
-    $s->getColumnDimension('I')->setWidth(5);
+    $s->getColumnDimension('I')->setWidth(10);
+    $s->getColumnDimension('J')->setWidth(5);
 
     $r++;
     $s->setCellValue("A$r", "Nombre inscrit: $actualCount");

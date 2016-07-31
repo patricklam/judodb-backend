@@ -2,9 +2,9 @@
 function produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, $grid) {
     $allCount = count($ds);
     $notFirst = FALSE;
-    // new: ["Nom", "Prenom", "Sexe", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
-    $COURS = 12;
-    $COLS = 12;
+    // new: ["Nom", "Prenom", "Sexe", "Courriel", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
+    $COURS = 13;
+    $COLS = 13;
     $BOXES = 35;
     $EXTRAS = 5;
     for ($p = 0; $p < $c; $p++) {

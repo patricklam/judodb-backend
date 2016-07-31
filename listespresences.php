@@ -28,9 +28,9 @@ if ($multi == "1") {
 $data = iconv("UTF-8", "ISO-8859-1", $_POST['data']);
 $ds = explode("*", $data);
 
-// [blank, id, nom, prenom, sexe, grade, dategrade, tel, JudoQC, ddn, div, cours-short-desc, cours-id, ?, ?]
-$display = array(false, false, true, true, false, false, false, true, false, false, false, false, false, false);
-$w = array(-1, -1, 45, 45, -1, -1, -1, 30, -1, -1, -1, -1);
+// [blank, id, nom, prenom, courriel, sexe, grade, dategrade, tel, JudoQC, ddn, div, cours-short-desc, cours-id, ?, ?]
+$display = array(false, false, true, true, false, false, false, false, true, false, false, false, false, false, false);
+$w = array(-1, -1, 45, 45, -1, -1, -1, -1, 30, -1, -1, -1, -1);
 produceOutput($pdf, $ts, $sts, $ds, $c, $multi, $display, $w, true);
 
 $pdf->Output();
