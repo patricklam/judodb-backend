@@ -90,6 +90,7 @@ CREATE TABLE `services` (
   `id` INTEGER PRIMARY KEY auto_increment, 
   `date_inscription` date,
   `saisons` char(10),
+  `date_affiliation_envoye` date,
   `sans_affiliation` boolean,
   `affiliation_initiation` boolean,
   `affiliation_ecole` boolean,
