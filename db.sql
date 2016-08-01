@@ -91,6 +91,7 @@ CREATE TABLE `services` (
   `date_inscription` date,
   `saisons` char(10),
   `date_affiliation_envoye` date,
+  `carte_judoca_recu` boolean,
   `sans_affiliation` boolean,
   `affiliation_initiation` boolean,
   `affiliation_ecole` boolean,
