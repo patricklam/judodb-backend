@@ -1,5 +1,5 @@
 <?php
-$GLOBAL_FIELDS = array("nom", "prenom", "ddn", "courriel", "adresse", "ville", "code_postal", "tel", "affiliation", "carte_resident", "nom_recu_impot", "tel_contact_urgence", "sexe");
+$GLOBAL_FIELDS = array("nom", "prenom", "ddn", "courriel", "adresse", "ville", "code_postal", "tel", "affiliation", "carte_resident", "nom_recu_impot", "tel_contact_urgence", "sexe", "notes");
 $ALL_FIELDS = $GLOBAL_FIELDS;
 $GRADES_FIELDS = array("date_grade", "grade");
 $SERVICE_FIELDS = array("date_inscription", "saisons", "date_affiliation_envoye", "carte_judoca_recu", "sans_affiliation", "affiliation_initiation", "affiliation_ecole", "affiliation_parascolaire", "cours", "resident", "paypal", "judogi", "escompte", "frais", "categorie_frais", "affiliation_frais", "supp_frais", "cas_special_note", "escompte_special", "verification", "solde", "club_id");
