@@ -210,8 +210,8 @@ CREATE TABLE `escompte` (
 
 DROP TABLE IF EXISTS `produit`;
 CREATE TABLE `produit` (
-  `id` INTEGER PRIMARY KEY auto_increment,
-  `club_id` INTEGER,
+  `id` INTEGER DEFAULT NULL,
+  `club_id` INTEGER DEFAULT NULL,
   `nom` varchar(25),
   `montant` char(6)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
