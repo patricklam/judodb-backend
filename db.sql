@@ -111,7 +111,7 @@ CREATE TABLE `services` (
   `cas_special_note` varchar(50),
   `escompte_special` varchar(10),
   `horaire_special` varchar(50),
-  `verification` BOOLEAN,
+  `affiliation_envoye` BOOLEAN,
   `solde` BOOLEAN,
   `club_id` int(11)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
