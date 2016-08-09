@@ -9,7 +9,7 @@ $db = pdo_db_connect();
 require_authentication($db);
 
 $club_id = $_GET["club_id"];
-if (!isset($club_id) || !can_access_club($db, get_user_id($db), $club_id)) die;
+if (!isset($club_id) || ($club_id != "0" && !can_access_club($db, get_user_id($db), $club_id))) die;
 
 $produitlist = array();
 $produit_query = $db->prepare('SELECT * FROM `produit` WHERE `club_id` = 0 OR `club_id`=:club_id ORDER BY `id`');
