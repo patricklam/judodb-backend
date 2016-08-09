@@ -190,15 +190,6 @@ CREATE TABLE `club_cours` (
   `short_desc` char(30)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `club_division_session`;
-CREATE TABLE `club_division_session` (
-  `id` INTEGER PRIMARY KEY auto_increment,
-  `club_id` INTEGER,
-  `session_seqno` INTEGER,
-  `division_abbrev` char(6),
-  `frais_judo_qc` char(10)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `escompte`;
 CREATE TABLE `escompte` (
   `id` INTEGER PRIMARY KEY auto_increment,
