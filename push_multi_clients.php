@@ -247,6 +247,16 @@ foreach ($updates as $u) {
     array_push($stored_cmds,
        "UPDATE `escompte` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$quoted_club_id;");
     break;
+  case "Y": // delete escompte
+    if (!is_admin($db, $userid)) {
+       $response_code = 403;
+       break;
+    }
+    $id = $db->quote($ua[2]);
+    $club_id = $db->quote($ua[3]);
+    array_push($stored_cmds,
+       "DELETE FROM `escompte` WHERE `id` = $id AND `club_id`=$club_id;");
+    break;
   case "J": // new produit
     $id = $db->quote($ua[2]);
     $nom = $db->quote($ua[3]);
