@@ -85,10 +85,8 @@ based on the POST input.
 Input files: 
 
     ft303version2013.pdf
-    recu-impot.pdf
 
 * `listesft.php`: creates an FT-303 form for tournament entry.
-* `listesimpot.php`: creates receipts for tax purposes.
 * `listespdf.php`: creates a PDF listing of a class or multiple classes.
 * `listespresences.php`: creates a PDF usable as a class list.
 * `listesxls.php`: creates an XLS containing class lists.
