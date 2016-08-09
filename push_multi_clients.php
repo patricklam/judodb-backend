@@ -88,6 +88,14 @@ foreach ($updates as $u) {
     array_push($stored_cmds,
        "UPDATE `club` SET $action=$newvalue WHERE `id`=$quoted_club_id;");
     break;
+  case "D": // delete global session
+    if (!is_admin($db, $userid)) {
+       $response_code = 403;
+       break;
+    }
+    $seqno = $db->quote($ua[2]);
+    array_push($stored_cmds,
+       "DELETE FROM `session` WHERE `seqno` = $seqno;");
     break;
   case "E": // new global session
     if (!is_admin($db, $userid)) {
