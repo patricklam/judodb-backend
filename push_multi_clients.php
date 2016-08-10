@@ -282,6 +282,17 @@ foreach ($updates as $u) {
     array_push($stored_cmds,
        "UPDATE `produit` SET $action=$newvalue WHERE `id`=$id AND `club_id`=$quoted_club_id;");
     break;
+  case "K": // delete produit
+    $id = $db->quote($ua[2]);
+    $club_id = $ua[3];
+    if (!can_write_club($db, $userid, $club_id)) {
+       $response_code = 403;
+       break;
+    }
+    $quoted_club_id = $db->quote($club_id);
+    array_push($stored_cmds,
+       "DELETE FROM `produit` WHERE `id`=$id AND `club_id`=$quoted_club_id;");
+    break;
   }
 }
 
