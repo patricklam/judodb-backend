@@ -149,7 +149,7 @@ foreach ($updates as $u) {
     array_push($stored_cmds,
        "INSERT INTO `club_cours` (`club_id`, `session_seqno`, `short_desc`) VALUES ($club_id, $session_seqno, $short_desc);");
     break;
-  case "r":
+  case "r": // update cours
     $id = $db->quote($ua[2]);
     $newvalue = $db->quote($ua[3]);
     $club_id = $ua[4];
@@ -163,12 +163,12 @@ foreach ($updates as $u) {
     break;
   case "O": // delete cours
     $id = $db->quote($ua[2]);
-    $club_id = $ua[4];
+    $club_id = $ua[3];
     if (!can_write_club($db, $userid, $club_id)) {
        $response_code = 403;
        break;
     }
-    $quoted_club_id = $db->quote($ua[4]);
+    $quoted_club_id = $db->quote($club_id);
     array_push($stored_cmds,
        "DELETE FROM `club_cours` WHERE `id`=$id AND `club_id`=$quoted_club_id;");
     break;
@@ -219,7 +219,6 @@ foreach ($updates as $u) {
        break;
     }
     $quoted_club_id = $db->quote($ua[4]);
-    // never used, not implemented
     break;
   case "Z": // new escompte
     $id = $db->quote($ua[2]);
