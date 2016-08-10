@@ -4,3 +4,5 @@ fpdi
 _dbconfig.php
 _top_sekrit_debug_mode.php
 *~
+backups/db*
+
