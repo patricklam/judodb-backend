@@ -31,7 +31,7 @@ CREATE TABLE `client` (
   `adresse` varchar(255) DEFAULT NULL,
   `ville` varchar(50) DEFAULT NULL,
   `code_postal` varchar(8) DEFAULT NULL,
-  `tel` varchar(20) DEFAULT NULL,
+  `tel` varchar(80) DEFAULT NULL,
   `affiliation` varchar(20) DEFAULT NULL,
   `carte_resident` varchar(20) DEFAULT NULL,
   `nom_recu_impot` varchar(255) DEFAULT NULL,
