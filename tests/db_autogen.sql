@@ -351,7 +351,7 @@ CREATE TABLE `services` (
   `cas_special_note` varchar(50) CHARACTER SET latin1 DEFAULT NULL,
   `escompte_special` varchar(10) CHARACTER SET latin1 DEFAULT NULL,
   `horaire_special` varchar(50) CHARACTER SET latin1 DEFAULT NULL,
-  `verification` tinyint(1) DEFAULT NULL,
+  `affiliation_envoye` tinyint(1) DEFAULT NULL,
   `solde` tinyint(1) DEFAULT NULL,
   `club_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
