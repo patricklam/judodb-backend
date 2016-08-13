@@ -1,5 +1,5 @@
 <?php
-include '_top_sekrit_debug_mode.php';
+if (file_exists('_top_sekrit_debug_mode.php')) include '_top_sekrit_debug_mode.php';
 
 function get_user_id($db) {
   global $DEBUG_MODE;
