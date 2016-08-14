@@ -1,5 +1,5 @@
 <?php
-include '_top_sekrit_debug_mode.php';
+if (file_exists('_top_sekrit_debug_mode.php')) include '_top_sekrit_debug_mode.php';
 
 require_once ('_pdo.php');
 
