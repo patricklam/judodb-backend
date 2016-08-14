@@ -34,7 +34,7 @@ function generate_cmds($db, $args) {
   }
 
   // Handle 'deleted' requests.
-  if (array_key_exists("key", $args) && $args['deleted'] == 'true') {
+  if (array_key_exists("deleted", $args) && $args['deleted'] == 'true') {
     array_push($stored_cmds,"DELETE FROM `client` WHERE id=$sid");
     array_push($stored_cmds,"DELETE FROM `grades` WHERE client_id=$sid");
     array_push($stored_cmds,"DELETE FROM `services` WHERE client_id=$sid");
