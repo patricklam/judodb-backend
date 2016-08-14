@@ -13,6 +13,6 @@ $db = NULL;
 
 exec("mysqldump --user=$DBI_USERNAME --password=$DBI_PASSWORD --host=$DBI_HOST $DBI_DATABASE > backups/db-" . date('Ymd-his'));
 
-echo 'backup terminé avec succès: backups/db-' . date('Ymd-his') . '<br>';
+echo 'terminé avec succès: backups/db-' . date('Ymd-his') . '';
 ?>
 
