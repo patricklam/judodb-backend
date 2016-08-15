@@ -102,7 +102,7 @@ CREATE TABLE `services` (
   `passeport` boolean,
   `resident` boolean,
   `paypal` boolean,
-  `judogi` char(3),
+  `judogi` char(20),
   `escompte` char(3),
   `categorie_frais` char(10),
   `affiliation_frais` char(10),

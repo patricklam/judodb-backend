@@ -302,7 +302,7 @@ CREATE TABLE `services` (
   `passeport` tinyint(1) DEFAULT NULL,
   `resident` tinyint(1) DEFAULT NULL,
   `paypal` tinyint(1) DEFAULT NULL,
-  `judogi` char(3) DEFAULT NULL,
+  `judogi` char(20) DEFAULT NULL,
   `escompte` char(3) DEFAULT NULL,
   `categorie_frais` char(10) DEFAULT NULL,
   `affiliation_frais` char(10) DEFAULT NULL,
