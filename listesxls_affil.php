@@ -1,6 +1,32 @@
 <?php
 require ('_config.php');
 
+function convertGrade($g) {
+    switch(substr($g, 0, 3)) {
+        case 'Bla': return '6 Kyu';
+	case 'B/J': return '6 Kyu +';
+	case 'Jau': return '5 Kyu';
+	case 'J/O': return '5 Kyu +';
+	case 'Ora': return '4 Kyu '; // note extra space due to bug in given Excel file
+	case 'O/V': return '4 Kyu +';
+	case 'Ver': return '3 Kyu';
+	case 'V/B': return '3 Kyu +';
+	case 'Ble': return '2 Kyu';
+	case 'B/M': return '2 Kyu +';
+	case 'Mar': return '1 Kyu';
+	case '1D': return 'Shodan';
+	case '2D': return 'Nidan';
+	case '3D': return 'Sandan';
+	case '4D': return 'Yondan';
+	case '5D': return 'Godan';
+	case '6D': return 'Rokudan';
+	case '7D': return 'Shichidan';
+	case '8D': return 'Hachidan';
+        case '9D': return 'Kudan';
+        case '10D': return 'Judan';
+  }
+}
+
 require ('PHPExcel/PHPExcel.php');
 require ('PHPExcel/PHPExcel/IOFactory.php');
 
@@ -22,6 +48,7 @@ $format = str_replace("'","", $_POST['format']);
 $fs = array_flip(explode(",", $format));
 
 $s = $objPHPExcel->getSheetByName('REGULIER');
+$s->getProtection()->setSheet(false);
 
 $r = 6;
 for ($i = 0; $i < $allCount-1; $i++) {
@@ -31,7 +58,7 @@ for ($i = 0; $i < $allCount-1; $i++) {
     $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["nom"]]);
     $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["prenom"]]);
     $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["sexe"]]);
-    $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["grade"]]);
+    $s->setCellValueByColumnAndRow($col++, $r, convertGrade($d[$fs["grade"]]));
     $col++; // skip hidden
 
     $s->setCellValueByColumnAndRow($col++, $r, substr($d[$fs["ddn"]], 8, 2));
@@ -51,6 +78,12 @@ for ($i = 0; $i < $allCount-1; $i++) {
     $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["codepostale"]]);
 
     $r++;
+}
+
+// avoid getting 400 21+s
+for (; $r < 505; $r++) {
+    $s->setCellValueByColumnAndRow(23, $r, "");
+    $s->setCellValueByColumnAndRow(24, $r, "");
 }
 
 $c = explode('|', iconv("UTF-8", "ISO-8859-1", $_POST['auxdata']));
