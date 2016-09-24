@@ -38,6 +38,8 @@ $s->mergeCells('A2:D2');
 $r = 5;
 
 $format = explode(",", str_replace("'","", $_POST['format']));
+$fs = array_flip($format);
+
 for ($j = 0; $j < count($format); $j++) {
     $s->setCellValueByColumnAndRow($j, 4, $format[$j]);
 }
@@ -48,8 +50,8 @@ for ($i = 0; $i < $allCount-1; $i++) {
     for ($j = 0; $j < count($d); $j++)
         $s->setCellValueByColumnAndRow($j, $r, $d[$j]);
 
-    $s->getStyleByColumnAndRow(12, $r)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-    $s->getStyleByColumnAndRow(17, $r)->getNumberFormat()->setFormatCode('#,##0.00_-"$"');
+    $s->getStyleByColumnAndRow($fs["carteresident"], $r)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+    $s->getStyleByColumnAndRow($fs["frais"], $r)->getNumberFormat()->setFormatCode('#,##0.00_-"$"');
     $actualCount++; $r++;
 }
 
@@ -57,11 +59,12 @@ for ($c = 'A'; $c < 'S'; $c++)
     $s->getColumnDimension($c)->setAutoSize(true);
 
 // some manual fixes:
-$s->getColumnDimension('A')->setAutoSize(false)->setWidth(6);
-$s->getColumnDimension('D')->setAutoSize(false)->setWidth(6);
-$s->getColumnDimension('E')->setAutoSize(false)->setWidth(11);
-$s->getColumnDimension('F')->setAutoSize(false)->setWidth(11);
-$s->getColumnDimension('J')->setAutoSize(false)->setWidth(10);
+$letters = 'ABCDEFGHIJKLMN';
+$s->getColumnDimension($letters[$fs["id"]])->setAutoSize(false)->setWidth(6);
+$s->getColumnDimension($letters[$fs["sexe"]])->setAutoSize(false)->setWidth(6);
+$s->getColumnDimension($letters[$fs["JC"]])->setAutoSize(false)->setWidth(11);
+$s->getColumnDimension($letters[$fs["ddn"]])->setAutoSize(false)->setWidth(11);
+$s->getColumnDimension($letters[$fs["codepostale"]])->setAutoSize(false)->setWidth(10);
 
 $r++;
 $s->setCellValue("A$r", "Nombre inscrit: $actualCount");

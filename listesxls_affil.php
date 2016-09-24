@@ -44,8 +44,8 @@ $data = $_POST['data_full'];
 $ds = explode("*", $data);
 $allCount = count($ds);
 
-$format = str_replace("'","", $_POST['format']);
-$fs = array_flip(explode(",", $format));
+$format = explode(",", str_replace("'","", $_POST['format']));
+$fs = array_flip($format);
 
 $s = $objPHPExcel->getSheetByName('REGULIER');
 $s->getProtection()->setSheet(false);
