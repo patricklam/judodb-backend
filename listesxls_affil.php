@@ -99,6 +99,11 @@ $clubno = $c[1];
 $s->setCellValueByColumnAndRow(6, 2, $clubno);
 $s->setCellValueByColumnAndRow(7, 2, $club);
 
+$s->setCellValueByColumnAndRow(10, 2, $c[2]);
+$s->setCellValueByColumnAndRow(13, 2, $c[3]);
+$s->setCellValueByColumnAndRow(16, 2, $c[4]);
+$s->setCellValueByColumnAndRow(17, 2, $c[5]);
+
 $datetime = date('Ymd-Hi');
 $filename = "affiliations-$clubno-$datetime.xlsx";
 
