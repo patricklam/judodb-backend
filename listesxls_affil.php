@@ -1,6 +1,9 @@
 <?php
 require ('_config.php');
 
+$PRODUIT_PASSEPORT_JUDO_QC = 1;
+$PRODUIT_PASSEPORT_JUDO_CA = 2;
+
 function convertGrade($g) {
     switch(substr($g, 0, 3)) {
         case 'Bla': return '6 Kyu';
@@ -53,6 +56,9 @@ $s->getProtection()->setSheet(false);
 $r = 6;
 for ($i = 0; $i < $allCount-1; $i++) {
     $d = explode("|", $ds[$i]);
+
+    $produits = explode(";", $d[$fs["produits"]]);
+
     $col = 6;
     $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["JC"]]);
     $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["nom"]]);
@@ -66,8 +72,8 @@ for ($i = 0; $i < $allCount-1; $i++) {
     $s->setCellValueByColumnAndRow($col++, $r, substr($d[$fs["ddn"]], 0, 4));
     $rn = empty($d[$fs["JC"]]) ? "N" : "R";
     $s->setCellValueByColumnAndRow($col++, $r, $rn); // if has judo ca then R else N
-    $s->setCellValueByColumnAndRow($col++, $r, ""); // passport judo ca
-    $s->setCellValueByColumnAndRow($col++, $r, ""); // passport judo qc
+    $s->setCellValueByColumnAndRow($col++, $r, in_array($PRODUIT_PASSEPORT_JUDO_CA, $produits) ? "O" : "N");
+    $s->setCellValueByColumnAndRow($col++, $r, in_array($PRODUIT_PASSEPORT_JUDO_QC, $produits) ? "O" : "N");
     $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["courriel"]]);
     $s->setCellValueByColumnAndRow($col++, $r, ""); // comment
     $s->setCellValueByColumnAndRow($col++, $r, "Athlete/Athlète");
