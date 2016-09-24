@@ -35,8 +35,13 @@ $s->getStyle('A2')->getFont()->setSize(14);
 $s->getRowDimension('2')->setRowHeight(17);
 $s->mergeCells('A2:D2');
 
-$r = 4;
-$COLS = 18;
+$r = 5;
+
+$format = explode(",", str_replace("'","", $_POST['format']));
+for ($j = 0; $j < count($format); $j++) {
+    $s->setCellValueByColumnAndRow($j, 4, $format[$j]);
+}
+
 $actualCount = 0;
 for ($i = 0; $i < $allCount-1; $i++) {
     $d = explode("|", $ds[$i]);
