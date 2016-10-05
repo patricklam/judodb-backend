@@ -15,10 +15,17 @@ $pdf->SetAutoPageBreak(false);
 $pdf->addPage();
 $pdf->useTemplate($tplidx);
 
-// to avoid the need for syncronisation before output, use POST params
-// for the data in the list.
-
 $pdf->SetFont('Times', '', 14);
+
+$catX = array('M' => 52, 'S' => 52, 'U21' => 71.5, 'U18' => 52,
+      'U16' => 71.5, 'U14' => 52, 'U12' => 71.5, 'U10' => 52, 'U8' => 71.5);
+$catY = array('M' => 21, 'S' => 27, 'U21' => 27, 'U18' => 33.5,
+      'U16' => 33.5, 'U14' => 41, 'U12' => 41, 'U10' => 47, 'U8' => 47);
+
+// to avoid need for backend smarts, use POST params for the data in the list.
+
+$format = explode(",", str_replace("'","", $_POST['format']));
+$fs = array_flip($format);
 
 $evt = iconv("UTF-8", "ISO-8859-1", $_POST['evt']);
 $date = str_replace("/", "     ", str_replace("-", "     ",
@@ -26,17 +33,14 @@ $date = str_replace("/", "     ", str_replace("-", "     ",
 $c = explode('|', iconv("UTF-8", "ISO-8859-1", $_POST['auxdata']));
 $club = $c[0];
 $clubno = $c[1];
-// ["CID", "Nom", "Prenom", "Sexe", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
-$COLS = 15;
-$display = array(false, true, true, false, true, true, false, false, false, false, false, false, false, false, true);
-$x = array(0, 128, 128, 0, 178, 51, 0, 0, 0, 0, 0, 0, 0, 0, 128);
-$y = array(0, 20, 27, 0, 41, 56.5, 0, 0, 0, 0, 0, 0, 0, 0, 41);
-$INCREMENT = 84;
 
-$catX = array('M' => 52, 'S' => 52, 'U21' => 71.5, 'U18' => 52,
-      'U16' => 71.5, 'U14' => 52, 'U12' => 71.5, 'U10' => 52, 'U8' => 71.5);
-$catY = array('M' => 21, 'S' => 27, 'U21' => 27, 'U18' => 33.5,
-      'U16' => 33.5, 'U14' => 41, 'U12' => 41, 'U10' => 47, 'U8' => 47);
+// ["CID", "Nom", "Prenom", "Sexe", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
+
+$display = array("nom", "prenom", "JC", "ddn", "grade");
+$x = array(128, 128, 178, 51, 128);
+$y = array(20, 27, 41, 56.5, 41);
+
+$INCREMENT = 84;
 
 $actualCount = 0;
 $data = iconv("UTF-8", "ISO-8859-1", $_POST['data_full']);
@@ -51,8 +55,8 @@ for ($i = 0; $i < $allCount; $i++) {
 
     $effOff = ($i % 3) * $INCREMENT;
     $d = explode("|", $ds[$i]);
+    $d[$fs["ddn"]] = substr($d[$fs["ddn"]], 0, 4);
 
-    $d[5] = substr($d[5], 0, 4);
     $pdf->SetXY(128, 33.5 + $effOff);
     $pdf->Cell(0, 0, $club);
     $pdf->SetXY(175, 33.5 + $effOff);
@@ -63,25 +67,24 @@ for ($i = 0; $i < $allCount; $i++) {
     $pdf->Cell(0, 0, $date);
 
     // division
-    if (substr($d[6], -1) == 'N') $d[6] = substr($d[6], 0, -1);
-    if (substr($d[18], 0, 1) == 'M') $d[6] = 'M';
-    $pdf->SetXY($catX[$d[6]], $catY[$d[6]] + $effOff);
+    if (substr($d[$fs["div"]], -1) == 'N') $d[$fs["div"]] = substr($d[$fs["div"]], 0, -1);
+    if (substr($d[$fs["sm"]], 0, 1) == 'M') $d[$fs["div"]] = 'M';
+    $pdf->SetXY($catX[$d[$fs["div"]]], $catY[$d[$fs["div"]]] + $effOff);
     $pdf->Cell(0, 0, 'X');
 
     $sx = 0;
-    if ($d[3] == 'M')
+    if ($d[$fs["sexe"]] == 'M')
       $sx = 33.2;
-    if ($d[3] == 'F')
+    if ($d[$fs["sexe"]] == 'F')
       $sx = 46.2;
     if ($sx > 0) {
       $pdf->SetXY(60 + $sx, 55.7 + $effOff);
       $pdf->Cell(0, 0, "X");
     }
 
-    for ($j = 0; $j < $COLS; $j++) {
-        if (!$display[$j]) continue;
+    foreach ($display as $j => $key) {
         $pdf->SetXY($x[$j], $y[$j] + $effOff);
-        $pdf->Cell(0, 0, $d[$j]);
+	$pdf->Cell(0, 0, $d[$fs[$key]]);
     }
     $actualCount++;
 }
