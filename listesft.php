@@ -34,8 +34,6 @@ $c = explode('|', iconv("UTF-8", "ISO-8859-1", $_POST['auxdata']));
 $club = $c[0];
 $clubno = $c[1];
 
-// ["CID", "Nom", "Prenom", "Sexe", "JudoQC", "DDN", "Div", "Courriel", "Addr", "Ville", "CodePostal", "Tel", "CarteAnjou", "TelUrg", "Grade", "DateGrade", "Cours"]
-
 $display = array("nom", "prenom", "JC", "ddn", "grade");
 $x = array(128, 128, 178, 51, 128);
 $y = array(20, 27, 41, 56.5, 41);
