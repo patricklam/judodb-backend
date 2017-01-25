@@ -87,14 +87,17 @@ for ($i = 0; $i < $allCount-1; $i++) {
 }
 
 // avoid getting 400 21+s
-for (; $r < 505; $r++) {
+for (; $r <= 505; $r++) {
     $s->setCellValueByColumnAndRow(23, $r, "");
     $s->setCellValueByColumnAndRow(24, $r, "");
 }
 
-$c = explode('|', iconv("UTF-8", "ISO-8859-1", $_POST['auxdata']));
+// huh, iconv does the opposite of the right thing. Weird.
+//$c = explode('|', iconv("UTF-8", "ISO-8859-1", $_POST['auxdata']));
+$c = explode('|', $_POST['auxdata']);
 $club = $c[0];
 $clubno = $c[1];
+$club_addr = str_replace('_', ',', $c[5]);
 
 $s->setCellValueByColumnAndRow(6, 2, $clubno);
 $s->setCellValueByColumnAndRow(7, 2, $club);
@@ -102,7 +105,7 @@ $s->setCellValueByColumnAndRow(7, 2, $club);
 $s->setCellValueByColumnAndRow(10, 2, $c[2]);
 $s->setCellValueByColumnAndRow(13, 2, $c[3]);
 $s->setCellValueByColumnAndRow(16, 2, $c[4]);
-$s->setCellValueByColumnAndRow(17, 2, $c[5]);
+$s->setCellValueByColumnAndRow(17, 2, $club_addr);
 
 $datetime = date('Ymd-Hi');
 $filename = "affiliations-$clubno-$datetime.xlsx";
