@@ -117,7 +117,8 @@ CREATE TABLE `services` (
   `horaire_special` varchar(50),
   `affiliation_envoye` BOOLEAN,
   `solde` BOOLEAN,
-  `club_id` int(11)
+  `club_id` int(11),
+  `tarif` char(10)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /** Payments not currently implemented. */
@@ -182,6 +183,7 @@ CREATE TABLE `club` (
   `pro_rata` tinyint(1),
   `ajustable_cours` tinyint(1),
   `ajustable_division` tinyint(1),
+  `frais_cours_tarif` tinyint(1),
   `tresorier` char(30),
   `coords` char(30)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -218,6 +220,7 @@ CREATE TABLE `prix` (
   `session_seqno` char(10),
   `division_abbrev` char(6),
   `cours_id` INTEGER,
+  `nom` varchar(30),
   `frais` char(6)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
