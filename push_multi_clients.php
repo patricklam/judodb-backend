@@ -214,12 +214,14 @@ foreach ($updates as $u) {
     break;
   case "Q": // delete prix
     $id = $db->quote($ua[2]);
-    $club_id = $ua[4];
+    $club_id = $ua[3];
+    $quoted_club_id = $db->quote($ua[3]);
     if (!can_write_club($db, $userid, $club_id)) {
        $response_code = 403;
        break;
     }
-    $quoted_club_id = $db->quote($ua[4]);
+    array_push($stored_cmds,
+       "DELETE FROM `prix` WHERE `id`=$id AND `club_id`=$quoted_club_id;");
     break;
   case "I": // new prix name
     $newvalue = $db->quote($ua[2]); // name
