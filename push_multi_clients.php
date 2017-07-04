@@ -182,14 +182,14 @@ foreach ($updates as $u) {
     $session_seqno = $db->quote($ua[4]);
     $division_abbrev = $db->quote($ua[5]);
     $cours_id = $db->quote($ua[6]);
-    $nom = $db->quote($ua[7]);
+    $nom_tarif = $db->quote($ua[7]);
 
     if (!can_write_club($db, $userid, $club_id)) {
        $response_code = 403;
        break;
     }
     array_push($stored_cmds,
-       "INSERT INTO `prix` (`frais`, `club_id`, `session_seqno`, `division_abbrev`, `cours_id`, `nom`) VALUES ($newvalue, $quoted_club_id, $session_seqno, $division_abbrev, $cours_id, $nom);");
+       "INSERT INTO `prix` (`frais`, `club_id`, `session_seqno`, `division_abbrev`, `cours_id`, `nom_tarif`) VALUES ($newvalue, $quoted_club_id, $session_seqno, $division_abbrev, $cours_id, $nom_tarif);");
     break;
   case "p": // update prix
     $id = $db->quote($ua[2]);
@@ -239,11 +239,11 @@ foreach ($updates as $u) {
        break;
     }
     array_push($stored_cmds,
-       "INSERT INTO `prix` (`frais`, `club_id`, `session_seqno`, `division_abbrev`, `cours_id`, `nom`) VALUES (0, $quoted_club_id, $session_seqno, $division_abbrev, $cours_id, $newvalue);");
+       "INSERT INTO `prix` (`frais`, `club_id`, `session_seqno`, `division_abbrev`, `cours_id`, `nom_tarif`) VALUES (0, $quoted_club_id, $session_seqno, $division_abbrev, $cours_id, $newvalue);");
     break;
   case "i": // update prix name
     $id = $db->quote($ua[2]);
-    $newvalue = $db->quote($ua[3]); // nom
+    $newvalue = $db->quote($ua[3]); // nom_tarif
     $club_id = $ua[4];
     $quoted_club_id = $db->quote($ua[4]);
     if ($quoted_club_id == "'null'") {
@@ -257,7 +257,7 @@ foreach ($updates as $u) {
        break;
     }
     array_push($stored_cmds,
-       "UPDATE `prix` SET nom=$newvalue WHERE `id`=$id AND `club_id` $club_id_frag;");
+       "UPDATE `prix` SET nom_tarif=$newvalue WHERE `id`=$id AND `club_id` $club_id_frag;");
     break;
   case "Z": // new escompte
     $id = $db->quote($ua[2]);

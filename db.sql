@@ -118,7 +118,7 @@ CREATE TABLE `services` (
   `affiliation_envoye` BOOLEAN,
   `solde` BOOLEAN,
   `club_id` int(11),
-  `tarif` char(10)
+  `nom_tarif` varchar(30)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 /** Payments not currently implemented. */
@@ -220,7 +220,7 @@ CREATE TABLE `prix` (
   `session_seqno` char(10),
   `division_abbrev` char(6),
   `cours_id` INTEGER,
-  `nom` varchar(30),
+  `nom_tarif` varchar(30),
   `frais` char(6)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
