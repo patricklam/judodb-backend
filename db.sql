@@ -175,17 +175,24 @@ CREATE TABLE `club` (
   `nom_short` varchar(15),
   `numero_club` char(30),
   `ville` char(50),
+  `personne_contact` varchar(50),
+  `personne_contact_courriel` varchar(50),
+  `personne_contact_tel` varchar(50),
+  `personne_contact_adresse` varchar(50),
   `prefix_codepostale` char(7),
   `escompte_resident` char(7),
   `indicatif_regional` char(4),
   `afficher_paypal` char(1),
+  `montant_paypal` char(5),
   `supplement_prorata` char(3),
   `pro_rata` tinyint(1),
+  `debut_session` date,
+  `fin_session` date,
   `ajustable_cours` tinyint(1),
   `ajustable_division` tinyint(1),
   `frais_cours_tarif` tinyint(1),
   `tresorier` char(30),
-  `coords` char(30)
+  `coords` char(120)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `club_cours`;
