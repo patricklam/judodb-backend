@@ -38,7 +38,6 @@ function generate_cmds($db, $args) {
     array_push($stored_cmds,"DELETE FROM `client` WHERE id=$sid");
     array_push($stored_cmds,"DELETE FROM `grades` WHERE client_id=$sid");
     array_push($stored_cmds,"DELETE FROM `services` WHERE client_id=$sid");
-    array_push($stored_cmds,"DELETE FROM `payment_group_members` WHERE client_id=$sid");
     array_push($stored_cmds,"DELETE FROM `payment` WHERE client_id=$sid");
 
     print($stored_cmds);

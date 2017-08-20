@@ -121,26 +121,13 @@ CREATE TABLE `services` (
   `nom_tarif_id` varchar(30)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-/** Payments not currently implemented. */
-DROP TABLE IF EXISTS `payment_groups`;
-CREATE TABLE `payment_groups` (
-  `id` INTEGER PRIMARY KEY auto_increment,
-  `version` int(5) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `payment_group_members`;
-CREATE TABLE `payment_group_members` (
-  `group_id` INTEGER,
-  `client_id` INTEGER
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `payment`;
 CREATE TABLE `payment` (
   `id` INTEGER PRIMARY KEY auto_increment,
-  `group_id` INTEGER,
-  `client_id` INTEGER,
-  `mode` INTEGER,
-  `chqno` INTEGER,
+  `service_id` INTEGER,
+  `number` INTEGER,
+  `mode` char(10),
+  `chqno` varchar(40),
   `date` DATE,
   `montant` char(10)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
