@@ -9,7 +9,7 @@ $db = pdo_db_connect();
 require_authentication($db);
 
 function pull_cours($db, $club_id, $session_seqno, $ss_sql_frag, $courslist) {
-  if (!can_access_club($db, get_user_id($db), $club_id)) continue;
+  if (!can_access_club($db, get_user_id($db), $club_id)) return [];
 
   $cc_query = $db->prepare('SELECT * FROM `club_cours` WHERE `club_id`=:club_id ' . $ss_sql_frag);
   $cc_query->execute(array(':club_id' => $club_id, ':seqno' => $session_seqno));
