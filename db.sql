@@ -103,7 +103,7 @@ CREATE TABLE `services` (
   `affiliation_parascolaire` boolean,
   `cours` char(6),
   `no_sessions` char(1),
-  `passeport` boolean,
+  `passeport` char(1),
   `resident` boolean,
   `paypal` boolean,
   `judogi` char(20),
@@ -124,11 +124,12 @@ CREATE TABLE `services` (
 DROP TABLE IF EXISTS `payment`;
 CREATE TABLE `payment` (
   `id` INTEGER PRIMARY KEY auto_increment,
+  `client_id` INTEGER, /* not normalized, but helps keep db clean */
   `service_id` INTEGER,
   `number` INTEGER,
   `mode` char(10),
   `chqno` varchar(40),
-  `date` DATE,
+  `paiement_date` DATE,
   `montant` char(10)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

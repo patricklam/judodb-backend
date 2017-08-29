@@ -41,7 +41,7 @@ foreach ($grades_query->fetchAll(PDO::FETCH_OBJ) as $g) {
 $services_query = $db->prepare('SELECT * FROM `services` '.
                                'WHERE client_id=? ORDER BY date_inscription ASC');
 $payments_query = $db->prepare('SELECT * FROM `payment` '.
-                               'WHERE service_id=? ORDER BY date ASC');
+                               'WHERE service_id=? ORDER BY number ASC');
 $services_query->execute(array($id));
 $client->services = array();
 foreach ($services_query->fetchAll(PDO::FETCH_OBJ) as $s) {

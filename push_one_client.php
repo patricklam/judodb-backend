@@ -9,6 +9,8 @@ require_authentication($db);
 require ('_constants.php');
 require ('_push_helper.php');
 
+$data = json_decode($_POST["encoded_client"], true);
+
 $stored_cmds = generate_cmds($db, $_POST);
 
 /*echo "<pre>";
