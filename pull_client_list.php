@@ -35,7 +35,7 @@ foreach ($services_query->fetchAll(PDO::FETCH_OBJ) as $s) {
     // deduplicate
     if (in_array($s->client_id, $seen_clients)) {
       foreach ($tmpclients as $cl) {
-        if ($cl->id == $s->client_id)
+        if ($cl->{'id'} == $s->client_id)
           $cl->clubs[] = $s->club_id;
       }
       continue;
@@ -50,8 +50,8 @@ foreach ($services_query->fetchAll(PDO::FETCH_OBJ) as $s) {
 }
 
 $clients = array();
-foreach ($tmpclients as $client) { 
-  $saisons_query->execute(array($client->id));
+foreach ($tmpclients as $client) {
+  $saisons_query->execute(array($client->{'id'}));
   if ($saisons_query->rowCount() > 0) {
     $first = true;
     $client->saisons = '';
