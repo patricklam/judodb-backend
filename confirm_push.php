@@ -19,8 +19,8 @@ if (isset($_SESSION[$guid])) {
  foreach ($_SESSION[$guid] as $sq) {
   $stmt = $db->prepare($sq);
   $result['executed']++;
-  $stmt->execute();
   print_debug_info($sq);
+  $stmt->execute();
  }
 
  $_SESSION[$guid] = Array(-1);
