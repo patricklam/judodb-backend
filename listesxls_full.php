@@ -51,7 +51,9 @@ for ($i = 0; $i < $allCount-1; $i++) {
         $s->setCellValueByColumnAndRow($j, $r, $d[$j]);
 
     $s->getStyleByColumnAndRow($fs["carteresident"], $r)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+    $s->getStyleByColumnAndRow($fs["frais_supp"], $r)->getNumberFormat()->setFormatCode('#,##0.00_-"$"');
     $s->getStyleByColumnAndRow($fs["frais"], $r)->getNumberFormat()->setFormatCode('#,##0.00_-"$"');
+    $s->getStyleByColumnAndRow($fs["a_payer"], $r)->getNumberFormat()->setFormatCode('#,##0.00_-"$"');
     $actualCount++; $r++;
 }
 
