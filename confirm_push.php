@@ -46,7 +46,7 @@ function print_debug_info($a) {
  if (!$debug) return;
 
  $fh = fopen('/tmp/push', 'a');
- fwrite($fh, $a . PHP_EOL);
+ fwrite($fh, $a . ';' . PHP_EOL);
  fclose($fh);
 }
 
