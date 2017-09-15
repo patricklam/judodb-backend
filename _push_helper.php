@@ -9,6 +9,8 @@ function generate_cmds($db, $args) {
   global $GLOBAL_FIELDS, $ALL_FIELDS, $GRADES_FIELDS, $SERVICE_FIELDS, $PAYMENT_FIELDS, $SESSION_FIELDS, $COURS_FIELDS, $CATEGORIES_FIELDS, $CATEGORIE_SESSION_FIELDS, $ESCOMPTE_FIELDS, $MISC_FIELDS;
 
   $guid = $args['guid'];
+  // avoid overwriting with empty data, e.g. due to old clients
+  if (empty($args["encoded_client"])) die;
   $client = json_decode($args["encoded_client"], true);
 
   // Get a server id.
