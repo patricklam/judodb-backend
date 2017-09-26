@@ -36,87 +36,149 @@ require ('PHPExcel/PHPExcel/IOFactory.php');
 // no need for authentication on this PHP file.
 
 $fileType = 'Excel2007';
-$fileName = 'files/qc-judoca-2017-18.xlsx';
+$fileName = Array();
+$fileName['regulier'] = 'files/qc-judoca-2017-18.xlsx';
+$fileName['scolaire'] = 'files/qc-judoca-scolaire-2017-18.xlsx';
+$fileName['parascolaire'] = 'files/qc-judoca-parascolaire-2017-18.xlsx';
+$fileName['initiation'] = 'files/qc-judoca-initiation-2017-18.xlsx';
 
-$objReader = PHPExcel_IOFactory::createReader($fileType);
-$objPHPExcel = $objReader->load($fileName);
+$SHEET_NAMES = Array();
+$SHEET_NAMES['regulier'] = 'REGULIER';
+$SHEET_NAMES['initiation'] = 'INITIATION';
+$SHEET_NAMES['scolaire'] = 'SCOLAIRE';
+$SHEET_NAMES['parascolaire'] = 'SCOLAIRE';
 
 // to avoid need for backend smarts, use POST params for the data in the list.
 
 $data = $_POST['data_full'];
 $ds = explode("*", $data);
 $allCount = count($ds);
+$kinds = 0;
+$have = Array();
+$have['scolaire'] = false; $have['parascolaire'] = false;
+$have['initiation'] = false; $have['regulier'] = false;
 
 $format = explode(",", str_replace("'","", $_POST['format']));
 $fs = array_flip($format);
 
-$s = $objPHPExcel->getSheetByName('REGULIER');
-$s->getProtection()->setSheet(false);
-
-$r = 6;
 for ($i = 0; $i < $allCount-1; $i++) {
     $d = explode("|", $ds[$i]);
-
-    $produits = explode(";", $d[$fs["produits"]]);
-
-    $col = 6;
-    $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["JC"]]);
-    $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["nom"]]);
-    $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["prenom"]]);
-    $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["sexe"]]);
-    $s->setCellValueByColumnAndRow($col++, $r, convertGrade($d[$fs["grade"]]));
-    $col++; // skip hidden
-
-    $s->setCellValueByColumnAndRow($col++, $r, substr($d[$fs["ddn"]], 8, 2));
-    $s->setCellValueByColumnAndRow($col++, $r, substr($d[$fs["ddn"]], 5, 2));
-    $s->setCellValueByColumnAndRow($col++, $r, substr($d[$fs["ddn"]], 0, 4));
-    $rn = empty($d[$fs["JC"]]) ? "N" : "R";
-    $s->setCellValueByColumnAndRow($col++, $r, $rn); // if has judo ca then R else N
-    $s->setCellValueByColumnAndRow($col++, $r, in_array($PRODUIT_PASSEPORT_JUDO_CA, $produits) ? "O" : "N");
-    $s->setCellValueByColumnAndRow($col++, $r, in_array($PRODUIT_PASSEPORT_JUDO_QC, $produits) ? "O" : "N");
-    $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["courriel"]]);
-    $s->setCellValueByColumnAndRow($col++, $r, ""); // comment
-    $s->setCellValueByColumnAndRow($col++, $r, "Athlete/Athlète");
-    $s->setCellValueByColumnAndRow($col++, $r, ""); // 2func
-    $s->setCellValueByColumnAndRow($col++, $r, ""); // 3func
-
-    $col = 33;
-    $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["codepostale"]]);
-
-    $r++;
+    if ($d[$fs['scolaire']] == 'true') {
+        $have['scolaire'] = true; $kinds++;
+    } else if ($d[$fs['parascolaire']] == 'true') {
+        $have['parascolaire'] = true; $kinds++;
+    } else if ($d[$fs['initiation']] == 'true') {
+        $have['initiation'] = true; $kinds++;
+    } else {
+        $have['regulier'] = true; $kinds++;
+    }
 }
 
-// avoid getting 400 21+s
-for (; $r <= 505; $r++) {
-    $s->setCellValueByColumnAndRow(23, $r, "");
-    $s->setCellValueByColumnAndRow(24, $r, "");
+if ($kinds > 1) {
+    echo 'too many kinds';
+    die;
 }
 
-// huh, iconv does the opposite of the right thing. Weird.
-//$c = explode('|', iconv("UTF-8", "ISO-8859-1", $_POST['auxdata']));
-$c = explode('|', $_POST['auxdata']);
-$club = $c[0];
-$clubno = $c[1];
-$club_addr = str_replace('_', ',', $c[5]);
+if ($have['regulier']) {
+    output_xls('regulier');
+}
 
-$s->setCellValueByColumnAndRow(6, 2, $clubno);
-$s->setCellValueByColumnAndRow(7, 2, $club);
+if ($have['scolaire']) {
+    output_xls('scolaire');
+}
 
-$s->setCellValueByColumnAndRow(10, 2, $c[2]);
-$s->setCellValueByColumnAndRow(13, 2, $c[3]);
-$s->setCellValueByColumnAndRow(16, 2, $c[4]);
-$s->setCellValueByColumnAndRow(17, 2, $club_addr);
+if ($have['parascolaire']) {
+    output_xls('parascolaire');
+}
 
-$datetime = date('Ymd-Hi');
-$filename = "affiliations-$clubno-$datetime.xlsx";
+if ($have['initiation']) {
+    output_xls('initiation');
+}
 
-// redirect output to client browser
-header('Content-Type: application/vnd.ms-excel');
-header('Content-Disposition: attachment;filename=' . $filename);
-header('Cache-Control: max-age=0');
+function check_kind($d, $kind) {
+    global $fs;
+    if ($kind == 'regulier') {
+        return $d[$fs['scolaire']] != 'true' && $d[$fs['parascolaire']] != 'true' &&
+	       $d[$fs['initiation']] != 'true';
+    }
+    return $d[$fs[$kind]] == true;
+}
 
-//$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-$objWriter->setPreCalculateFormulas(true);
-$objWriter->save('php://output');
+function output_xls($kind) {
+    global $fileType, $fileName, $SHEET_NAMES, $fs, $ds, $PRODUIT_PASSEPORT_JUDO_CA, $PRODUIT_PASSEPORT_JUDO_QC;
+    $allCount = count($ds);
+    $objReader = PHPExcel_IOFactory::createReader($fileType);
+    $objPHPExcel = $objReader->load($fileName[$kind]);
+
+    $s = $objPHPExcel->getSheetByName($SHEET_NAMES[$kind]);
+    $s->getProtection()->setSheet(false);
+
+    $r = 6;
+    for ($i = 0; $i < $allCount-1; $i++) {
+        $d = explode("|", $ds[$i]);
+        check_kind($d, $kind);
+
+        $produits = explode(";", $d[$fs["produits"]]);
+
+        $col = 6;
+        $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["JC"]]);
+        $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["nom"]]);
+        $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["prenom"]]);
+        $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["sexe"]]);
+        $s->setCellValueByColumnAndRow($col++, $r, convertGrade($d[$fs["grade"]]));
+        $col++; // skip hidden
+
+        $s->setCellValueByColumnAndRow($col++, $r, substr($d[$fs["ddn"]], 8, 2));
+        $s->setCellValueByColumnAndRow($col++, $r, substr($d[$fs["ddn"]], 5, 2));
+        $s->setCellValueByColumnAndRow($col++, $r, substr($d[$fs["ddn"]], 0, 4));
+        $rn = empty($d[$fs["JC"]]) ? "N" : "R";
+        $s->setCellValueByColumnAndRow($col++, $r, $rn); // if has judo ca then R else N
+        $s->setCellValueByColumnAndRow($col++, $r, in_array($PRODUIT_PASSEPORT_JUDO_CA, $produits) ? "O" : "N");
+        $s->setCellValueByColumnAndRow($col++, $r, in_array($PRODUIT_PASSEPORT_JUDO_QC, $produits) ? "O" : "N");
+        $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["courriel"]]);
+        $s->setCellValueByColumnAndRow($col++, $r, ""); // comment
+        $s->setCellValueByColumnAndRow($col++, $r, "Athlete/Athlète");
+        $s->setCellValueByColumnAndRow($col++, $r, ""); // 2func
+        $s->setCellValueByColumnAndRow($col++, $r, ""); // 3func
+
+        $col = 33;
+        $s->setCellValueByColumnAndRow($col++, $r, $d[$fs["codepostale"]]);
+
+        $r++;
+    }
+
+    // avoid getting 400 21+s
+    for (; $r <= 505; $r++) {
+        $s->setCellValueByColumnAndRow(23, $r, "");
+        $s->setCellValueByColumnAndRow(24, $r, "");
+    }
+
+    // huh, iconv does the opposite of the right thing. Weird.
+    //$c = explode('|', iconv("UTF-8", "ISO-8859-1", $_POST['auxdata']));
+    $c = explode('|', $_POST['auxdata']);
+    $club = $c[0];
+    $clubno = $c[1];
+    $club_addr = str_replace('_', ',', $c[5]);
+
+    $s->setCellValueByColumnAndRow(6, 2, $clubno);
+    $s->setCellValueByColumnAndRow(7, 2, $club);
+
+    $s->setCellValueByColumnAndRow(10, 2, $c[2]);
+    $s->setCellValueByColumnAndRow(13, 2, $c[3]);
+    $s->setCellValueByColumnAndRow(16, 2, $c[4]);
+    $s->setCellValueByColumnAndRow(17, 2, $club_addr);
+
+    $datetime = date('Ymd-Hi');
+    $filename = "affiliations-$clubno-$datetime.xlsx";
+
+    // redirect output to client browser
+    header('Content-Type: application/vnd.ms-excel');
+    header('Content-Disposition: attachment;filename=' . $filename);
+    header('Cache-Control: max-age=0');
+
+    //$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+    $objWriter->setPreCalculateFormulas(true);
+    $objWriter->save('php://output');
+}
 ?>
