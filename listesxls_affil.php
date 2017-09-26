@@ -1,5 +1,6 @@
 <?php
 require ('_config.php');
+require_once "System.php";
 
 $PRODUIT_PASSEPORT_JUDO_QC = 1;
 $PRODUIT_PASSEPORT_JUDO_CA = 2;
@@ -74,25 +75,43 @@ for ($i = 0; $i < $allCount-1; $i++) {
     }
 }
 
-if ($kinds > 1) {
-    echo 'too many kinds';
-    die;
+$many = $kinds > 1;
+$zip = NULL;
+
+if ($many) {
+    $c = explode('|', $_POST['auxdata']);
+    $clubno = $c[1];
+    $tempdir = System::mktemp("-d affiliations-$clubno");
+    $zip = new ZipArchive();
+    $zfn = System::mktemp("affiliations.zip");
+    if ($zip->open($zfn, ZipArchive::CREATE)!==TRUE) {
+        exit("cannot open <$zfn>\n");
+    }
 }
 
 if ($have['regulier']) {
-    output_xls('regulier');
+    output_xls('regulier', $many, $zip);
 }
 
 if ($have['scolaire']) {
-    output_xls('scolaire');
+    output_xls('scolaire', $many, $zip);
 }
 
 if ($have['parascolaire']) {
-    output_xls('parascolaire');
+    output_xls('parascolaire', $many, $zip);
 }
 
 if ($have['initiation']) {
-    output_xls('initiation');
+    output_xls('initiation', $many, $zip);
+}
+
+if ($many) {
+    $zip->close();
+    header("Content-type: application/zip");
+    header("Content-Disposition: attachment; filename=affiliations-$clubno.zip");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+    readfile($zfn);
 }
 
 function check_kind($d, $kind) {
@@ -101,10 +120,10 @@ function check_kind($d, $kind) {
         return $d[$fs['scolaire']] != 'true' && $d[$fs['parascolaire']] != 'true' &&
 	       $d[$fs['initiation']] != 'true';
     }
-    return $d[$fs[$kind]] == true;
+    return $d[$fs[$kind]] == 'true';
 }
 
-function output_xls($kind) {
+function output_xls($kind, $many, $zip) {
     global $fileType, $fileName, $SHEET_NAMES, $fs, $ds, $PRODUIT_PASSEPORT_JUDO_CA, $PRODUIT_PASSEPORT_JUDO_QC;
     $allCount = count($ds);
     $objReader = PHPExcel_IOFactory::createReader($fileType);
@@ -116,7 +135,7 @@ function output_xls($kind) {
     $r = 6;
     for ($i = 0; $i < $allCount-1; $i++) {
         $d = explode("|", $ds[$i]);
-        check_kind($d, $kind);
+        if (!check_kind($d, $kind)) continue;
 
         $produits = explode(";", $d[$fs["produits"]]);
 
@@ -169,16 +188,24 @@ function output_xls($kind) {
     $s->setCellValueByColumnAndRow(17, 2, $club_addr);
 
     $datetime = date('Ymd-Hi');
-    $filename = "affiliations-$clubno-$datetime.xlsx";
+    $filename = "affiliations-$kind-$clubno-$datetime.xlsx";
 
-    // redirect output to client browser
-    header('Content-Type: application/vnd.ms-excel');
-    header('Content-Disposition: attachment;filename=' . $filename);
-    header('Cache-Control: max-age=0');
+    if ($many) {
+        global $tempdir;
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->setPreCalculateFormulas(true);
+        $objWriter->save($tempdir . DIRECTORY_SEPARATOR . $filename);
+        $zip->addFile($tempdir . DIRECTORY_SEPARATOR . $filename, $filename);
+    } else {
+        // redirect output to client browser
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename=' . $filename);
+        header('Cache-Control: max-age=0');
 
-    //$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-    $objWriter->setPreCalculateFormulas(true);
-    $objWriter->save('php://output');
+        //$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->setPreCalculateFormulas(true);
+        $objWriter->save('php://output');
+    }
 }
 ?>
