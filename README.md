@@ -103,3 +103,10 @@ Prefix: `_*.php`
 * `_dbconfig.php`: DB configuration.
 * `_produce_fpdi_output.php`: helper function for producing PDF output with fpdi.
 * `_userutils.php`: helper functions for access control; also UTF encoding.
+
+Judo Canada Affiliation sheets
+------------------------------
+
+Gnumeric and LibreOffice appear to generate bogus xlsx which is incompatible with PHPExcel.
+For 2017-2018 I managed to save the provided file using Google Sheets as xlsx (Excel 2007)
+and that appears to work.

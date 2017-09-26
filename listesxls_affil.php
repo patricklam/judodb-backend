@@ -36,7 +36,7 @@ require ('PHPExcel/PHPExcel/IOFactory.php');
 // no need for authentication on this PHP file.
 
 $fileType = 'Excel2007';
-$fileName = 'files/qc-judoca-2016-17.xlsx';
+$fileName = 'files/qc-judoca-2017-18.xlsx';
 
 $objReader = PHPExcel_IOFactory::createReader($fileType);
 $objPHPExcel = $objReader->load($fileName);
