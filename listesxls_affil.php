@@ -64,18 +64,18 @@ $fs = array_flip($format);
 
 for ($i = 0; $i < $allCount-1; $i++) {
     $d = explode("|", $ds[$i]);
-    if ($d[$fs['scolaire']] == 'true') {
+    if ($d[$fs['scolaire']] == 'true' && !$have['scolaire']) {
         $have['scolaire'] = true; $kinds++;
-    } else if ($d[$fs['parascolaire']] == 'true') {
+    } else if ($d[$fs['parascolaire']] == 'true' && !$have['parascolaire']) {
         $have['parascolaire'] = true; $kinds++;
-    } else if ($d[$fs['initiation']] == 'true') {
+    } else if ($d[$fs['initiation']] == 'true' && !$have['initiation']) {
         $have['initiation'] = true; $kinds++;
-    } else {
+    } else if (!$have['regulier']) {
         $have['regulier'] = true; $kinds++;
     }
 }
 
-$many = $kinds > 1;
+$many = ($kinds > 1);
 $zip = NULL;
 
 if ($many) {
