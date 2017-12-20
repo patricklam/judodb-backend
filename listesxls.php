@@ -46,7 +46,7 @@ for ($p = 0; $p < $c; $p++) {
     $objPHPExcel->setActiveSheetIndex(++$sheetNum);
     $s = $objPHPExcel->getActiveSheet();
     $s->getDefaultStyle()->getFont()->setName('Arial');
-    $s->setTitle($shts[$p]);
+    $s->setTitle(str_replace("/","-",$shts[$p]));
     $s->getPageSetup()->setOrientation
 	(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT)
 	          ->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LETTER);
