@@ -10,7 +10,7 @@ function generate_cmds($db, $args) {
 
   $guid = $args['guid'];
   // avoid overwriting with empty data, e.g. due to old clients
-  if (empty($args["encoded_client"])) die;
+  if (empty($args["encoded_client"])) { http_response_code(500); die; }
   $client = json_decode($args["encoded_client"], true);
 
   // Get a server id.
