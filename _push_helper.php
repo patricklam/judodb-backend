@@ -14,9 +14,9 @@ function generate_cmds($db, $args) {
   $client = json_decode($args["encoded_client"], true);
 
   // Get a server id.
-  $nom = $db->quote($client['nom']);
-  $prenom = $db->quote($client['prenom']);
-  $ddn = $db->quote($client['ddn']);
+  $nom = $client['nom'];
+  $prenom = $client['prenom'];
+  $ddn = $client['ddn'];
   if (isset($args['sid']) && $args['sid'] != '') {
     $cid = $db->quote($args['sid']);
     $new_client = FALSE;
