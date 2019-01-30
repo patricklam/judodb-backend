@@ -5,14 +5,13 @@ function get_user_id($db) {
   global $DEBUG_MODE;
   if ($DEBUG_MODE) return 1;
   $email = $_SESSION['email'];
-  $pid = $_SESSION['plus_identity'];
   if (isset($_SESSION["authenticated"]) && $_SESSION["authenticated"] == "yes") {
-    $id_query = $db->prepare('SELECT count(`id`) FROM `user` WHERE `email`=? AND `plus_identity`=?');
-    $id_query->execute(array($email, $pid));
+    $id_query = $db->prepare('SELECT count(`id`) FROM `user` WHERE `email`=?');
+    $id_query->execute(array($email));
     if ($id_query->fetchColumn() == 0) return -1;
     else {
-      $real_id_query = $db->prepare('SELECT `id` FROM `user` WHERE `email`=? AND `plus_identity`=?');
-      $real_id_query->execute(array($email, $pid));
+      $real_id_query = $db->prepare('SELECT `id` FROM `user` WHERE `email`=?');
+      $real_id_query->execute(array($email));
       return $real_id_query->fetch(PDO::FETCH_OBJ)->id;
     }
   }

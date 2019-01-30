@@ -15,7 +15,7 @@ class TestUserUtils extends PHPUnit_Framework_TestCase {
 /**
  * The test database contains a user that is dedicated
  * for running test cases. The database table 'user'
- * contains its 'email' and 'plus_identity' information.
+ * contains its 'email' information.
  *
  * The 'setup' function manually retrieves the test
  * user 'id' to compare it with the value returned by
@@ -32,7 +32,6 @@ class TestUserUtils extends PHPUnit_Framework_TestCase {
     global $DBI_DATABASE, $DBI_HOST, $DBI_USERNAME, $DBI_PASSWORD;
 
     $_SESSION['authenticated'] = 'yes';
-    $_SESSION['plus_identity'] = '106965541410182340140';
   
     $this->link = mysql_connect($DBI_HOST, $DBI_USERNAME, $DBI_PASSWORD) || die("could not connect to db");    
     mysql_select_db($DBI_DATABASE) || die("could not select db");
@@ -72,7 +71,7 @@ class TestUserUtils extends PHPUnit_Framework_TestCase {
   /**
    * The current test is only based on the 'email' address
    * value and does not take into account cases where the
-   * 'plus_identity' and 'username' are taken into account.
+   * 'username' is taken into account.
    */
   public function test_get_user_id() {
     $user_id = get_user_id();
