@@ -10,6 +10,9 @@ $db = pdo_db_connect();
 require_authentication($db);
 $user_id = get_user_id($db);
 
+$club_id = $_GET["club_id"];
+if (!isset ($club_id)) die;
+
 $gquery = $db->prepare('SELECT * FROM `grades` ' .
                        'WHERE client_id=:client_id ORDER BY date_grade ASC');
 $squery = $db->prepare('SELECT * FROM `services` ' .
@@ -18,7 +21,9 @@ $payments_query = $db->prepare('SELECT * FROM `payment` '.
                                'WHERE service_id=? ORDER BY number ASC');
 
 $clients = array();
-foreach ($db->query('SELECT * FROM `client`',PDO::FETCH_OBJ) as $client) {
+$clients_query = $db->prepare('SELECT * FROM `client` WHERE EXISTS (SELECT `client_id` FROM `services` WHERE `club_id`=? AND `services`.`client_id` = `client`.`id`)');
+$clients_query->execute(array($club_id));
+foreach ($clients_query->fetchAll(PDO::FETCH_OBJ) as $client) {
   $id = $client->id;
   $params = array(':client_id' => $id);
 
