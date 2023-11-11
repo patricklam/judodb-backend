@@ -12,12 +12,14 @@ function is_authenticated($db) {
  $email = $_SESSION['email'];
  // if the openid identity matches something in the db, that's us. 
 
- $email_query = $db->prepare('SELECT COUNT(`id`) FROM `user` WHERE email=?');
- $email_query->execute(array($email));
+ $email_query = $db->prepare('SELECT COUNT(`id`) FROM `user` WHERE `email`=:email');
+ $email_query->bindValue(":email", $email, PDO::PARAM_STR);
+ $email_query->execute();
  if ($email_query->fetchColumn() == 0) return false;
 
- $update_query = $db->prepare('UPDATE `user` SET `last_update` = curdate() WHERE `id` = :id');
- $update_query->execute(array('id' => $id));
+ //$update_query = $db->prepare('UPDATE `user` SET `last_update` = curdate() WHERE `id` = :id');
+ //$update_query->bindValue(":id", $id, PDO::PARAM_INT);
+ //$update_query->execute();
  return true;
 }
 function require_authentication($db) {

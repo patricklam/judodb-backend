@@ -15,9 +15,9 @@ $seen_clients = array();
 
 $rs0 = NULL;
 $userid = get_user_id($db);
-$client_query = $db->prepare('SELECT * from `client` WHERE id=? ORDER BY `nom` ASC, `prenom` ASC');
+$client_query = $db->prepare('SELECT * from `client` WHERE id=:id ORDER BY `nom` ASC, `prenom` ASC');
 $saisons_query = $db->prepare('SELECT saisons FROM `services` ' .
-                               'WHERE client_id=?');
+                               'WHERE client_id=:id');
 
 if (is_admin($db, $userid)) {
   $services_query = $db->prepare('SELECT * from `services` ORDER BY `date_inscription` DESC');
@@ -25,39 +25,45 @@ if (is_admin($db, $userid)) {
 else {
   $services_query = $db->prepare('SELECT * from `services` ' .
                                      'LEFT JOIN `user_club` ON services.club_id=user_club.club_id ' .
-                                     'WHERE user_club.user_id=? ' .
+                                     'WHERE user_club.user_id=:id ' .
                                      'ORDER BY `date_inscription` DESC');
+  $services_query->bindValue(":id", $userid, PDO::PARAM_INT);
 }
-$services_query->execute(array($userid));
+$services_query->execute();
 
 foreach ($services_query->fetchAll(PDO::FETCH_OBJ) as $s) {
   if (in_array($s->club_id, $auth_clubs)) {
     // deduplicate
     if (in_array($s->client_id, $seen_clients)) {
       foreach ($tmpclients as $cl) {
-        if ($cl->{'id'} == $s->client_id)
-          $cl->clubs[] = $s->club_id;
+        if ($cl['id'] == $s->client_id)
+          $cl['clubs'] = $s->club_id;
       }
       continue;
     }
     $seen_clients[] = $s->client_id;
 
-    $client_query->execute(array($s->client_id));
-    $client = $client_query->fetch(PDO::FETCH_OBJ);
-    $client->clubs[] = $s->club_id;
-    $tmpclients[] = $client;
+    $client_query->bindValue(":id", $s->client_id, PDO::PARAM_INT);
+    $client_query->execute();
+    $client = $client_query->fetch(PDO::FETCH_ASSOC);
+    if (!empty($client)) {
+      $client['clubs'] = $s->club_id;
+      $tmpclients[] = $client;
+    }
   }
 }
 
 $clients = array();
+
 foreach ($tmpclients as $client) {
-  $saisons_query->execute(array($client->{'id'}));
+  $saisons_query->bindValue(":id", $client['id'], PDO::PARAM_INT);
+  $saisons_query->execute();
   if ($saisons_query->rowCount() > 0) {
     $first = true;
-    $client->saisons = '';
+    $client['saisons'] = '';
     foreach ($saisons_query->fetchAll(PDO::FETCH_OBJ) as $s) {
-      if (!$first) $client->saisons .= ' ';
-      $client->saisons .= $s->saisons;
+      if (!$first) $client['saisons'] .= ' ';
+      $client['saisons'] .= $s->saisons;
       $first = false;
     }
   }

@@ -6,12 +6,14 @@ function get_user_id($db) {
   if ($DEBUG_MODE) return 1;
   $email = $_SESSION['email'];
   if (isset($_SESSION["authenticated"]) && $_SESSION["authenticated"] == "yes") {
-    $id_query = $db->prepare('SELECT count(`id`) FROM `user` WHERE `email`=?');
-    $id_query->execute(array($email));
+    $id_query = $db->prepare('SELECT count(`id`) FROM `user` WHERE `email`=:email');
+    $id_query->bindValue(":email", $email, PDO::PARAM_STR);
+    $id_query->execute();
     if ($id_query->fetchColumn() == 0) return -1;
     else {
-      $real_id_query = $db->prepare('SELECT `id` FROM `user` WHERE `email`=?');
-      $real_id_query->execute(array($email));
+      $real_id_query = $db->prepare('SELECT `id` FROM `user` WHERE `email`=:email');
+      $real_id_query->bindValue(":email", $email, PDO::PARAM_STR);
+      $real_id_query->execute();
       return $real_id_query->fetch(PDO::FETCH_OBJ)->id;
     }
   }
@@ -19,11 +21,13 @@ function get_user_id($db) {
 }
 
 function is_admin($db, $user_id) {
-  $admin_query = $db->prepare('SELECT COUNT(`is_admin`) FROM `user` WHERE id=?');
-  $admin_query->execute(array($user_id));
+  $admin_query = $db->prepare('SELECT COUNT(`is_admin`) FROM `user` WHERE id=:id');
+  $admin_query->bindValue(":id", $user_id, PDO::PARAM_INT);
+  $admin_query->execute();
   if ($admin_query->fetchColumn() > 0) {
-    $real_admin_query = $db->prepare('SELECT `is_admin` FROM `user` WHERE id=?');
-    $real_admin_query->execute(array($user_id));
+    $real_admin_query = $db->prepare('SELECT `is_admin` FROM `user` WHERE id=:id');
+    $real_admin_query->bindValue(":id", $user_id, PDO::PARAM_INT);
+    $real_admin_query->execute();
     return $real_admin_query->fetch(PDO::FETCH_OBJ)->is_admin;
   }
   return 0;
@@ -60,15 +64,19 @@ function can_write_client($db, $userid, $cid) {
 
 function can_access_club($db, $user_id, $club_id) {
   if (is_admin($db, $user_id)) return TRUE;
-  $has_access_query = $db->prepare('SELECT COUNT(*) FROM `user_club` WHERE `user_id`=? AND `club_id`=?');
-  $has_access_query->execute(array($user_id, $club_id));
+  $has_access_query = $db->prepare('SELECT COUNT(*) FROM `user_club` WHERE `user_id`=:user_id AND `club_id`=:club_id');
+  $has_access_query->bindValue(":user_id", $user_id, PDO::PARAM_INT);
+  $has_access_query->bindValue(":club_id", $club_id, PDO::PARAM_INT);
+  $has_access_query->execute();
   return $has_access_query->fetchColumn() > 0;
 }
 
 function can_write_club($db, $user_id, $club_id) {
   if (is_admin($db, $user_id)) return TRUE;
-  $has_access_query = $db->prepare('SELECT COUNT(*) FROM `user_club` WHERE `user_id`=? AND `club_id`=? AND can_write=1');
-  $has_access_query->execute(array($user_id, $club_id));
+  $has_access_query = $db->prepare('SELECT COUNT(*) FROM `user_club` WHERE `user_id`=:user_id AND `club_id`=:club_id AND can_write=1');
+  $has_access_query->bindValue(":user_id", $user_id, PDO::PARAM_INT);
+  $has_access_query->bindValue(":club_id", $club_id, PDO::PARAM_INT);
+  $has_access_query->execute();
   return $has_access_query->fetchColumn() > 0;
 }
 
@@ -79,11 +87,14 @@ function get_club_list($db) {
     die;
   }
   $clubs = array();
-  if (is_admin($db, $user_id))
+  if (is_admin($db, $user_id)) {
     $id_query = $db->prepare('SELECT `id` FROM `club`');
-  else
-    $id_query = $db->prepare('SELECT DISTINCT `club_id` FROM `user_club` WHERE user_id=?');
-  $id_query->execute(array($user_id));
+    $id_query->execute();
+  } else {
+    $id_query = $db->prepare('SELECT DISTINCT `club_id` FROM `user_club` WHERE user_id=:id');
+    $id_query->bindValue(":id", $user_id, PDO::PARAM_INT);
+    $id_query->execute();
+  }
   foreach ($id_query->fetchAll(PDO::FETCH_NUM) as $user_club) {
     $club_id = $user_club[0];
     $clubs[] = $club_id;

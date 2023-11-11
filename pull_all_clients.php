@@ -18,11 +18,12 @@ $gquery = $db->prepare('SELECT * FROM `grades` ' .
 $squery = $db->prepare('SELECT * FROM `services` ' .
                        'WHERE client_id=:client_id ORDER BY date_inscription ASC');
 $payments_query = $db->prepare('SELECT * FROM `payment` '.
-                               'WHERE service_id=? ORDER BY number ASC');
+                               'WHERE service_id=:service_id ORDER BY number ASC');
 
 $clients = array();
-$clients_query = $db->prepare('SELECT * FROM `client` WHERE EXISTS (SELECT `client_id` FROM `services` WHERE `club_id`=? AND `services`.`client_id` = `client`.`id`)');
-$clients_query->execute(array($club_id));
+$clients_query = $db->prepare('SELECT * FROM `client` WHERE EXISTS (SELECT `client_id` FROM `services` WHERE `club_id`=:club_id AND `services`.`client_id` = `client`.`id`)');
+$clients_query->bindValue(":club_id", $club_id, PDO::PARAM_INT);
+$clients_query->execute();
 foreach ($clients_query->fetchAll(PDO::FETCH_OBJ) as $client) {
   $id = $client->id;
   $params = array(':client_id' => $id);
@@ -34,7 +35,8 @@ foreach ($clients_query->fetchAll(PDO::FETCH_OBJ) as $client) {
     unset($s->client_id);
     $client->services[] = $s;
     if (can_access_club($db, $user_id, $s->club_id)) $visible = true;
-    $payments_query->execute(array($s->id));
+    $payments_query->bindValue(":service_id", $s->id, PDO::PARAM_INT);
+    $payments_query->execute();
     $s->paiements = array();
     foreach ($payments_query->fetchAll(PDO::FETCH_OBJ) as $p) {
       unset($p->service_id);
