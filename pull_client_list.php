@@ -16,8 +16,8 @@ $seen_clients = array();
 $rs0 = NULL;
 $userid = get_user_id($db);
 $client_query = $db->prepare('SELECT * from `client` WHERE id=:id ORDER BY `nom` ASC, `prenom` ASC');
-$saisons_query = $db->prepare('SELECT saisons FROM `services` ' .
-                               'WHERE client_id=:id');
+$saisons_query = $db->prepare('SELECT `saisons` FROM `services` ' .
+                               'WHERE `client_id`=:id');
 
 if (is_admin($db, $userid)) {
   $services_query = $db->prepare('SELECT * from `services` ORDER BY `date_inscription` DESC');
@@ -37,7 +37,7 @@ foreach ($services_query->fetchAll(PDO::FETCH_OBJ) as $s) {
     if (in_array($s->client_id, $seen_clients)) {
       foreach ($tmpclients as $cl) {
         if ($cl['id'] == $s->client_id)
-          $cl['clubs'] = $s->club_id;
+	  array_push($cl['clubs'], $s->club_id);
       }
       continue;
     }
@@ -47,7 +47,7 @@ foreach ($services_query->fetchAll(PDO::FETCH_OBJ) as $s) {
     $client_query->execute();
     $client = $client_query->fetch(PDO::FETCH_ASSOC);
     if (!empty($client)) {
-      $client['clubs'] = $s->club_id;
+      $client['clubs'] = array($s->club_id);
       $tmpclients[] = $client;
     }
   }
