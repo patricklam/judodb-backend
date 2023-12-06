@@ -7,6 +7,7 @@ ini_set('zlib.output_compression', 4096);
 header('content-type: application/json');
 
 $db = pdo_db_connect();
+$db->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, true);
 require_authentication($db);
 $user_id = get_user_id($db);
 

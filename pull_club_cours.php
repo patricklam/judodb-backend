@@ -6,6 +6,7 @@ require_once ('_userutils.php');
 header('content-type: application/json');
 
 $db = pdo_db_connect();
+$db->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, true);
 require_authentication($db);
 
 function pull_cours($db, $club_id, $session_seqno, $ss_sql_frag, $courslist) {

@@ -1,11 +1,13 @@
 <?php
 
-require ('PHPExcel/PHPExcel.php');
-require ('PHPExcel/PHPExcel/IOFactory.php');
+require __DIR__ . '/vendor/autoload.php';
+
+use PhpOffice\Spreadsheet;
+use PhpOffice\IOFactory;
 
 // no need for authentication on this PHP file.
 
-$objPHPExcel = new PHPExcel();
+$objPHPExcel = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
 // to avoid need for backend smarts, use POST params for the data in the list.
 
@@ -40,7 +42,9 @@ for ($p = 0; $p < $c; $p++) {
 	    break;
         }
     }
-    
+
+    if ($live)
+    echo "live true"; else echo "live false";
     if (!$live) continue;
     $objPHPExcel->createSheet();
     $objPHPExcel->setActiveSheetIndex(++$sheetNum);
@@ -100,6 +104,7 @@ for ($p = 0; $p < $c; $p++) {
     $s->setCellValue("A$r", "Nombre inscrit: $actualCount");
     $nonEmpty = TRUE;
 }
+die;
 if ($nonEmpty) {
   $objPHPExcel->removeSheetByIndex(0);
   $objPHPExcel->setActiveSheetIndex(0);
@@ -113,6 +118,6 @@ header('Content-Type: application/vnd.ms-excel');
 header('Content-Disposition: attachment;filename="cours.xls"');
 header('Cache-Control: max-age=0');
 
-$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+$objWriter = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($objPHPExcel);
 $objWriter->save('php://output');
 ?>

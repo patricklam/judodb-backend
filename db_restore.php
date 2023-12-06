@@ -18,6 +18,7 @@ require_once ('_userutils.php');
 $db = NULL;
 try {
   $db = pdo_db_connect();
+  $db->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, true);
   require_authentication($db);
   $userid = get_user_id($db);
   if (!is_admin($db, $userid)) {
