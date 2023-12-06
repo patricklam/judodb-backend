@@ -43,21 +43,19 @@ for ($p = 0; $p < $c; $p++) {
         }
     }
 
-    if ($live)
-    echo "live true"; else echo "live false";
     if (!$live) continue;
     $objPHPExcel->createSheet();
     $objPHPExcel->setActiveSheetIndex(++$sheetNum);
     $s = $objPHPExcel->getActiveSheet();
-    $s->getDefaultStyle()->getFont()->setName('Arial');
+    $s->getParent()->getDefaultStyle()->getFont()->setName('Arial');
     $s->setTitle(str_replace("/","-",$shts[$p]));
     $s->getPageSetup()->setOrientation
-	(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT)
-	          ->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_LETTER);
+	(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT)
+	          ->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_LETTER);
 
     $s->setCellValue('A1', $shts[$p])
-      ->getStyle()->getAlignment()
-            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+      ->getStyle('A1')->getAlignment()
+            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
     $s->getStyle('A1')->getFont()->setSize(14);
     $s->getRowDimension('1')->setRowHeight(17);
     $s->mergeCells('A1:D1');
@@ -78,18 +76,18 @@ for ($p = 0; $p < $c; $p++) {
             $s->setCellValue("D$r", $d[5]); // sexe
             $s->setCellValue("E$r", $d[6]); // grade
             $s->getCell("F$r")->setValueExplicit($d[8], 
-	      	  PHPExcel_Cell_DataType::TYPE_STRING); // tel
+	      	  PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); // tel
             $s->setCellValue("G$r", $d[4]); // courriel
             $s->setCellValue("H$r", $d[9]); // judoQC
 	    $dd = (int)(25569 + (strtotime("$d[10] 12:00:00") / 86400));
             $s->setCellValue("I$r", $dd); // ddn
 	    $s->getStyle("I$r")->
-                getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDD);
+                getNumberFormat()->setFormatCode(PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_YYYYMMDD);
             $s->setCellValue("J$r", $d[11]); // cat
             $actualCount++; $r++;
 	}
     }
-    $s->getColumnDimension('A')->setWidth(5);
+    $s->getColumnDimension('A')->setWidth(10);
     $s->getColumnDimension('B')->setWidth(20);
     $s->getColumnDimension('C')->setWidth(20);
     $s->getColumnDimension('D')->setWidth(5);
@@ -97,14 +95,13 @@ for ($p = 0; $p < $c; $p++) {
     $s->getColumnDimension('F')->setWidth(16);
     $s->getColumnDimension('G')->setWidth(20);
     $s->getColumnDimension('H')->setWidth(10);
-    $s->getColumnDimension('I')->setWidth(10);
+    $s->getColumnDimension('I')->setWidth(12);
     $s->getColumnDimension('J')->setWidth(5);
 
     $r++;
     $s->setCellValue("A$r", "Nombre inscrit: $actualCount");
     $nonEmpty = TRUE;
 }
-die;
 if ($nonEmpty) {
   $objPHPExcel->removeSheetByIndex(0);
   $objPHPExcel->setActiveSheetIndex(0);
