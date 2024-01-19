@@ -1,12 +1,14 @@
 <?php
 
-require ('fpdf/fpdf.php');
-require ('fpdi/fpdi.php');
-require ('_produce_fpdi_output.php');
+use setasign\Fpdi\Fpdi;
+
+require_once ('fpdf/fpdf.php');
+require_once ('fpdi260/autoload.php');
+require_once ('_produce_fpdi_output.php');
 
 // no need for authentication on this PHP file.
 
-$pdf =& new FPDI('P', 'mm', 'Letter');
+$pdf = new FPDI('P', 'mm', 'Letter');
 
 $pagecount = $pdf->setSourceFile('files/ft303version2013.pdf');
 $tplidx = $pdf->importPage(1, '/MediaBox');
